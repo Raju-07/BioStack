@@ -142,3 +142,9 @@ STATICFILES_DIRS = [
 # Link for media
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
+
+LOGIN_URL = "auth/login/"
+LOGIN_REDIRECT_URL = "dashboard/"
+LOGOUT_REDIRECT_URL = "auth/login/"
