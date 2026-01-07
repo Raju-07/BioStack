@@ -21,12 +21,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from BioStack import views
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',views.homepage),
-    path('auth/',include("accounts.urls")), #Accounts app urls
-]
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#      path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")), #Accounts app urls
+#     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")), # Dashboard app urls
+    
+#     ]
 
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path('',views.homepage),
+    path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
+]
 
 if settings.DEBUG:
     urlpatterns+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

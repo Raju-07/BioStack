@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #Apps
     'accounts',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,6 @@ MEDIA_URL = '/media/'
 
 TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
 
-LOGIN_URL = "auth/login/"
-LOGIN_REDIRECT_URL = "dashboard/"
-LOGOUT_REDIRECT_URL = "auth/login/"
+LOGIN_URL = "/auth/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/auth/login/"

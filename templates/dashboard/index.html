@@ -1,0 +1,7 @@
+<h2>Dashboard</h2>
+
+<p>Welcome, {{ request.user.email }}</p>
+
+<p>
+  <a href="{% url 'accounts:logout' %}">Logout</a>
+</p>
