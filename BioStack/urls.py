@@ -25,7 +25,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('',views.homepage),
-    
+
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
@@ -35,7 +35,9 @@ urlpatterns = [
     path("password-reset/done/",auth_views.PasswordResetDoneView.as_view(template_name="accounts/password_reset_done.html" ),name="password_reset_done",),
     path( "reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name="accounts/password_reset_confirm.html"),name="password_reset_confirm", ),
     path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_complete.html"),name="password_reset_complete", ),
-        
+    #Profile 
+    path("profile/", include(("profiles.urls", "profiles"), namespace="profiles")),
+
 ]
 
 if settings.DEBUG:

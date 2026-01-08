@@ -1,12 +1,21 @@
+<div style="display: flex;flex-direction: column;align-items: center;justify-content: center;min-height: 100vh;">
 <h2>Login</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Login</button>
+  <button type="submit" style="width: 150px;height: 45px;font-size: medium;font-weight: bold;border-radius: 12px;border-color: black;background-color: transparent;">Login</button>
 </form>
 
-<p>
-  <a href='{% url "password_reset" %}'>
-    Forgot password?
-  </a>
-</p>
+
+  <p>
+    <a href='{% url "password_reset" %}'>
+      Forgot password?
+    </a>
+
+  </p>
+  <p>
+    <a href='{% url "accounts:signup" %}'>
+      Create Account
+    </a>
+  </p>
+</div>

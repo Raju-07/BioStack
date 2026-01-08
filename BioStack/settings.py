@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #Apps
     'accounts',
     'dashboard',
+    'profiles',
 ]
 
 MIDDLEWARE = [

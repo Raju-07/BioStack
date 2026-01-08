@@ -1,6 +1,10 @@
+
+<div style="display: flex;flex-direction: column;align-items: center;justify-content: center;min-height: 100vh;">
+
 <h2>Sign Up</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Create account</button>
 </form>
+</div>
