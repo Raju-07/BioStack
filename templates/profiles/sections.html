@@ -1,0 +1,19 @@
+<h2>Profile Sections</h2>
+
+<ul>
+  {% for s in sections %}
+    <li>
+      {{ s.section_type }} — {{ s.title }}
+      <a href="{% url 'profiles:section_edit' s.id %}">Edit</a>
+    </li>
+  {% empty %}
+    <li>No sections yet</li>
+  {% endfor %}
+</ul>
+
+<h3>Add Section</h3>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add</button>
+</form>

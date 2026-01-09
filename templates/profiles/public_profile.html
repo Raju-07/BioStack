@@ -1,0 +1,9 @@
+<h1>{{ profile.full_name }}</h1>
+<p>{{ profile.bio }}</p>
+
+{% for section in sections %}
+  <section>
+    <h2>{{ section.title }}</h2>
+    <pre>{{ section.data|json_script:"data" }}</pre>
+  </section>
+{% endfor %}

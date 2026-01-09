@@ -38,3 +38,43 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.slug} ({self.visibility})"
+
+class ProfileSection(models.Model):
+    ABOUT = "ABOUT"
+    SKILLS = "SKILLS"
+    LINKS = "LINKS"
+    PROJECTS = "PROJECT"
+    EXPERIENCE = "EXPERIENCE"
+
+    SECTION_TYPES = [
+        (ABOUT,"About"),
+        (SKILLS,"Skills"),
+        (LINKS,"Links"),
+        (PROJECTS,"Projects"),
+        (EXPERIENCE,"Experience")
+    ]
+
+    profile = models.ForeignKey(
+        "profiles.Profile",
+        on_delete=models.CASCADE,
+        related_name="sections",
+    )
+
+    section_type = models.CharField(max_length=20,choices=SECTION_TYPES,)
+
+    title = models.CharField(max_length=255)
+    data = models.JSONField(default=dict)
+
+    is_enable = models.BooleanField(default= True)
+    order = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ["order","created_at"]
+        unique_together = ("profile","section_type")
+
+    def __str__(self):
+        return f"{self.section_type} ({self.profile.slug})"
+    
