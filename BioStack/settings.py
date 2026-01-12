@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'accounts',
     'dashboard',
     'profiles',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +81,7 @@ WSGI_APPLICATION = 'BioStack.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG")=="False"
 
 DATABASES = {
     "default": {
@@ -152,5 +153,21 @@ LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/auth/login/"
 
 #For Reset login
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@biostack.local"
+
+#SMTP Integration 
+
+if DEBUG == "True":
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT",587))
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
+
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+    SITE_ID = 1
