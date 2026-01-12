@@ -1,0 +1,12 @@
+<h2>My Profiles</h2>
+
+<ul>
+  {% for profile in profiles %}
+    <li>
+      {{ profile.slug }} —
+      <a href="{% url 'profiles:public' profile.slug %}">View</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'profiles:create' %}">Create new profile</a>
