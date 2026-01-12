@@ -3,8 +3,15 @@
 <ul>
   {% for profile in profiles %}
     <li>
-      {{ profile.slug }} —
-      <a href="{% url 'profiles:public' profile.slug %}">View</a>
+      <strong>{{ profile.slug }}</strong>
+
+      {% if profile.id == active_profile_id %}
+        <span style="color: green;">(Active)</span>
+      {% else %}
+        <a href="{% url 'profiles:set_active' profile.id %}">
+          Set Active
+        </a>
+      {% endif %}
     </li>
   {% endfor %}
 </ul>
