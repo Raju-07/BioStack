@@ -1,116 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-<style>
-  .sections-wrapper {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-  }
+  <meta charset="UTF-8" />
+  <title>Manage Sections | BioStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  .sections-wrapper h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-  }
+  <style>
+    body { font-family: 'Inter', sans-serif; }
 
-  .section-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 30px;
-  }
+    /* DJANGO FORM OVERRIDES */
+    form p { margin-bottom: 1.25rem; }
+    
+    form label { 
+      display: block; 
+      font-size: 0.875rem; 
+      font-weight: 500; 
+      color: #94a3b8; /* text-slate-400 */
+      margin-bottom: 0.5rem; 
+    }
 
-  .section-item {
-    padding: 14px 16px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fafafa;
-  }
+    /* Styling for Text Inputs */
+    form input[type="text"],
+    form input[type="number"] {
+      width: 100%;
+      background-color: #1e293b; /* bg-slate-800 */
+      border: 1px solid #334155; /* border-slate-700 */
+      color: white;
+      border-radius: 0.75rem; /* rounded-xl */
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+    }
 
-  .section-meta {
-    font-size: 14px;
-    color: #555;
-  }
+    /* Styling for Select Dropdowns */
+    form select {
+      width: 100%;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.75rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+    }
 
-  .section-type {
-    font-weight: 600;
-    margin-right: 6px;
-  }
+    form input:focus,
+    form select:focus {
+      border-color: #6366f1; /* indigo-500 */
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
+      background-color: #0f172a; 
+    }
 
-  .empty {
-    color: #888;
-    font-style: italic;
-  }
+    /* Checkbox styling (if needed) */
+    form input[type="checkbox"] {
+      height: 1.25rem;
+      width: 1.25rem;
+      border-radius: 0.25rem;
+      border: 1px solid #475569;
+      background-color: #1e293b;
+      color: #6366f1;
+    }
 
-  .add-section {
-    margin-top: 30px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-  }
-
-  button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background: #1976d2;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  button:hover {
-    background: #155fa0;
-  }
-</style>
+    .helptext {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+      display: block;
+    }
+  </style>
 </head>
 
-<body>
-  
+<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
 
-<div class="sections-wrapper">
-
-  <h2>Profile Sections</h2>
-
-  <ul class="section-list">
-    {% for s in sections %}
-      <li class="section-item">
-        <div>
-          <span class="section-type">{{ s.section_type }}</span>
-          <span class="section-meta">— {{ s.title }}</span>
-        </div>
-
-        {% if not s.is_enabled %}
-          <span class="section-meta">(Hidden)</span>
-        {% endif %}
-      </li>
-    {% empty %}
-      <li class="empty">No sections added yet.</li>
-    {% endfor %}
-  </ul>
-
-  <div class="add-section">
-    <h3>Add New Section</h3>
-
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Add Section</button>
-    </form>
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(56,189,248,0.1),rgba(255,255,255,0))]"></div>
   </div>
 
-</div>
+  <div class="relative z-10 max-w-4xl mx-auto px-6 py-12">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-white tracking-tight">Profile Sections</h2>
+        <p class="text-slate-400 mt-2">Organize the building blocks of your profile.</p>
+      </div>
+
+      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm text-slate-300 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        Back to Dashboard
+      </a>
+    </div>
+
+    <div class="space-y-4 mb-12">
+      {% for s in sections %}
+        <div class="group flex items-center justify-between p-5 bg-slate-900 border border-white/5 rounded-2xl hover:border-indigo-500/30 transition duration-200">
+          
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+            </div>
+            
+            <div>
+              <div class="flex items-center gap-3">
+                <h3 class="font-semibold text-lg text-white">{{ s.title }}</h3>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-mono uppercase">
+                  {{ s.section_type }}
+                </span>
+              </div>
+              
+              {% if not s.is_enabled %}
+                <p class="text-xs text-amber-500 mt-1 flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                  Currently Hidden
+                </p>
+              {% else %}
+                <p class="text-xs text-emerald-500 mt-1 flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  Visible
+                </p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="text-slate-500">
+            </div>
+
+        </div>
+      {% empty %}
+        <div class="flex flex-col items-center justify-center p-12 border-2 border-dashed border-slate-800 rounded-2xl bg-slate-900/30">
+          <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          </div>
+          <h3 class="text-slate-300 font-medium">No sections added yet</h3>
+          <p class="text-slate-500 text-sm mt-1">Add your first section below to get started.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden">
+      <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
+
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white">Add New Section</h3>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          
+          <div class="grid gap-6">
+            {{ form.as_p }}
+          </div>
+          
+          <button type="submit" class="mt-8 w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition duration-200 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transform active:scale-[0.99]">
+            Add Section
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
 </body>
 </html>

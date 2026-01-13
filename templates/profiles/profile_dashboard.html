@@ -1,152 +1,111 @@
-<html>
-  <head>
-<style>
-  .profile-dashboard {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Profile | BioStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  .profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 20px;
-  }
-
-  .profile-header h2 {
-    margin: 0;
-    font-size: 26px;
-    font-weight: 600;
-  }
-
-  .profile-badge {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .profile-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  .action-card {
-    padding: 22px;
-    border-radius: 10px;
-    border: 1px solid #eee;
-    background: #fafafa;
-    transition: all 0.25s ease;
-    cursor: pointer;
-  }
-
-  .action-card:hover {
-    background: #ffffff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
-
-  .action-card h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .action-card p {
-    margin: 0;
-    font-size: 14px;
-    color: #555;
-    line-height: 1.5;
-  }
-
-  .action-card a {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    height: 100%;
-  }
-
-  .profile-footer {
-    margin-top: 40px;
-    text-align: right;
-  }
-
-  .public-link {
-    font-size: 14px;
-    color: #1976d2;
-    text-decoration: none;
-  }
-
-  .public-link:hover {
-    text-decoration: underline;
-  }
-</style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body>
-<div class="profile-dashboard">
 
-  <!-- HEADER -->
-  <div class="profile-header">
-    <h2>{{ profile.full_name|default:profile.slug }}</h2>
-    <span class="profile-badge">Active Profile</span>
+<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
+
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_60%_60%_at_70%_-10%,rgba(99,102,241,0.15),rgba(255,255,255,0))]"></div>
+    <div class="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(ellipse_60%_60%_at_30%_110%,rgba(6,182,212,0.15),rgba(255,255,255,0))]"></div>
   </div>
 
-  <!-- ACTIONS -->
-  <div class="profile-actions">
+  <div class="relative z-10 max-w-5xl mx-auto px-6 py-12">
 
-    <div class="action-card">
-      <a href="{% url 'profiles:sections' %}">
-        <h3>Manage Sections</h3>
-        <p>
-          Add, edit, reorder, or hide profile sections such as About,
-          Skills, Projects, and Experience.
-        </p>
+    <div class="flex items-center justify-between mb-8">
+      <a href="{% url 'profiles:list' %}" class="group flex items-center gap-2 text-sm text-slate-400 hover:text-white transition">
+        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </div>
+        <span>Back to All Profiles</span>
+      </a>
+
+      <a href="{% url 'profiles:public' profile.slug %}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white border border-indigo-500/20 rounded-lg text-sm font-medium transition">
+        <span>View Public Page</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
       </a>
     </div>
 
-    <div class="action-card">
-      <a href="#">
-        <h3>Edit Profile Details</h3>
-        <p>
-          Update your profile name, visibility, and other basic information.
-        </p>
-      </a>
+    <div class="relative p-8 rounded-3xl bg-slate-900 border border-white/5 shadow-2xl mb-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden">
+        <div class="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        </div>
+
+        <div class="flex items-center gap-5 relative z-10">
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-indigo-500/20">
+                {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
+            </div>
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <h2 class="text-3xl font-bold text-white tracking-tight">{{ profile.full_name|default:profile.slug }}</h2>
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                        Active Profile
+                    </span>
+                </div>
+                <p class="text-slate-400">Manage contents, visibility, and settings.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="action-card">
-      <a href="#">
-        <h3>Templates (Coming Soon)</h3>
-        <p>
-          Choose or customize a resume template to change how your
-          profile looks publicly.
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <a href="{% url 'profiles:sections' %}" class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:bg-slate-900 hover:border-indigo-500/50 transition duration-300">
+        <div class="w-12 h-12 rounded-xl bg-slate-800 group-hover:bg-indigo-600 text-slate-400 group-hover:text-white flex items-center justify-center mb-4 transition duration-300 shadow-lg">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">Manage Sections</h3>
+        <p class="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition">
+          Add, edit, reorder, or hide sections like About, Skills, Projects, and Experience.
         </p>
+        <div class="mt-6 flex items-center text-indigo-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition transform translate-y-2 group-hover:translate-y-0">
+            Launch Editor →
+        </div>
       </a>
+
+      <a href="#" class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:bg-slate-900 hover:border-cyan-500/50 transition duration-300">
+        <div class="w-12 h-12 rounded-xl bg-slate-800 group-hover:bg-cyan-600 text-slate-400 group-hover:text-white flex items-center justify-center mb-4 transition duration-300 shadow-lg">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">Edit Details</h3>
+        <p class="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition">
+            Update your display name, profile picture, contact info, and basic visibility settings.
+        </p>
+        <div class="mt-6 flex items-center text-cyan-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition transform translate-y-2 group-hover:translate-y-0">
+            Edit Settings →
+        </div>
+      </a>
+
+      <div class="relative p-6 rounded-2xl bg-slate-900/20 border border-white/5 opacity-75 cursor-not-allowed overflow-hidden">
+        <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.03)_25%,rgba(255,255,255,0.03)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.03)_75%,rgba(255,255,255,0.03)_100%)] bg-[size:20px_20px]"></div>
+        
+        <div class="relative z-10">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                </div>
+                <span class="px-2 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-400 border border-white/5">Coming Soon</span>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-slate-300 mb-2">Templates</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Choose or customize a resume template to change how your profile looks to the world.
+            </p>
+        </div>
+      </div>
+
     </div>
 
   </div>
-
-  <!-- FOOTER -->
-  <div class="profile-footer">
-    <a
-      class="public-link"
-      href="{% url 'profiles:public' profile.slug %}"
-      target="_blank"
-    >
-      View Public Profile →
-    </a>
-  </div>
-
-</div>
 
 </body>
 </html>

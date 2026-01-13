@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <title>BioStack | Your Professional Identity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              500: '#6366f1', // Indigo
+              600: '#4f46e5',
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Reveal Animation Base */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Staggered Delays for children */
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+
+    /* Grid Background Pattern */
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+    <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
+    <div class="absolute inset-0 bg-grid [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]"></div>
+  </div>
+
+  <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md border-b border-white/10"></div>
+    <div class="max-w-7xl mx-auto px-6 py-4 relative flex items-center justify-between">
+      <div class="flex items-center gap-2 text-xl font-bold tracking-tight">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow-lg shadow-indigo-500/20"></div>
+        BioStack
+      </div>
+
+      <div class="flex gap-4">
+        <a href="{% url 'accounts:login' %}" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Sign In</a>
+        <a href="#" class="px-5 py-2 text-sm rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="relative z-10 max-w-5xl mx-auto px-6 pt-40 pb-32 text-center reveal">
+    
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-8 animate-float">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+      </span>
+      v2.0 is now live
+    </div>
+
+    <h1 class="text-5xl sm:text-7xl font-bold tracking-tight mb-6">
+      Your professional identity,<br />
+      <span class="bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+        reimagined.
+      </span>
+    </h1>
+
+    <p class="mt-6 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      Stop sending static resumes. Create a dynamic, living profile that evolves with your career. 
+      Share once. Update forever.
+    </p>
+
+    <div class="mt-10 flex justify-center gap-4 flex-wrap">
+      <a href="#" class="group relative px-8 py-4 rounded-xl bg-indigo-600 text-white font-semibold overflow-hidden transition-all hover:scale-105 shadow-lg shadow-indigo-500/30">
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+        <span class="relative">Create BioStack Free</span>
+      </a>
+      <a href="#" class="px-8 py-4 rounded-xl border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition text-slate-300 hover:text-white">
+        View Demo Profile
+      </a>
+    </div>
+
+    <div class="mt-20 relative mx-auto max-w-4xl reveal delay-200">
+      <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20"></div>
+      <div class="relative rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden aspect-[16/9] flex items-center justify-center">
+        <p class="text-slate-500 font-mono text-sm">[ Dashboard UI Preview Placeholder ]</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="text-center mb-20 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Everything you need to grow</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Built for developers, designers, and creators who value aesthetics and functionality.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-indigo-400 group-hover:text-white group-hover:bg-indigo-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Single Living Link</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Replace PDFs and multiple social links with one URL that you never have to change again.
+          </p>
+        </div>
+      </div>
+
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal delay-100 hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-cyan-400 group-hover:text-white group-hover:bg-cyan-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Real-time Editing</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Update your skills, projects, and bio instantly. Changes reflect immediately across the web.
+          </p>
+        </div>
+      </div>
+
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal delay-200 hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-purple-400 group-hover:text-white group-hover:bg-purple-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Deep Analytics</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Understand your audience. See who viewed your profile, clicked your links, and where they came from.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative z-10 max-w-7xl mx-auto px-6 py-28">
+    <div class="mb-12 text-center reveal">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Why upgrade your presence?</h2>
+        <p class="text-slate-400">The old way vs. The BioStack way.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+        
+        <div class="md:col-span-2 p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border border-white/5 relative overflow-hidden reveal group">
+            <div class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition duration-500">
+                <svg class="w-64 h-64 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+            </div>
+            <div class="relative z-10">
+                <h3 class="text-2xl font-bold mb-3 text-white">Always Current, Always Live</h3>
+                <p class="text-slate-400 max-w-md">Traditional resumes are static and rot the moment you send them. BioStack is dynamic. Finished a new project? Add it instantly. Got promoted? Update it on the fly.</p>
+                <div class="mt-6 inline-flex items-center gap-2 text-indigo-400 font-medium group-hover:gap-3 transition-all cursor-pointer">
+                    Start updating <span class="text-xl">→</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900 border border-white/5 reveal delay-100 flex flex-col justify-center hover:border-indigo-500/50 transition duration-300">
+            <div class="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-400 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Verified Skills</h3>
+            <p class="text-sm text-slate-400">Showcase certifications with clickable proof, not just text.</p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900 border border-white/5 reveal delay-200 flex flex-col justify-center hover:border-cyan-500/50 transition duration-300">
+            <div class="w-10 h-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">High Performance</h3>
+            <p class="text-sm text-slate-400">Profiles load in under 100ms. Don't keep recruiters waiting.</p>
+        </div>
+    </div>
+  </section>
+
+  <section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 reveal">Simple Pricing</h2>
+    <p class="text-center text-slate-400 mb-16 reveal">Start for free, upgrade when you go pro.</p>
+
+    <div class="grid md:grid-cols-3 gap-8 items-center">
+      
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Starter</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Public profile URL</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Basic modules</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Standard themes</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
+        </div>
+
+        <div class="relative p-8 rounded-3xl bg-slate-900 border border-indigo-500/50 shadow-2xl shadow-indigo-500/20 reveal scale-105 z-10">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-xs font-bold text-white uppercase tracking-wider">
+                Most Popular
+            </div>
+            <h3 class="text-lg font-medium text-indigo-300 mb-2">Professional</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹299<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-300">
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Everything in Free</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> <strong>Custom Domain</strong> (.com)</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Advanced Analytics</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Remove Branding</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Start Free Trial</a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Team</h3>
+            <div class="text-4xl font-bold text-white mb-6">Custom</div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All Pro Features</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Unified Billing</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Admin Dashboard</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Contact Sales</a>
+        </div>
+
+    </div>
+  </section>
+
+  <footer class="border-t border-white/10 bg-slate-950/50 backdrop-blur relative z-10">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-2 text-lg font-bold mb-4">
+            <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-indigo-500 to-cyan-400"></div>
+            BioStack
+        </div>
+        <p class="text-slate-500 pr-4">Crafting the future of digital professional identities. Built in Gurugram.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-200 mb-4">Product</h4>
+        <ul class="space-y-2 text-slate-500">
+          <li><a href="#" class="hover:text-indigo-400 transition">Showcase</a></li>
+          <li><a href="#" class="hover:text-indigo-400 transition">Pricing</a></li>
+          <li><a href="#" class="hover:text-indigo-400 transition">Templates</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-200 mb-4">Company</h4>
+        <ul class="space-y-2 text-slate-500">
+          <li><a href="#" class="hover:text-indigo-400 transition">About</a></li>
+          <li><a href="#" class="hover:text-indigo-400 transition">Blog</a></li>
+          <li><a href="#" class="hover:text-indigo-400 transition">Careers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-slate-200 mb-4">Legal</h4>
+        <ul class="space-y-2 text-slate-500">
+          <li><a href="#" class="hover:text-indigo-400 transition">Privacy</a></li>
+          <li><a href="#" class="hover:text-indigo-400 transition">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center text-xs text-slate-600 py-6 border-t border-white/5">
+      © 2026 BioStack. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+          // Optional: Stop observing once revealed
+          // observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 }); // Trigger sooner
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>

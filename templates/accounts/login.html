@@ -1,21 +1,131 @@
-<div style="display: flex;flex-direction: column;align-items: center;justify-content: center;min-height: 100vh;">
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" style="width: 150px;height: 45px;font-size: medium;font-weight: bold;border-radius: 12px;border-color: black;background-color: transparent;">Login</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | BioStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <p>
-    <a href='{% url "password_reset" %}'>
-      Forgot password?
-    </a>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          animation: { 'blob': 'blob 7s infinite' },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
 
-  </p>
-  <p>
-    <a href='{% url "accounts:signup" %}'>
-      Create Account
-    </a>
-  </p>
-</div>
+  <style>
+    /* DJANGO FORM OVERRIDES 
+      Since {{ form.as_p }} renders plain HTML, we use these styles 
+      to force the inputs to look like modern Tailwind components.
+    */
+    
+    /* Spacing between fields */
+    form p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Labels */
+    form label {
+      display: block;
+      font-size: 0.875rem; /* text-sm */
+      font-weight: 500;
+      color: #94a3b8; /* text-slate-400 */
+      margin-bottom: 0.5rem;
+    }
+
+    /* Inputs (Text, Password, Email, etc) */
+    form input[type="text"],
+    form input[type="password"],
+    form input[type="email"],
+    form input[type="number"] {
+      width: 100%;
+      background-color: #1e293b; /* bg-slate-800 */
+      border: 1px solid #334155; /* border-slate-700 */
+      color: white;
+      border-radius: 0.75rem; /* rounded-xl */
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    /* Input Focus State */
+    form input:focus {
+      border-color: #6366f1; /* indigo-500 */
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); /* ring */
+      background-color: #0f172a; /* darker bg on focus */
+    }
+
+    /* Help text (if any) */
+    .helptext {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center relative overflow-hidden">
+
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+  </div>
+
+  <div class="relative z-10 w-full max-w-md p-8 mx-4 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
+    
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow-lg shadow-indigo-500/20">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white tracking-tight">Welcome back</h2>
+      <p class="text-slate-400 text-sm mt-2">Enter your credentials to access your BioStack.</p>
+    </div>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <div class="form-wrapper">
+        {{ form.as_p }}
+      </div>
+
+      <div class="flex justify-end -mt-4 mb-6">
+        <a href='{% url "password_reset" %}' class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition">
+          Forgot password?
+        </a>
+      </div>
+
+      <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition duration-200 transform hover:scale-[1.02] shadow-lg shadow-indigo-500/25 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900">
+        Sign In
+      </button>
+    </form>
+
+    <div class="mt-8 text-center pt-6 border-t border-white/5">
+      <p class="text-sm text-slate-400">
+        Don't have an account? 
+        <a href='{% url "accounts:signup" %}' class="font-medium text-white hover:text-indigo-400 transition ml-1">
+          Create Account
+        </a>
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
