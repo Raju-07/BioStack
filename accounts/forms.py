@@ -5,12 +5,15 @@ from .models import User
 
 
 class SignupForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}))
 
     class Meta:
         model = User
         fields = ("email",)
+        widgets = {
+            'email': forms.EmailInput(attrs={'placeholder': 'Enter your Email'}),
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -31,8 +34,8 @@ class SignupForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Enter your Email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
 
     def clean(self):
         cleaned_data = super().clean()

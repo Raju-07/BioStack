@@ -1,3 +1,5 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,9 +38,9 @@
   <div class="relative z-10 w-full max-w-md p-8 mx-4 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
     
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 shadow-lg shadow-indigo-500/20">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-      </div>
+      <img src="{% static 'images/main-logo.png' %}" 
+        alt="BioStack Logo" 
+        class="w-16 h-16 mx-auto mb-4 object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300">
       <h2 class="text-2xl font-bold text-white tracking-tight">Create your account</h2>
       <p class="text-slate-400 text-sm mt-2">Join BioStack today.</p>
     </div>
