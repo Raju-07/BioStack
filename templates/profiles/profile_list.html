@@ -15,6 +15,15 @@
 
 <body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
 
+  {% if messages %}
+    <div class="max-w-5xl mx-auto px-6 mt-6">
+        {% for message in messages %}
+            <div class="p-4 mb-4 rounded-lg {% if message.tags == 'error' %}bg-red-500/10 text-red-400 border border-red-500/20{% else %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
   <div class="fixed inset-0 pointer-events-none z-0">
     <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.2),rgba(255,255,255,0))]"></div>
   </div>
@@ -61,7 +70,7 @@
 
         {% else %}
 
-          <div class="relative group p-6 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-indigo-500/30 hover:bg-slate-900 transition duration-300">
+          <div class="relative group p-6 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-indigo-500/30 hover:bg-slate-900 transition duration-300 flex flex-col h-full">
             
             <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition mb-4">
               <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
@@ -70,9 +79,18 @@
             <h3 class="text-xl font-bold text-slate-200 group-hover:text-white transition mb-1">{{ profile.slug }}</h3>
             <p class="text-sm text-slate-500 group-hover:text-slate-400 transition mb-6">Inactive</p>
 
-            <a href="{% url 'profiles:set_active' profile.id %}" class="block w-full py-2.5 bg-white/5 hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-slate-300 hover:text-white text-center rounded-lg font-medium text-sm transition duration-200">
-              Set Active
-            </a>
+            <div class="mt-auto flex gap-3">
+                <a href="{% url 'profiles:set_active' profile.id %}" class="flex-1 py-2.5 bg-white/5 hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-slate-300 hover:text-white text-center rounded-lg font-medium text-sm transition duration-200">
+                  Set Active
+                </a>
+
+                <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete the profile &quot;{{ profile.slug }}&quot;? This cannot be undone.');">
+                    {% csrf_token %}
+                    <button type="submit" class="p-2.5 h-full bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-lg transition duration-200 flex items-center justify-center" title="Delete Profile">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </form>
+            </div>
           </div>
 
         {% endif %}

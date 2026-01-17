@@ -1,3 +1,5 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,23 +8,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel='icon' type='image/x-icon' href="{% static 'images/main-logo.png' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
     
-    /* Smooth reveal animation for sections */
-    .fade-up {
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0;
-      transform: translateY(20px);
+    /* 3D FLIP */
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; }
+    .group.flipped .flip-card-inner { transform: rotateY(180deg); }
+
+    /* ANIMATIONS */
+    .fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    .stagger-card { opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; }
+    .stagger-visible { opacity: 1; transform: translateY(0); }
+
+    /* GLASS CARD */
+    .glass-card {
+        background-color: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
-    
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .glass-card:hover {
+        background-color: rgba(15, 23, 42, 0.6);
+        border-color: rgba(99, 102, 241, 0.3);
+        transform: translateY(-2px);
     }
   </style>
 </head>
@@ -32,88 +51,313 @@
   <div class="fixed inset-0 pointer-events-none z-0">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-[500px] bg-indigo-500/20 rounded-full blur-[120px]"></div>
     <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]"></div>
-    
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
   </div>
 
-  <main class="relative z-10 max-w-2xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center">
+  <main class="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center gap-16">
 
-    <header class="text-center mb-12 w-full fade-up" style="animation-delay: 0ms;">
-      
-      <div class="relative mx-auto w-28 h-28 mb-6 group">
+    <header class="text-center w-full max-w-3xl fade-up" style="animation-delay: 0ms;">
+      <div class="relative mx-auto w-32 h-32 mb-6 group cursor-default">
         <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-        <div class="relative w-full h-full rounded-full bg-slate-900 border-2 border-white/10 flex items-center justify-center overflow-hidden shadow-2xl">
-          <span class="text-3xl font-bold text-white tracking-wider">
+        <div class="relative w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
+          <span class="text-4xl font-bold text-white tracking-wider">
             {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
           </span>
         </div>
       </div>
 
-      <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
+      <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
         {{ profile.full_name|default:profile.slug }}
       </h1>
-      
-      {% if profile.bio %}
+       {% if profile.bio %}
         <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">
           {{ profile.bio }}
         </p>
       {% endif %}
-
-      <div class="mt-6 flex justify-center gap-4 opacity-70 hover:opacity-100 transition">
-        <button class="p-2 rounded-full hover:bg-white/10 transition">
-          <svg class="w-5 h-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 2.404-4.69 3.83-7.586 3.828 4.08 2.628 8.932 4.196 14.181 4.196 17.151 0 26.54-14.21 26.376-26.79 1.799-1.303 3.359-2.924 4.606-4.631z"/></svg>
-        </button>
-        <button class="p-2 rounded-full hover:bg-white/10 transition">
-          <svg class="w-5 h-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-        </button>
-      </div>
+      
+      {% if not sections and profile.bio %}
+        <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">{{ profile.bio }}</p>
+      {% endif %}
     </header>
 
-    <div class="w-full space-y-4">
+    <div class="w-full max-w-4xl space-y-12">
       
-      {% for section in sections %}
-        <section class="fade-up relative w-full p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-white/5 hover:border-indigo-500/30 hover:bg-slate-900/60 transition duration-300 group" style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
-          
-          <h2 class="text-lg font-semibold text-white mb-3 flex items-center justify-between">
-            <span>{{ section.title }}</span>
-            <svg class="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </h2>
+      {% regroup sections by section_type as section_list %}
 
-          <div class="profile-section-content text-slate-400 text-sm">
+      {% for group in section_list %}
+        <section class="fade-up w-full" style="animation-delay: 100ms;">
             
-            {{ section.data|json_script:"data" }}
-            
-            <div class="js-render-target opacity-80">
-                </div>
+            {% if group.grouper == 'ABOUT' %}
+               {% for s in group.list %}
+               <div class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed glass-card p-6 rounded-2xl border-l-4 border-indigo-500 text-left">
+                  {{ s.data.content }}
+               </div>
+               {% endfor %}
 
-          </div>
+            {% elif group.grouper == 'PERSONAL' %}
+               <div class="flex items-center justify-between mb-8 px-2">
+                   <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-8 bg-indigo-500 rounded-full"></span> Personal Details
+                   </h2>
+                   <button onclick="togglePersonalBlock(this)" class="flex items-center gap-2 px-4 py-2 bg-slate-900/50 rounded-full border border-white/10 hover:bg-slate-800 transition">
+                       <i class="fa-regular fa-eye-slash text-slate-400 toggle-icon"></i>
+                       <span class="text-sm font-medium text-slate-300 toggle-text">Show</span>
+                   </button>
+               </div>
+               
+               <div class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 personal-grid-container">
+                   {% for s in group.list %}
+                        {% if s.data.email %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Email</span>
+                            <p class="text-slate-200 font-medium break-all">{{ s.data.email }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.phone %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Phone</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.phone }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.location %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Location</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.location }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.dob %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Birthday</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.dob }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.nationality %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Nationality</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.nationality }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.gender %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Gender</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.gender }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.marital_status %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Marital Status</span>
+                            <p class="text-slate-200 font-medium">{{ s.data.marital_status }}</p>
+                        </div>
+                        {% endif %}
+                        {% if s.data.content %}
+                        <div class="stagger-card glass-card p-4 rounded-2xl text-center col-span-full">
+                            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">Bio</span>
+                            <p class="text-slate-300 text-sm leading-relaxed">{{ s.data.content }}</p>
+                        </div>
+                        {% endif %}
+                   {% endfor %}
+               </div>
+
+            {% elif group.grouper == 'EXPERIENCE' %}
+               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
+                   <span class="w-1 h-8 bg-cyan-500 rounded-full"></span> Experience
+               </h2>
+               <div class="relative border-l-2 border-slate-800 ml-4 md:ml-6 space-y-8">
+                   {% for s in group.list %}
+                   <div class="relative pl-8 md:pl-12 group">
+                       <div class="absolute -left-[9px] top-6 w-4 h-4 rounded-full bg-[#0B0F19] border-4 border-slate-700 group-hover:border-cyan-500 transition duration-300 z-10"></div>
+                       <div class="glass-card p-6 md:p-8 rounded-3xl transition duration-300 hover:border-cyan-500/30">
+                           <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                               <div>
+                                   <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition">{{ s.data.position }}</h3>
+                                   <p class="text-lg text-slate-400 font-medium">{{ s.title }}</p>
+                               </div>
+                               <div class="text-right">
+                                   <span class="inline-block px-3 py-1 bg-slate-900/80 rounded-lg text-xs font-mono text-cyan-400 border border-cyan-500/20">
+                                       {{ s.data.start_date }} — {% if s.data.is_current %}Present{% else %}{{ s.data.end_date }}{% endif %}
+                                   </span>
+                                   <div class="text-xs text-slate-500 mt-1 calc-exp font-medium" data-start="{{ s.data.start_date }}" data-end="{{ s.data.end_date }}" data-current="{{ s.data.is_current }}"></div>
+                               </div>
+                           </div>
+                           <p class="text-slate-300 leading-relaxed whitespace-pre-wrap text-sm">{{ s.data.content }}</p>
+                       </div>
+                   </div>
+                   {% endfor %}
+               </div>
+
+            {% elif group.grouper == 'PROJECTS' %}
+               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
+                   <span class="w-1 h-8 bg-purple-500 rounded-full"></span> Projects
+               </h2>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {% for s in group.list %}
+                   <div class="perspective-1000 h-64 group cursor-pointer" onclick="toggleFlip(this)">
+                       <div class="flip-card-inner relative w-full h-full transform-style-3d shadow-xl rounded-3xl">
+                           <div class="absolute inset-0 glass-card rounded-3xl backface-hidden flex flex-col justify-between p-8 hover:bg-slate-800/60 transition border-purple-500/10">
+                               <div>
+                                   <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5">
+                                       <i class="fa-solid fa-rocket text-2xl text-purple-400"></i>
+                                   </div>
+                                   <h3 class="text-xl font-bold text-white mb-2 line-clamp-1">{{ s.title }}</h3>
+                                   <p class="text-slate-400 text-sm line-clamp-3 leading-relaxed">{{ s.data.content }}</p>
+                               </div>
+                               <div class="flex items-center text-purple-400 text-xs font-bold tracking-widest">
+                                   <span>DETAILS</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition"></i>
+                               </div>
+                           </div>
+                           <div class="absolute inset-0 bg-[#0F172A] rounded-3xl backface-hidden rotate-y-180 flex flex-col justify-center p-8 border border-purple-500/30">
+                                <h3 class="text-lg font-bold text-white mb-3">{{ s.title }}</h3>
+                                <p class="text-slate-300 text-sm leading-relaxed line-clamp-4 mb-5">
+                                   {{ s.data.content }}
+                                </p>
+                                <button onclick="openModal('{{ s.title }}', '{{ s.data.content|escapejs }}'); event.stopPropagation();" class="self-start px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-purple-500/25">
+                                   Read More
+                                </button>
+                           </div>
+                       </div>
+                    </div>
+                   {% endfor %}
+               </div>
+
+            {% elif group.grouper == 'SKILLS' %}
+               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
+                   <span class="w-1 h-8 bg-emerald-500 rounded-full"></span> Skills
+               </h2>
+               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                   {% for s in group.list %}
+                   <div class="perspective-1000 h-40 group cursor-pointer" onclick="toggleFlip(this)">
+                       <div class="flip-card-inner relative w-full h-full transform-style-3d">
+                           <div class="absolute inset-0 glass-card rounded-2xl backface-hidden flex flex-col items-center justify-center p-4 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition duration-300">
+                               <i class="devicon-{{ s.data.name|lower }}-plain text-4xl mb-3 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]" id="icon-{{ s.id }}"></i>
+                               <h3 class="font-bold text-white text-sm tracking-wide">{{ s.data.name }}</h3>
+                               <span class="text-[10px] text-emerald-500/80 font-bold uppercase tracking-widest mt-2">{{ s.data.level }}</span>
+                           </div>
+                           <div class="absolute inset-0 bg-slate-900 border border-emerald-500/30 rounded-2xl backface-hidden rotate-y-180 flex flex-col items-center justify-center p-3 text-center">
+                               <h3 class="font-bold text-white text-sm mb-1">{{ s.data.name }}</h3>
+                               <p class="text-[10px] text-slate-400 line-clamp-4 leading-tight">
+                                   {{ s.data.content|default:"Proficient in this technology." }}
+                               </p>
+                           </div>
+                       </div>
+                       <script>
+                           (function(){
+                               const icon = document.getElementById('icon-{{ s.id }}');
+                               const map = { 'c++': 'cplusplus', 'c#': 'csharp', 'html': 'html5', 'css': 'css3', 'js': 'javascript', 'react': 'react' };
+                               let name = "{{ s.data.name|lower }}".split(' ')[0]; 
+                               if(map[name]) name = map[name];
+                               if(icon) icon.className = `devicon-${name}-plain text-4xl mb-3 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]`;
+                           })();
+                       </script>
+                   </div>
+                   {% endfor %}
+               </div>
+
+            {% elif group.grouper == 'LINKS' %}
+               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
+                   <span class="w-1 h-8 bg-pink-500 rounded-full"></span> Connect
+               </h2>
+               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                   {% for s in group.list %}
+                   <a href="{{ s.data.url }}" target="_blank" class="glass-card p-4 rounded-xl flex items-center gap-4 hover:bg-pink-500/10 hover:border-pink-500/40 transition duration-300 group">
+                       <div class="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center shrink-0 border border-white/5 group-hover:border-pink-500/30 transition shadow-inner">
+                            <img src="https://www.google.com/s2/favicons?domain={{ s.data.url }}&sz=64" 
+                                 class="w-5 h-5 opacity-70 group-hover:opacity-100 transition duration-300"
+                                 onerror="this.style.display='none'">
+                       </div>
+                       <div class="min-w-0">
+                           <h3 class="font-bold text-white text-sm truncate group-hover:text-pink-400 transition">{{ s.title }}</h3>
+                           <p class="text-xs text-slate-500 truncate group-hover:text-slate-400 transition">Visit Link</p>
+                       </div>
+                       <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 ml-auto group-hover:text-pink-400 transition transform group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+                   </a>
+                   {% endfor %}
+               </div>
+            {% endif %}
+
         </section>
       {% endfor %}
 
     </div>
 
-    <footer class="mt-20 text-center fade-up" style="animation-delay: 500ms;">
-      <a href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-medium text-slate-400 hover:text-white transition">
-        <div class="w-3 h-3 rounded bg-gradient-to-tr from-indigo-500 to-cyan-400"></div>
+    <footer class="mt-24 text-center fade-up opacity-50 hover:opacity-100 transition">
+      <a href="/" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-medium text-slate-400 hover:text-white transition">
+        <img src="{% static 'images/main-logo.png' %}" alt="BioStack Logo" class='w-5 h-5'>
         Built with BioStack
       </a>
     </footer>
 
   </main>
 
+  <div id="info-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+      <div class="bg-slate-900 border border-white/10 w-full max-w-lg rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300 relative">
+          <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+              <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+          <h3 id="modal-title" class="text-2xl font-bold text-white mb-4"></h3>
+          <div id="modal-content" class="text-slate-300 leading-relaxed whitespace-pre-wrap max-h-[60vh] overflow-y-auto pr-2"></div>
+      </div>
+  </div>
+
   <script>
-    // Example: If you wanted to quickly log the data to console to verify it works
-    document.querySelectorAll('section').forEach(section => {
-      const script = section.querySelector('script[type="application/json"]');
-      if(script) {
-        try {
-          const data = JSON.parse(script.textContent);
-          console.log("Section Data:", data);
-          // Your rendering logic would go here
-        } catch(e) {
-          console.error("Error parsing section data");
+    function toggleFlip(element) { element.classList.toggle('flipped'); }
+
+    // Modal Logic
+    const modal = document.getElementById('info-modal');
+    const mTitle = document.getElementById('modal-title');
+    const mContent = document.getElementById('modal-content');
+
+    function openModal(t, c) {
+        mTitle.textContent = t; mContent.textContent = c;
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); modal.firstElementChild.classList.remove('scale-95'); modal.firstElementChild.classList.add('scale-100'); }, 10);
+    }
+    function closeModal() {
+        modal.classList.add('opacity-0'); modal.firstElementChild.classList.remove('scale-100'); modal.firstElementChild.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+    // FIXED: Personal Data Toggle Logic
+    // We now traverse the DOM to find the exact sibling container
+    function togglePersonalBlock(btn) {
+        // Find the parent container (the header div)
+        const headerDiv = btn.closest('div');
+        // The grid is the NEXT sibling element after the header div
+        const grid = headerDiv.nextElementSibling;
+        
+        const icon = btn.querySelector('.toggle-icon');
+        const text = btn.querySelector('.toggle-text');
+        
+        if (grid.classList.contains('hidden')) {
+            grid.classList.remove('hidden');
+            grid.style.display = 'grid'; 
+            if(icon) icon.className = "fa-solid fa-eye text-indigo-400 toggle-icon";
+            if(text) text.textContent = "Hide";
+            
+            // Animation
+            const cards = grid.querySelectorAll('.stagger-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => card.classList.add('stagger-visible'), index * 100);
+            });
+        } else {
+            const cards = grid.querySelectorAll('.stagger-card');
+            cards.forEach(card => card.classList.remove('stagger-visible'));
+            setTimeout(() => {
+                grid.classList.add('hidden');
+            }, 300);
+            if(icon) icon.className = "fa-regular fa-eye-slash text-slate-400 toggle-icon";
+            if(text) text.textContent = "Show";
         }
-      }
+    }
+
+    // Exp Calc
+    document.querySelectorAll('.calc-exp').forEach(span => {
+        const s = new Date(span.dataset.start);
+        const e = span.dataset.current === 'True' ? new Date() : new Date(span.dataset.end);
+        if (isNaN(s)) return;
+        let m = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+        const y = Math.floor(m / 12); m %= 12;
+        span.textContent = (y > 0 ? y + " yr " : "") + (m > 0 ? m + " mo" : "") || "New";
     });
   </script>
 

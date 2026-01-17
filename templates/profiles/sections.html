@@ -6,171 +6,438 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     body { font-family: 'Inter', sans-serif; }
-
-    /* DJANGO FORM OVERRIDES */
-    form p { margin-bottom: 1.25rem; }
+    input[type="date"] { color-scheme: dark; }
+    .draggable-item { cursor: grab; touch-action: none; }
+    .draggable-item:active { cursor: grabbing; }
+    .group-handle { cursor: move; }
+    .sortable-ghost { opacity: 0.4; background-color: #312e81; border: 2px dashed #6366f1; }
     
-    form label { 
-      display: block; 
-      font-size: 0.875rem; 
-      font-weight: 500; 
-      color: #94a3b8; /* text-slate-400 */
-      margin-bottom: 0.5rem; 
+    /* Universal Form Styling */
+    .django-field-group input, .django-field-group textarea, .django-field-group select {
+        width: 100%; background-color: #1e293b; border: 1px solid #334155;
+        color: white; border-radius: 0.75rem; padding: 0.75rem 1rem;
+        outline: none; transition: all 0.2s;
     }
-
-    /* Styling for Text Inputs */
-    form input[type="text"],
-    form input[type="number"] {
-      width: 100%;
-      background-color: #1e293b; /* bg-slate-800 */
-      border: 1px solid #334155; /* border-slate-700 */
-      color: white;
-      border-radius: 0.75rem; /* rounded-xl */
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.2s;
+    .django-field-group input:focus, .django-field-group select:focus {
+        border-color: #6366f1; background-color: #0f172a;
     }
-
-    /* Styling for Select Dropdowns */
-    form select {
-      width: 100%;
-      background-color: #1e293b;
-      border: 1px solid #334155;
-      color: white;
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.2s;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-      background-position: right 0.75rem center;
-      background-repeat: no-repeat;
-      background-size: 1.5em 1.5em;
-    }
-
-    form input:focus,
-    form select:focus {
-      border-color: #6366f1; /* indigo-500 */
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
-      background-color: #0f172a; 
-    }
-
-    /* Checkbox styling (if needed) */
-    form input[type="checkbox"] {
-      height: 1.25rem;
-      width: 1.25rem;
-      border-radius: 0.25rem;
-      border: 1px solid #475569;
-      background-color: #1e293b;
-      color: #6366f1;
-    }
-
-    .helptext {
-      font-size: 0.75rem;
-      color: #64748b;
-      margin-top: 0.25rem;
-      display: block;
-    }
+    .django-field-group input[type="checkbox"] { width: 1.25rem; height: 1.25rem; accent-color: #6366f1; }
   </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
 
-  <div class="fixed inset-0 pointer-events-none z-0">
-    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(56,189,248,0.1),rgba(255,255,255,0))]"></div>
-  </div>
+  {% if messages %}
+    <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4">
+        {% for message in messages %}
+            <div class="p-4 mb-2 rounded-xl shadow-lg border backdrop-blur-md flex items-center gap-3 animate-fade-in-down
+                {% if message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-200
+                {% else %}bg-emerald-500/10 border-emerald-500/20 text-emerald-200{% endif %}">
+                <span class="font-medium">{{ message }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(() => {
+            const msgs = document.querySelectorAll('.animate-fade-in-down');
+            msgs.forEach(m => m.style.opacity = '0');
+            setTimeout(() => msgs.forEach(m => m.remove()), 500);
+        }, 3000);
+    </script>
+  {% endif %}
 
-  <div class="relative z-10 max-w-4xl mx-auto px-6 py-12">
+  <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
     
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div class="flex flex-col md:flex-row justify-between gap-4 mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-white tracking-tight">Profile Sections</h2>
-        <p class="text-slate-400 mt-2">Organize the building blocks of your profile.</p>
+        <h2 class="text-3xl font-bold text-white">Profile Sections</h2>
+        <p class="text-slate-400 mt-2">Create content and organize your profile structure.</p>
       </div>
-
-      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm text-slate-300 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5 text-sm text-slate-300">
         Back to Dashboard
       </a>
     </div>
 
-    <div class="space-y-4 mb-12">
-      {% for s in sections %}
-        <div class="group flex items-center justify-between p-5 bg-slate-900 border border-white/5 rounded-2xl hover:border-indigo-500/30 transition duration-200">
-          
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-            </div>
-            
-            <div>
-              <div class="flex items-center gap-3">
-                <h3 class="font-semibold text-lg text-white">{{ s.title }}</h3>
-                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-mono uppercase">
-                  {{ s.section_type }}
-                </span>
-              </div>
-              
-              {% if not s.is_enabled %}
-                <p class="text-xs text-amber-500 mt-1 flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
-                  Currently Hidden
-                </p>
-              {% else %}
-                <p class="text-xs text-emerald-500 mt-1 flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  Visible
-                </p>
-              {% endif %}
-            </div>
-          </div>
-
-          <div class="text-slate-500">
-            </div>
-
-        </div>
-      {% empty %}
-        <div class="flex flex-col items-center justify-center p-12 border-2 border-dashed border-slate-800 rounded-2xl bg-slate-900/30">
-          <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          </div>
-          <h3 class="text-slate-300 font-medium">No sections added yet</h3>
-          <p class="text-slate-500 text-sm mt-1">Add your first section below to get started.</p>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden">
-      <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
-
+    <div class="p-8 rounded-3xl bg-slate-900/50 border border-white/10 shadow-2xl mb-12 relative overflow-hidden">
       <div class="relative z-10">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          </div>
-          <h3 class="text-xl font-bold text-white">Add New Section</h3>
-        </div>
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle text-indigo-500"></i>
+            Add New Section
+        </h3>
 
-        <form method="post">
+        <form method="post" id="section-form">
           {% csrf_token %}
-          
-          <div class="grid gap-6">
-            {{ form.as_p }}
+          <div class="grid gap-5">
+            
+            <div class="django-field-group">
+                <label class="block text-sm text-slate-400 mb-2">Section Type</label>
+                {{ form.section_type }}
+            </div>
+
+            <div id="group-title" class="django-field-group">
+                <label id="label-title" class="block text-sm text-slate-400 mb-2">Title</label>
+                {{ form.title }}
+            </div>
+
+            <div id="group-experience" class="hidden space-y-5 p-5 bg-slate-800/50 rounded-xl border border-white/5">
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.position.label }}</label>
+                    {{ form.position }}
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.start_date.label }}</label>
+                        {{ form.start_date }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.end_date.label }}</label>
+                        {{ form.end_date }}
+                    </div>
+                </div>
+                <div class="django-field-group">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        {{ form.is_current }} <span class="text-sm text-slate-300">I currently work here</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="group-links" class="hidden p-5 bg-slate-800/50 rounded-xl border border-white/5">
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.link_url.label }}</label>
+                    {{ form.link_url }}
+                </div>
+            </div>
+
+            <div id="group-skills" class="hidden space-y-5 p-5 bg-slate-800/50 rounded-xl border border-white/5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.skill_name.label }}</label>
+                        {{ form.skill_name }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.skill_level.label }}</label>
+                        {{ form.skill_level }}
+                    </div>
+                </div>
+            </div>
+
+            <div id="group-personal" class="hidden space-y-5 p-5 bg-slate-800/50 rounded-xl border border-white/5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.dob.label }}</label>
+                        {{ form.dob }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.gender.label }}</label>
+                        {{ form.gender }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.marital_status.label }}</label>
+                        {{ form.marital_status }}
+                    </div>
+                    <div class="django-field-group">
+                        <label class="block text-sm text-slate-400 mb-2">{{ form.nationality.label }}</label>
+                        {{ form.nationality }}
+                    </div>
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.address.label }}</label>
+                    {{ form.address }}
+                </div>
+                 <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.location.label }}</label>
+                    {{ form.location }}
+                </div>
+            </div>
+
+            <div id="group-content" class="django-field-group">
+                <label id="label-content" class="block text-sm text-slate-400 mb-2">Description</label>
+                {{ form.content }}
+            </div>
+
+            <div class="django-field-group pt-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    {{ form.is_enabled }} <span class="text-sm text-slate-300">Visible on Profile</span>
+                </label>
+            </div>
+
           </div>
-          
-          <button type="submit" class="mt-8 w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition duration-200 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transform active:scale-[0.99]">
+          <button type="submit" class="mt-8 w-full py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20">
             Add Section
           </button>
         </form>
       </div>
     </div>
 
+    <h3 class="text-2xl font-bold text-white mb-6">Manage Content</h3>
+    
+    <div id="main-groups-container" class="space-y-8 pb-12">
+        
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="PERSONAL">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-regular fa-id-card mr-2"></i> Personal Data</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-PERSONAL" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'PERSONAL' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.title }}</h4>
+                                    <p class="text-xs text-slate-500">{{ s.data.email }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="ABOUT">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-regular fa-user mr-2"></i> About Me</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-ABOUT" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'ABOUT' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.title }}</h4>
+                                    <p class="text-xs text-slate-500 line-clamp-1">{{ s.data.content }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="EXPERIENCE">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-solid fa-briefcase mr-2"></i> Experience</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-EXPERIENCE" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'EXPERIENCE' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.data.position }}</h4>
+                                    <p class="text-xs text-slate-500">{{ s.title }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="PROJECTS">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-solid fa-rocket mr-2"></i> Projects</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-PROJECTS" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'PROJECTS' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.title }}</h4>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="SKILLS">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-solid fa-microchip mr-2"></i> Skills</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-SKILLS" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'SKILLS' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.data.name }}</h4>
+                                    <p class="text-xs text-slate-500">{{ s.data.level }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="group-block bg-slate-900/30 border border-white/5 p-6 rounded-2xl" data-group-id="LINKS">
+            <h4 class="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-white/5 flex items-center justify-between group-handle cursor-move">
+                <span><i class="fa-solid fa-link mr-2"></i> Links</span>
+                <i class="fa-solid fa-grip-lines text-slate-600 hover:text-white"></i>
+            </h4>
+            <div id="list-LINKS" class="space-y-3 sortable-list min-h-[50px]">
+                {% for s in sections %}
+                    {% if s.section_type == 'LINKS' %}
+                        <div class="draggable-item group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:border-indigo-500/30 transition" data-id="{{ s.id }}">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="p-2 text-slate-600 cursor-grab hover:text-white"><i class="fa-solid fa-grip-vertical"></i></div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white">{{ s.title }}</h4>
+                                    <p class="text-xs text-slate-500">{{ s.data.url }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'profiles:delete_section' s.id %}" method="POST" onsubmit="return confirm('Delete?');">{% csrf_token %}<button class="p-2 text-slate-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- 1. THE SAVE FUNCTION ---
+        function saveGlobalOrder() {
+            // A. Find all Group Blocks in the visual order (Personal, About, Exp...)
+            const groupContainer = document.getElementById('main-groups-container');
+            // We use 'div.group-block' to ensure we only get the category containers
+            const groups = Array.from(groupContainer.querySelectorAll('.group-block')); 
+            
+            let globalOrderIds = [];
+            
+            // B. Loop through groups in order
+            groups.forEach(group => {
+                // Find the list container inside this group
+                const list = group.querySelector('.sortable-list');
+                if(list) {
+                    // C. Find all items inside this list in order
+                    const items = Array.from(list.querySelectorAll('.draggable-item'));
+                    items.forEach(item => {
+                        const id = parseInt(item.getAttribute('data-id'));
+                        if (id) globalOrderIds.push(id);
+                    });
+                }
+            });
+            
+            console.log("Saving Order:", globalOrderIds); // Debugging
+
+            // D. Send to Backend
+            if(globalOrderIds.length > 0) {
+                fetch("{% url 'profiles:reorder_sections' %}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: JSON.stringify({ order: globalOrderIds })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Save Response:", data);
+                });
+            }
+        }
+
+        // --- 2. INITIALIZE ITEM LISTS ---
+        const lists = document.querySelectorAll('.sortable-list');
+        lists.forEach(list => {
+            new Sortable(list, {
+                group: 'items', 
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                handle: '.cursor-grab',
+                onEnd: function (evt) {
+                    saveGlobalOrder(); // Save DB on item drop
+                }
+            });
+        });
+
+        // --- 3. INITIALIZE GROUP LIST ---
+        const mainContainer = document.getElementById('main-groups-container');
+        new Sortable(mainContainer, {
+            animation: 150,
+            handle: '.group-handle', 
+            ghostClass: 'sortable-ghost',
+            onEnd: function (evt) {
+                // Save DB on Group Swap
+                saveGlobalOrder(); 
+                
+                // Also save preference to LocalStorage so groups stay there on refresh
+                var order = this.toArray();
+                localStorage.setItem(this.options.group.name, order.join('|'));
+            },
+            store: {
+                get: function (sortable) {
+                    var order = localStorage.getItem(sortable.options.group.name);
+                    return order ? order.split('|') : [];
+                },
+                set: function (sortable) {
+                    // Already handling save in onEnd, but required for load
+                    var order = sortable.toArray();
+                    localStorage.setItem(sortable.options.group.name, order.join('|'));
+                }
+            },
+            group: 'main-groups'
+        });
+
+        // --- 4. FORM VISIBILITY (Existing) ---
+        const typeSelect = document.querySelector('#id_section_type');
+        const groups = {
+            'EXPERIENCE': document.getElementById('group-experience'),
+            'LINKS': document.getElementById('group-links'),
+            'SKILLS': document.getElementById('group-skills'),
+            'PERSONAL': document.getElementById('group-personal'),
+            'title': document.getElementById('group-title'),
+            'content': document.getElementById('group-content')
+        };
+        const labelContent = document.getElementById('label-content');
+
+        function updateLayout() {
+            const type = typeSelect.value;
+            Object.values(groups).forEach(g => g && g.classList.add('hidden'));
+            groups['title'].classList.remove('hidden');
+            groups['content'].classList.remove('hidden');
+
+            if (type === 'EXPERIENCE') groups['EXPERIENCE'].classList.remove('hidden');
+            else if (type === 'LINKS') { groups['LINKS'].classList.remove('hidden'); groups['content'].classList.add('hidden'); }
+            else if (type === 'SKILLS') { groups['SKILLS'].classList.remove('hidden'); groups['title'].classList.add('hidden'); }
+            else if (type === 'PERSONAL') { groups['PERSONAL'].classList.remove('hidden'); groups['title'].classList.add('hidden'); labelContent.textContent = "Short Bio"; }
+        }
+
+        if(typeSelect) { typeSelect.addEventListener('change', updateLayout); updateLayout(); }
+    });
+  </script>
 </body>
 </html>

@@ -4,55 +4,9 @@
   <meta charset="UTF-8" />
   <title>Create Profile | BioStack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-
-    /* DJANGO FORM OVERRIDES */
-    form p { margin-bottom: 1.5rem; }
-    
-    form label { 
-      display: block; 
-      font-size: 0.875rem; 
-      font-weight: 500; 
-      color: #94a3b8; /* text-slate-400 */
-      margin-bottom: 0.5rem; 
-    }
-
-    form input[type="text"] {
-      width: 100%;
-      background-color: #1e293b; /* bg-slate-800 */
-      border: 1px solid #334155; /* border-slate-700 */
-      color: white;
-      border-radius: 0.75rem; /* rounded-xl */
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    form input:focus {
-      border-color: #6366f1; /* indigo-500 */
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
-      background-color: #0f172a; 
-    }
-
-    .helptext {
-      font-size: 0.75rem;
-      color: #64748b;
-      margin-top: 0.25rem;
-      display: block;
-    }
-    
-    ul.errorlist {
-      color: #f87171;
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-  </style>
+  <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -68,22 +22,66 @@
     <div class="flex items-start justify-between mb-8">
       <div>
         <h2 class="text-2xl font-bold text-white tracking-tight">Create New Profile</h2>
-        <p class="text-slate-400 text-sm mt-1">Give your new identity a unique name (slug).</p>
+        <p class="text-slate-400 text-sm mt-1">Give your new identity a unique name.</p>
       </div>
       <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
       </div>
     </div>
 
-    <form method="post">
+    <form method="post" class="space-y-5">
       {% csrf_token %}
       
-      <div class="mb-8">
-        {{ form.as_p }}
-      </div>
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-400 mb-2">
+            {{ field.label }}
+          </label>
+          
+          <div class="relative">
+             <style>
+                /* Helper to target the Django rendered widget */
+                #div_id_{{ field.name }} input, 
+                #div_id_{{ field.name }} textarea, 
+                #div_id_{{ field.name }} select {
+                    width: 100%;
+                    background-color: #1e293b;
+                    border: 1px solid #334155;
+                    color: white;
+                    border-radius: 0.75rem;
+                    padding: 0.75rem 1rem;
+                    font-size: 1rem;
+                    outline: none;
+                    transition: all 0.2s;
+                }
+                #div_id_{{ field.name }} input:focus,
+                #div_id_{{ field.name }} textarea:focus, 
+                #div_id_{{ field.name }} select:focus {
+                    border-color: #6366f1;
+                    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
+                    background-color: #0f172a; 
+                }
+             </style>
+             
+             <div id="div_id_{{ field.name }}">
+                 {{ field }}
+             </div>
+          </div>
 
-      <div class="flex items-center gap-4">
-        <a href="{% url 'profiles:profile_list' %}" class="flex-1 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-center rounded-xl transition duration-200">
+          {% if field.help_text %}
+            <p class="mt-1 text-xs text-slate-500">{{ field.help_text }}</p>
+          {% endif %}
+
+          {% if field.errors %}
+            <div class="mt-2 text-sm text-red-400">
+              {{ field.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="pt-4 flex items-center gap-4">
+        <a href="{% url 'profiles:list' %}" class="flex-1 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-center rounded-xl transition duration-200">
           Cancel
         </a>
         

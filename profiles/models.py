@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import UniqueConstraint,Q
 from django.utils.text import slugify
 
 
@@ -47,28 +48,37 @@ class Profile(models.Model):
 
 
 class ProfileSection(models.Model):
+    # Section Types
     ABOUT = "ABOUT"
     SKILLS = "SKILLS"
     LINKS = "LINKS"
     PROJECTS = "PROJECTS"
     EXPERIENCE = "EXPERIENCE"
+    PERSONAL = "PERSONAL" 
+    CUSTOM = "CUSTOM"
 
     SECTION_TYPES = [
-        (ABOUT, "About"),
+        (ABOUT, "About Me"),
         (SKILLS, "Skills"),
         (LINKS, "Links"),
         (PROJECTS, "Projects"),
         (EXPERIENCE, "Experience"),
+        (PERSONAL, "Personal Details"),
+        (CUSTOM, "Custom Section"),
     ]
 
     profile = models.ForeignKey(
-        Profile,
+        'Profile', # Assuming Profile is in the same app
         on_delete=models.CASCADE,
         related_name="sections",
     )
 
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES)
     title = models.CharField(max_length=255)
+    
+    # We store all data here. 
+    # For About: {"content": "..."}
+    # For Skills: {"name": "Python", "level": "Expert"}
     data = models.JSONField(default=dict)
 
     is_enabled = models.BooleanField(default=True)
@@ -79,7 +89,20 @@ class ProfileSection(models.Model):
 
     class Meta:
         ordering = ["order", "created_at"]
-        unique_together = ("profile", "section_type")
+        constraints = [
+            # CONSTRAINT 1: Only ONE 'About' section per profile
+            UniqueConstraint(
+                fields=['profile', 'section_type'],
+                condition=Q(section_type='ABOUT'),
+                name='unique_about_section'
+            ),
+            # CONSTRAINT 2: Only ONE 'Personal Details' section per profile
+            UniqueConstraint(
+                fields=['profile', 'section_type'],
+                condition=Q(section_type='PERSONAL'),
+                name='unique_personal_section'
+            )
+        ]
 
     def __str__(self):
-        return f"{self.section_type} ({self.profile.slug})"
+        return f"{self.section_type} - {self.title}"
