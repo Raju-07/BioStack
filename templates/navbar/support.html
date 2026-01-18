@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Support Center | BioStack{% endblock %}
+
+{% block content %}
+<style>
+  .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+  @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+  
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+
+  /* Gradient Text */
+  .text-gradient {
+      background: linear-gradient(to right, #818cf8, #2dd4bf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+  }
+</style>
+
+<div class="relative min-h-screen overflow-hidden text-slate-200 selection:bg-indigo-500 selection:text-white">
+
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[100px]"></div>
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay"></div>
+  </div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-6 py-20 md:py-28">
+    
+    <div class="text-center mb-24 fade-in-up">
+      <span class="inline-block py-1 px-3 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold tracking-widest uppercase mb-4">
+        Help Center
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6">
+        How can we <span class="text-gradient">help you?</span>
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Whether you have a question about features, pricing, or just want to say hello, our team is ready to answer all your questions.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32">
+      
+      <div class="col-span-1 md:col-span-2 group relative p-8 rounded-3xl bg-[#0F172A]/60 backdrop-blur-xl border border-white/10 hover:border-indigo-500/30 transition duration-300 fade-in-up delay-100 overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition transform group-hover:scale-110 duration-500">
+            <i class="fa-solid fa-envelope-open-text text-9xl text-indigo-400"></i>
+        </div>
+        
+        <div class="relative z-10">
+            <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20">
+                <i class="fa-solid fa-envelope text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Email Support</h3>
+            <p class="text-slate-400 mb-8 max-w-md">For technical issues, partnership inquiries, or account help. We usually respond within 24 hours.</p>
+            
+            <a href="mailto:biostack.info@gmail.com" class="inline-flex items-center gap-3 text-xl font-bold text-white hover:text-indigo-400 transition group/link">
+                biostack.info@gmail.com
+                <i class="fa-solid fa-arrow-right -rotate-45 group-hover/link:rotate-0 transition duration-300"></i>
+            </a>
+        </div>
+      </div>
+
+      <div class="p-8 rounded-3xl bg-[#0F172A]/60 backdrop-blur-xl border border-white/10 hover:border-white/20 transition duration-300 fade-in-up delay-200">
+        <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20">
+            <i class="fa-solid fa-book text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-4">Documentation</h3>
+        <ul class="space-y-4 text-slate-400">
+            <li><a href="#" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Getting Started</a></li>
+            <li><a href="#" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Custom Domains</a></li>
+            <li><a href="#" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> API Access</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="max-w-3xl mx-auto fade-in-up delay-300" id="feedback-form">
+        <div class="relative bg-[#0F172A]/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden">
+            
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-white mb-3">Send us Feedback</h2>
+                <p class="text-slate-400">Have a suggestion? Found a bug? We read every message.</p>
+            </div>
+
+            <form method="POST" action="{% url 'profiles:support' %}">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-6">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Topic</label>
+                    <div class="relative">
+                        {{ form.subject }}
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-8">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Message</label>
+                    {{ form.message }}
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 group">
+                    <span>Submit Feedback</span>
+                    <i class="fa-solid fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition"></i>
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+  </div>
+</div>
+
+{% if messages %}
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+    {% for message in messages %}
+    <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center gap-3 animate-slide-in">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+</div>
+<style>
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .animate-slide-in { animation: slideIn 0.4s ease-out forwards; }
+</style>
+<script>
+    setTimeout(() => {
+        const toasts = document.querySelectorAll('.animate-slide-in');
+        toasts.forEach(t => t.style.display = 'none');
+    }, 4000);
+</script>
+{% endif %}
+
+{% endblock %}

@@ -9,10 +9,49 @@
       </div>
 
       <div class="flex gap-4">
-        <a href="{% url 'accounts:login' %}" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Sign In</a>
-        <a href="{% url 'accounts:signup' %}" class="px-5 py-2 text-sm rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-          Get Started
-        </a>
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'home' %}" class="hidden sm:block px-4 py-2 text-sm transition
+          {% if request.resolver_match.url_name == 'home' %}
+            text-white border-b-2 border-indigo-500
+          {% else %}
+            text-slate-300 hover:text-white
+          {% endif %}">Home</a>
+
+          <a href="{% url 'pricing' %}" class="hidden sm:block px-4 py-2 text-sm transition
+          {% if request.resolver_match.url_name == 'pricing' %}
+            text-white border-b-2 border-indigo-500
+          {% else %}
+            text-slate-300 hover:text-white
+          {% endif %}">Pricing</a>
+         
+          <a href="{% url 'features' %}" class="hidden sm:block px-4 py-2 text-sm transition
+          {% if request.resolver_match.url_name == 'features' %}
+            text-white border-b-2 border-indigo-500
+          {% else %}
+            text-slate-300 hover:text-white
+          {% endif %}">Features</a>
+          <a href="{% url 'profiles:support' %}" class="hidden sm:block px-4 py-2 text-sm transition
+          {% if request.resolver_match.url_name == 'support' %}
+            text-white border-b-2 border-indigo-500
+          {% else %}
+            text-slate-300 hover:text-white
+          {% endif %}">Support</a>
+
+          <a href="{% url 'about' %}" class="hidden sm:block px-4 py-2 text-sm transition
+          {% if request.resolver_match.url_name == 'about' %}
+            text-white border-b-2 border-indigo-500
+          {% else %}
+            text-slate-300 hover:text-white
+          {% endif %}">About us</a>
+
+          <a href="/dashboard/" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Dashboard</a>
+
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Sign In</a>
+          <a href="{% url 'accounts:signup' %}" class="px-5 py-2 text-sm rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+            Get Started
+          </a>
+        {% endif %}
       </div>
     </div>
   </nav>

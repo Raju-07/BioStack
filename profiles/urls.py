@@ -9,6 +9,7 @@ from .views import (
     delete_profile,
     delete_section,
     reorder_sections,
+    support,
 )
 
 app_name = "profiles"
@@ -16,6 +17,7 @@ app_name = "profiles"
 urlpatterns = [
     path("me/", profile_list, name="list"),
     path("create/", profile_create, name="create"),
+    path('support/',support,name='support'),
     path("set-active/<int:profile_id>/", set_active_profile, name="set_active"),
     path("me/dashboard/", profile_dashboard, name="dashboard"),
     path("me/sections/", section_list_create, name="sections"),

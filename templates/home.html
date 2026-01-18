@@ -1,8 +1,23 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block content %}
 
+<style>
+  /* Gentle floating animation for the whole mockup setup */
+  .mockup-float { animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+  }
 
-  <section class="relative z-10 max-w-5xl mx-auto px-6 pt-40 pb-32 text-center reveal">
+  /* Custom scrollbar for the mockups so they look clean */
+  .mockup-scroll::-webkit-scrollbar { width: 4px; }
+  .mockup-scroll::-webkit-scrollbar-track { background: transparent; }
+  .mockup-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+</style>
+
+<section class="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-24 text-center reveal overflow-hidden">
     
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-8 animate-float">
       <span class="relative flex h-2 w-2">
@@ -24,7 +39,7 @@
       Share once. Update forever.
     </p>
 
-    <div class="mt-10 flex justify-center gap-4 flex-wrap">
+    <div class="mt-10 flex justify-center gap-4 flex-wrap mb-24">
       <a href='{% url "profiles:create" %}' class="group relative px-8 py-4 rounded-xl bg-indigo-600 text-white font-semibold overflow-hidden transition-all hover:scale-105 shadow-lg shadow-indigo-500/30">
         <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
         <span class="relative">Create BioStack Free</span>
@@ -34,15 +49,133 @@
       </a>
     </div>
 
-    <div class="mt-20 relative mx-auto max-w-4xl reveal delay-200">
-      <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20"></div>
-      <div class="relative rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden aspect-[16/9] flex items-center justify-center">
-        <p class="text-slate-500 font-mono text-sm">[ Dashboard UI Preview Placeholder ]</p>
-      </div>
-    </div>
-  </section>
+    <div class="relative mx-auto w-full max-w-5xl h-[600px] mt-16 perspective-1000">
+    
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80% ] h-[80%] bg-gradient-to-tr from-indigo-600/30 to-cyan-600/30 rounded-full blur-[120px] -z-10"></div>
 
-  <section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="relative w-full h-full mockup-float flex items-center justify-center">
+        
+        <div class="relative w-[70%] h-[450px] bg-[#0F172A] border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden transform -rotate-y-6 translate-x-10 translate-z-0 z-10">
+            <div class="h-8 bg-slate-800 flex items-center px-4 gap-2 border-b border-slate-700">
+                <div class="flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-red-400/60"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/60"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-green-400/60"></div>
+                </div>
+                <div class="flex-1 text-center">
+                    <div class="mx-auto w-1/2 h-5 bg-slate-900/50 rounded-md flex items-center justify-center text-[10px] text-slate-400 font-mono">
+                        <i class="fa-solid fa-lock text-[8px] mr-1"></i> biostack.dev/alex
+                    </div>
+                </div>
+            </div>
+            <div class="h-[calc(100%-32px)] overflow-y-auto mockup-scroll bg-[#020617]">
+                <div class="h-32 bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 relative">
+                     <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                </div>
+                
+                <div class="max-w-3xl mx-auto px-8 pb-12">
+                    <div class="flex flex-col md:flex-row gap-6 -mt-12 relative z-10">
+                        <div class="w-full md:w-1/3 flex flex-col">
+                            <div class="w-24 h-24 rounded-2xl border-4 border-[#020617] bg-slate-800 overflow-hidden shadow-xl mb-4">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AlexDev" class="w-full h-full object-cover">
+                            </div>
+                            <h1 class="text-2xl font-bold text-white">Alex Chen</h1>
+                            <p class="text-indigo-400 font-medium text-sm mb-2">Senior Frontend Engineer</p>
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4">Specializing in React, TypeScript, and building accessible UI systems. Open source contributor.</p>
+                            <div class="flex gap-2 flex-wrap mb-6">
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">React</span>
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">TypeScript</span>
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">Next.js</span>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-slate-400"><i class="fa-brands fa-github"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-blue-400"><i class="fa-brands fa-twitter"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-pink-500"><i class="fa-brands fa-dribbble"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-2/3 pt-12 space-y-4">
+                            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Featured Projects</h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="group p-4 bg-slate-800/50 hover:bg-slate-800 border border-white/5 rounded-xl cursor-pointer transition">
+                                    <div class="h-24 bg-indigo-900/30 rounded-lg mb-3 overflow-hidden relative">
+                                        <div class="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center">↗</div>
+                                    </div>
+                                    <h3 class="text-white font-bold text-sm mb-1">E-commerce Dashboard</h3>
+                                    <p class="text-slate-400 text-xs">React & Tailwind Admin UI</p>
+                                </div>
+                                <div class="group p-4 bg-slate-800/50 hover:bg-slate-800 border border-white/5 rounded-xl cursor-pointer transition">
+                                    <div class="h-24 bg-emerald-900/30 rounded-lg mb-3 overflow-hidden relative">
+                                        <div class="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center">↗</div>
+                                    </div>
+                                    <h3 class="text-white font-bold text-sm mb-1">Analytics API</h3>
+                                    <p class="text-slate-400 text-xs">Node.js High-throughput service</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute right-[5%] w-[280px] h-[520px] bg-[#020617] border-[8px] border-slate-800 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden transform rotate-y-6 translate-z-10 z-20">
+            <div class="h-7 bg-slate-800 flex justify-center items-end pb-1 relative">
+                <div class="w-16 h-4 bg-black rounded-full absolute top-0"></div>
+                <div class="flex justify-between w-full px-4 text-[8px] text-slate-400 font-medium">
+                    <span>9:41</span>
+                    <div class="flex gap-1">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-[calc(100%-28px)] overflow-y-auto mockup-scroll bg-[#020617] pb-8">
+                <div class="h-24 bg-gradient-to-r from-indigo-900 to-purple-900 opacity-80"></div>
+                
+                <div class="px-4 -mt-12 flex flex-col items-center text-center relative z-10">
+                    <div class="w-24 h-24 rounded-full border-4 border-[#020617] bg-slate-800 overflow-hidden shadow-xl mb-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AlexDev" class="w-full h-full object-cover">
+                    </div>
+                    <h1 class="text-xl font-bold text-white">Alex Chen</h1>
+                    <p class="text-indigo-400 font-medium text-xs mb-2">Senior Frontend Engineer</p>
+                    <p class="text-slate-400 text-xs leading-snug mb-4 max-w-[200px]">Building scalable SaaS products. Python & React enthusiast.</p>
+
+                    <div class="flex gap-3 justify-center mb-6">
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-slate-300"><i class="fa-brands fa-github text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-blue-400"><i class="fa-brands fa-twitter text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-pink-500"><i class="fa-brands fa-dribbble text-sm"></i></div>
+                    </div>
+
+                    <div class="w-full space-y-3">
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white"><i class="fa-solid fa-laptop-code text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">My Portfolio Site</p></div>
+                            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                        </div>
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white"><i class="fa-solid fa-file-lines text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">View Resume</p></div>
+                            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                        </div>
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                             <div class="w-8 h-8 rounded bg-purple-600 flex items-center justify-center text-white"><i class="fa-solid fa-envelope text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">Contact Me</p></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-slate-600 rounded-full"></div>
+        </div>
+
+    </div>
+</div>
+
+</section>
+
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
     <div class="text-center mb-20 reveal">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">Everything you need to grow</h2>
       <p class="text-slate-400 max-w-2xl mx-auto">
@@ -90,9 +223,9 @@
         </div>
       </div>
     </div>
-  </section>
+</section>
 
-  <section class="relative z-10 max-w-7xl mx-auto px-6 py-28">
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-28">
     <div class="mb-12 text-center reveal">
         <h2 class="text-3xl md:text-4xl font-bold mb-4">Why upgrade your presence?</h2>
         <p class="text-slate-400">The old way vs. The BioStack way.</p>
@@ -129,9 +262,9 @@
             <p class="text-sm text-slate-400">Profiles load in under 100ms. Don't keep recruiters waiting.</p>
         </div>
     </div>
-  </section>
+</section>
 
-  <section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
     <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 reveal">Simple Pricing</h2>
     <p class="text-center text-slate-400 mb-16 reveal">Start for free, upgrade when you go pro.</p>
 
@@ -175,5 +308,6 @@
         </div>
 
     </div>
-  </section>
+</section>
+
 {% endblock content %}

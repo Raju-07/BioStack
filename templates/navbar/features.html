@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Features | BioStack{% endblock %}
+
+{% block content %}
+<style>
+  /* Animations */
+  .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+  @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+  
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+
+  /* Glass Effects */
+  .glass-feature {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+  }
+  .glass-feature:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15); /* Subtle glow on hover */
+  }
+
+  /* Mockup specific styles */
+  .mockup-container {
+      perspective: 1000px;
+  }
+  .mini-profile-card {
+      transform: rotateY(-10deg) rotateX(5deg);
+      transition: transform 0.5s ease;
+      box-shadow: -20px 20px 40px rgba(0,0,0,0.5);
+  }
+  .mockup-container:hover .mini-profile-card {
+      transform: rotateY(0deg) rotateX(0deg);
+  }
+</style>
+
+<div class="relative min-h-screen overflow-hidden text-slate-200 selection:bg-indigo-500 selection:text-white">
+
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-28">
+    
+    <div class="text-center mb-24 fade-in-up">
+      <span class="inline-block py-1 px-3 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold tracking-widest uppercase mb-4">
+        Platform Capabilities
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6">
+        Everything you need to <br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Stand Out Online</span>
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        BioStack gives you the tools to build a professional, responsive, and data-driven portfolio in minutes. No coding required.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32">
+      
+      <div class="glass-feature p-8 rounded-3xl fade-in-up delay-100">
+        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Drag & Drop Builder</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">
+          Reorder your projects, skills, and links effortlessly. Our intuitive editor lets you structure your profile exactly how you want it.
+        </p>
+      </div>
+
+      <div class="glass-feature p-8 rounded-3xl fade-in-up delay-200">
+        <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-6 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Smart Analytics</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">
+          Track views, link clicks, and engagement. Understand your audience with built-in charts and data visualization.
+        </p>
+      </div>
+
+      <div class="glass-feature p-8 rounded-3xl fade-in-up delay-300">
+        <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(52,211,153,0.2)]">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Mobile Optimized</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">
+          Your profile looks stunning on any device. We automatically adjust layouts for phones, tablets, and desktops.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 fade-in-up delay-200">
+      <div class="order-2 lg:order-1">
+        <h2 class="text-3xl font-bold text-white mb-6">Unmatched <span class="text-pink-400">Customization</span></h2>
+        <p class="text-slate-300 text-lg leading-relaxed mb-6">
+          Don't settle for a generic list of links. With BioStack, you can create rich content blocks for your specific needs.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-4">
+            <div class="mt-1 w-6 h-6 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-xs"><i class="fa-solid fa-check"></i></div>
+            <div>
+              <strong class="text-white block">Skill Showcases</strong>
+              <span class="text-slate-400 text-sm">Display your tech stack with auto-fetched logos.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <div class="mt-1 w-6 h-6 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-xs"><i class="fa-solid fa-check"></i></div>
+            <div>
+              <strong class="text-white block">Project Portfolios</strong>
+              <span class="text-slate-400 text-sm">Detailed cards with flip animations for case studies.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <div class="mt-1 w-6 h-6 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-xs"><i class="fa-solid fa-check"></i></div>
+            <div>
+              <strong class="text-white block">Timeline Experience</strong>
+              <span class="text-slate-400 text-sm">Visual career history timelines.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="order-1 lg:order-2 mockup-container flex justify-center items-center relative">
+        <div class="absolute -inset-4 bg-gradient-to-tr from-pink-500/30 to-purple-600/30 rounded-full blur-[80px]"></div>
+        
+        <div class="mini-profile-card relative w-[320px] bg-[#0F172A] rounded-3xl border border-white/10 overflow-hidden flex flex-col shadow-2xl">
+            
+            <div class="h-28 w-full bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1000&auto=format&fit=crop');">
+                <div class="absolute inset-0 bg-black/20"></div>
+            </div>
+
+            <div class="px-6 -mt-12 mb-4 relative z-10">
+                <div class="w-24 h-24 rounded-full border-[4px] border-[#0F172A] overflow-hidden bg-slate-800 shadow-md">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <div class="px-6 pb-2 text-center">
+                <h3 class="text-white font-bold text-xl">Sarah Jenkins</h3>
+                <p class="text-indigo-400 text-xs font-medium uppercase tracking-wider mb-2">Full Stack Developer</p>
+                <p class="text-slate-400 text-sm leading-snug mb-4">
+                    Building digital products & open source tools. Passionate about UI/UX and performance.
+                </p>
+                
+                <div class="flex justify-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer">
+                        <i class="fa-brands fa-github text-sm"></i>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer">
+                        <i class="fa-brands fa-linkedin text-sm"></i>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition cursor-pointer">
+                        <i class="fa-brands fa-twitter text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 pb-6 space-y-3">
+                <div class="flex flex-wrap justify-center gap-2 mb-4">
+                    <span class="px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20">React</span>
+                    <span class="px-2 py-1 rounded-md bg-yellow-500/10 text-yellow-400 text-[10px] font-bold border border-yellow-500/20">Python</span>
+                    <span class="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">Django</span>
+                </div>
+
+                <div class="group/card relative bg-slate-800/50 hover:bg-slate-800 border border-white/5 rounded-xl p-3 flex items-center gap-3 cursor-pointer transition">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-briefcase text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-white text-sm font-semibold truncate">My Portfolio Site</h4>
+                        <p class="text-slate-500 text-xs truncate">View my latest case studies</p>
+                    </div>
+                    <div class="text-slate-500 group-hover/card:text-white transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 fade-in-up delay-300">
+      
+      <div class="relative">
+        <div class="absolute -inset-1 bg-gradient-to-bl from-emerald-500 to-cyan-500 rounded-2xl blur-lg opacity-40"></div>
+        <div class="relative bg-[#0F172A] border border-white/10 rounded-2xl p-6 h-[350px] flex flex-col items-center justify-center gap-6">
+           
+           <div class="relative w-40 h-40 flex items-center justify-center">
+               <svg class="w-full h-full transform -rotate-90">
+                   <circle cx="80" cy="80" r="70" stroke="#1e293b" stroke-width="12" fill="none"></circle>
+                   <circle cx="80" cy="80" r="70" stroke="#10b981" stroke-width="12" fill="none" stroke-dasharray="440" stroke-dashoffset="10" stroke-linecap="round" class="animate-[dash_1.5s_ease-out_forwards]"></circle>
+               </svg>
+               <div class="absolute flex flex-col items-center">
+                   <span class="text-5xl font-bold text-emerald-400">99</span>
+                   <span class="text-xs text-slate-500 uppercase tracking-widest mt-1">Score</span>
+               </div>
+           </div>
+
+           <div class="flex gap-4 w-full px-8">
+               <div class="flex-1 bg-slate-900/50 rounded-xl p-3 text-center border border-white/5">
+                   <p class="text-xs text-slate-500 mb-1">Load Time</p>
+                   <p class="text-emerald-400 font-bold">0.4s</p>
+               </div>
+               <div class="flex-1 bg-slate-900/50 rounded-xl p-3 text-center border border-white/5">
+                   <p class="text-xs text-slate-500 mb-1">SEO</p>
+                   <p class="text-emerald-400 font-bold">100%</p>
+               </div>
+           </div>
+
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-3xl font-bold text-white mb-6">Blazing Fast & <span class="text-emerald-400">SEO Ready</span></h2>
+        <p class="text-slate-300 text-lg leading-relaxed mb-6">
+          We optimize your profile under the hood so you rank higher on Google. BioStack pages are built with clean, semantic HTML and optimized assets.
+        </p>
+        <p class="text-slate-300 text-lg leading-relaxed">
+          Your page loads instantly, ensuring your potential clients or employers never wait to see your work.
+        </p>
+      </div>
+    </div>
+
+    <div class="relative rounded-3xl overflow-hidden text-center py-20 px-6 border border-white/10 fade-in-up delay-400">
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-slate-900/80 backdrop-blur-xl z-0"></div>
+      <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+      
+      <div class="relative z-10 max-w-2xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Ready to build your BioStack?</h2>
+        <p class="text-slate-300 mb-10 text-lg">Join thousands of developers and creators showcasing their work professionally.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'accounts:signup' %}" class="px-8 py-3.5 bg-white text-indigo-900 font-bold rounded-xl hover:bg-slate-100 transition shadow-lg shadow-white/10">
+                Get Started for Free
+            </a>
+            <a href="{% url 'about' %}" class="px-8 py-3.5 bg-transparent border border-white/20 text-white font-semibold rounded-xl hover:bg-white/5 transition">
+                Read Our Story
+            </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

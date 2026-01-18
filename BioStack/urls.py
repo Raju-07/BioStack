@@ -24,8 +24,12 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('',views.homepage),
+    path('',views.homepage,name='home'),
     path('test/',views.test),
+    path('pricing/',views.pricing,name='pricing'),
+    path('features/',views.features_view,name='features'),
+    path('about-us/',views.about_view,name='about'),
+
 
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),

@@ -1,5 +1,5 @@
 from django import forms
-from .models import ProfileSection, Profile
+from .models import ProfileSection, Profile,Feedback
 
 class ProfileSectionForm(forms.ModelForm):
     # --- 1. General Content Field ---
@@ -202,3 +202,25 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("full_name", "bio", "slug", "visibility")
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['name', 'email', 'subject', 'message']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500',
+                'placeholder': 'Your Name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500',
+                'placeholder': 'your@email.com'
+            }),
+            'subject': forms.Select(attrs={
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition cursor-pointer'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500 h-32 resize-none',
+                'placeholder': 'How can we improve BioStack?'
+            }),
+        }

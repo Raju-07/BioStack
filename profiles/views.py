@@ -8,10 +8,26 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from .models import Profile, ProfileSection
-from .forms import ProfileForm, ProfileSectionForm
+from .forms import ProfileForm, ProfileSectionForm,FeedbackForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
 
+@login_required
+def support(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Thanks for your feedback! We'll look into it.")
+            return redirect('support') # Redirects back to clear the form
+    else:
+        # Pre-fill email if user is logged in
+        initial_data = {}
+        if request.user.is_authenticated:
+            initial_data = {'email': request.user.email, }
+        form = FeedbackForm(initial=initial_data)
+
+    return render(request, 'navbar/support.html', {'form': form})
 
 @login_required
 def profile_list(request):
