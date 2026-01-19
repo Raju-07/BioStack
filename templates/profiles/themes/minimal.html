@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.full_name|default:profile.slug }} | BioStack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; color: #171717; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-16 px-6">
+
+    <main class="w-full max-w-2xl bg-white p-8 md:p-12 shadow-xl shadow-slate-200/50 rounded-none border-t-4 border-slate-900">
+        
+        <header class="text-center mb-12">
+            <div class="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-6 overflow-hidden grayscale">
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed={{ profile.full_name }}&backgroundColor=e5e7eb&textColor=171717" class="w-full h-full object-cover">
+            </div>
+            <h1 class="text-4xl font-bold mb-3 text-slate-900">{{ profile.full_name|default:profile.slug }}</h1>
+            <p class="text-lg text-slate-500 max-w-md mx-auto leading-relaxed font-light">{{ profile.bio|default:"Creator & Developer" }}</p>
+        </header>
+
+        <div class="space-y-10">
+            
+            {% for section in sections %}
+                
+                {% if section.section_type == 'LINKS' %}
+                <div>
+                    <a href="{{ section.data.url }}" target="_blank" class="flex items-center justify-between p-4 border border-slate-200 hover:border-slate-900 transition-colors group">
+                        <span class="font-medium text-slate-700 group-hover:text-black">{{ section.title }}</span>
+                        <i class="fa-solid fa-arrow-right -rotate-45 text-slate-300 group-hover:text-black transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+                    </a>
+                </div>
+
+                {% elif section.section_type == 'EXPERIENCE' %}
+                <div class="border-l-2 border-slate-100 pl-6 py-1">
+                    <h3 class="text-xl font-bold mb-1">{{ section.data.position }}</h3>
+                    <p class="text-sm text-slate-500 uppercase tracking-widest mb-3 font-medium">{{ section.title }}</p>
+                    <p class="text-slate-600 leading-relaxed">{{ section.data.content }}</p>
+                </div>
+
+                {% elif section.section_type == 'SKILLS' %}
+                {% if forloop.first or previous_type != 'SKILLS' %}
+                    <div class="mb-2"><h3 class="text-lg font-bold border-b border-slate-100 pb-2 mb-4">Expertise</h3></div>
+                    <div class="flex flex-wrap gap-3">
+                {% endif %}
+                    <span class="px-4 py-2 bg-slate-50 text-slate-600 text-sm font-medium border border-slate-100">
+                        {{ section.data.name }}
+                    </span>
+                {% if forloop.last or next_type != 'SKILLS' %}
+                    </div>
+                {% endif %}
+
+                {% elif section.section_type == 'PERSONAL' %}
+                <div class="bg-slate-50 p-6 text-center border border-slate-100">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="block text-slate-400 text-xs uppercase tracking-wider mb-1">Location</span>
+                            {{ section.data.location }}
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-xs uppercase tracking-wider mb-1">Email</span>
+                            {{ section.data.email }}
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                <section>
+                    <h3 class="text-lg font-bold border-b border-slate-100 pb-2 mb-4">{{ section.title }}</h3>
+                    <div class="prose prose-slate max-w-none text-slate-600">
+                        {{ section.data.content|linebreaks }}
+                    </div>
+                </section>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+        <footer class="mt-16 pt-8 border-t border-slate-100 text-center">
+            <p class="text-xs text-slate-400 font-medium tracking-wide">POWERED BY <span class="text-slate-900">BIOSTACK</span></p>
+        </footer>
+
+    </main>
+
+</body>
+</html>

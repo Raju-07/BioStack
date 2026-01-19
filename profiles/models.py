@@ -4,6 +4,25 @@ from django.db.models import UniqueConstraint,Q
 from django.utils.text import slugify
 
 
+    
+# Model for theme
+class Theme(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+
+    #path to the template
+    template_name = models.CharField(max_length=255)
+
+    #preview Image for Dashbaord
+    thumbnail = models.ImageField(upload_to="theme_thumbnails/",blank=True,null=True)
+
+    #for premium
+    is_premium = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+    
+
 class Profile(models.Model):
     PUBLIC = "PUBLIC"
     PRIVATE = "PRIVATE"
@@ -28,6 +47,8 @@ class Profile(models.Model):
         choices=VISIBILITY_CHOICES,
         default=PRIVATE,
     )
+# linking the theme to the account
+    theme = models.ForeignKey(Theme,on_delete=models.SET_NULL,null=True,related_name="profiles")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

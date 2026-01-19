@@ -73,6 +73,11 @@
         <i class="fa-solid fa-users w-5 text-center {% if request.resolver_match.url_name != 'list' %}group-hover:text-purple-400 transition{% endif %}"></i>
         Switch Profile
       </a>
+      
+      <a href="{% url 'profiles:list' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'list' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
+        <i class="fa-solid fa-theme w-5 text-center {% if request.resolver_match.url_name != 'list' %}group-hover:text-purple-400 transition{% endif %}"></i>
+        Theme Store
+      </a>
 
       <a href="{% url 'accounts:settings' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'settings' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
         <i class="fa-solid fa-user-gear w-5 text-center {% if request.resolver_match.url_name != 'settings' %}group-hover:text-pink-400 transition{% endif %}"></i>
@@ -99,7 +104,61 @@
   </aside>
 
   <main class="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 w-full">
-    
+    {% if messages %}
+    <div id="toast-container" class="fixed top-24 right-6 z-50 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+        {% for message in messages %}
+            <div class="toast-message pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl backdrop-blur-xl border transform transition-all duration-500 ease-out translate-x-10 opacity-0
+                {% if message.tags == 'error' %}
+                    bg-red-500/10 border-red-500/20 text-red-200
+                {% else %}
+                    bg-emerald-500/10 border-emerald-500/20 text-emerald-200
+                {% endif %}">
+                
+                <div class="mt-0.5">
+                    {% if message.tags == 'error' %}
+                        <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+                    {% else %}
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    {% endif %}
+                </div>
+
+                <div class="flex-1 text-sm font-medium leading-relaxed">
+                    {{ message }}
+                </div>
+
+                <button onclick="this.parentElement.remove()" class="text-white/40 hover:text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast-message');
+            
+            toasts.forEach((toast, index) => {
+                // 1. Slide In Animation (Staggered)
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-10', 'opacity-0');
+                }, 100 * index);
+
+                // 2. Auto Dismiss Timer (5 seconds)
+                setTimeout(() => {
+                    dismissToast(toast);
+                }, 5000 + (100 * index));
+            });
+
+            // Helper to fade out and remove
+            function dismissToast(element) {
+                element.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    if(element) element.remove();
+                }, 500); // Wait for fade out to finish
+            }
+        });
+    </script>
+    {% endif %}
     <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0F172A]/90 backdrop-blur sticky top-0 z-30">
       <div class="font-bold text-lg text-white flex items-center gap-2">
         <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-xs">
@@ -113,15 +172,6 @@
     </header>
 
     <div class="p-6 md:p-10 max-w-7xl mx-auto w-full">
-        {% if messages %}
-            <div class="mb-6 space-y-2">
-                {% for message in messages %}
-                    <div class="p-4 rounded-xl text-sm font-medium {% if message.tags == 'error' %}bg-red-500/10 text-red-400 border border-red-500/20{% else %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
 
         {% block dashboard_content %}{% endblock %}
     </div>

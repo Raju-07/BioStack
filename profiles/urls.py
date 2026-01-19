@@ -9,6 +9,7 @@ from .views import (
     delete_profile,
     delete_section,
     reorder_sections,
+    update_theme,
 )
 
 app_name = "profiles"
@@ -23,4 +24,6 @@ urlpatterns = [
     path("me/sections/reorder/",reorder_sections, name="reorder_sections"),
     path("delete/<int:profile_id>",delete_profile,name='delete'),
     path("me/sections/delete/<int:section_id>/",delete_section, name="delete_section"),
+
+    path('me/theme/update/',update_theme,name='update_theme'),
 ]

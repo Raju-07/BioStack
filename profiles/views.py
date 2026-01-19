@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from .models import Profile, ProfileSection
+from .models import Profile, ProfileSection,Theme
 from .forms import ProfileForm, ProfileSectionForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
@@ -78,11 +78,41 @@ def profile_dashboard(request):
     if not profile:
         return redirect("profiles:list")
 
+    #Fetching themes here
+    themes =  Theme.objects.all()
+
+    #Ensure profile has a theme (fallback logic)
+    if not profile.theme:
+        default_theme = Theme.objects.first()
+        if default_theme :
+            profile_theme = default_theme
+            profile.save()
     return render(
         request,
         "profiles/profile_dashboard.html",
-        {"profile": profile},
+        {'profile':profile,'themes':themes},
+        content_type='text/html',
     )
+
+# Theme view
+@login_required
+@require_POST
+def update_theme(request):
+    profile = get_active_profile(request)
+    if not profile:
+        return redirect("profile:list")
+    
+    theme_id = request.POST.get("theme_id")
+
+    #fetching the actual theme object
+    theme = get_object_or_404(Theme,id=theme_id)
+
+    profile.theme = theme
+    profile.save()
+
+    messages.success(request,f"Theme updated to {theme.name}")
+    return redirect("profiles:dashboard")
+
 
 @login_required
 @require_POST
@@ -221,11 +251,19 @@ def public_profile_view(request, slug):
 
     if profile.visibility == Profile.PRIVATE:
         raise Http404()
-
+    
     sections = profile.sections.filter(is_enabled=True)
+    
+    #logic for dynamic rendering
+    if profile.theme:
+        template_name = profile.theme.template_name
+    else:
+        #fallback if db is empty
+        template_name = "profiles/themes/modern.html"
 
     return render(
         request,
-        "profiles/public_profile.html",
+        template_name,
         {"profile": profile, "sections": sections},
+        content_type="text/html"
     )
