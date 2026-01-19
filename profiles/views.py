@@ -1,33 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import Http404, HttpResponseForbidden,JsonResponse
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
 
 from .models import Profile, ProfileSection
-from .forms import ProfileForm, ProfileSectionForm,FeedbackForm
+from .forms import ProfileForm, ProfileSectionForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
-
-@login_required
-def support(request):
-    if request.method == 'POST':
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Thanks for your feedback! We'll look into it.")
-            return redirect('support') # Redirects back to clear the form
-    else:
-        # Pre-fill email if user is logged in
-        initial_data = {}
-        if request.user.is_authenticated:
-            initial_data = {'email': request.user.email, }
-        form = FeedbackForm(initial=initial_data)
-
-    return render(request, 'navbar/support.html', {'form': form})
 
 @login_required
 def profile_list(request):
@@ -45,16 +28,16 @@ def profile_list(request):
 
 @login_required
 @require_POST
-def delete_profile(request,profile_id):
-    profile = get_object_or_404(Profile,id=profile_id,user=request.user)
+def delete_profile(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id, user=request.user)
 
     active_profile_id = request.session.get("active_profile_id")
 
     if active_profile_id == profile.id:
-        messages.error(request,"You cannot delete your currently active profile. Switch to another profile first.")
+        messages.error(request, "You cannot delete your currently active profile. Switch to another profile first.")
     else:
         profile.delete()
-        messages.success(request,"Profile Deleted Successfully")
+        messages.success(request, "Profile Deleted Successfully")
 
     return redirect('profiles:list')
         
@@ -100,6 +83,7 @@ def profile_dashboard(request):
         "profiles/profile_dashboard.html",
         {"profile": profile},
     )
+
 @login_required
 @require_POST
 def reorder_sections(request):
@@ -111,14 +95,6 @@ def reorder_sections(request):
         if not profile:
             return JsonResponse({'status': 'error'}, status=400)
 
-        # Bulk update is efficient
-        sections = []
-        for index, section_id in enumerate(order_list):
-            # We use update() on queryset or loop.
-            # Looping allows us to find the object safely
-            # Ideally we fetch all sections first to avoid N queries
-            pass
-        
         # Optimized Approach:
         # Fetch all sections for this profile to memory
         all_sections = {s.id: s for s in profile.sections.all()}
@@ -136,6 +112,7 @@ def reorder_sections(request):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
 @login_required
 def section_list_create(request):
     # 1. Get the active profile
@@ -195,7 +172,28 @@ def section_list_create(request):
             messages.error(request, "Please check the form for errors.")
 
     else:
-        form = ProfileSectionForm()
+        # --- NEW LOGIC: Pre-fill from Global User Details ---
+        initial_data = {}
+        try:
+            # Check if the user has global details saved (from the Accounts app)
+            if hasattr(request.user, 'details'):
+                user_details = request.user.details
+                initial_data = {
+                    'phone': user_details.phone,
+                    'email': request.user.email, # Always use account email
+                    'dob': user_details.dob,
+                    'gender': user_details.gender,
+                    'marital_status': user_details.marital_status,
+                    'nationality': user_details.nationality,
+                    'address': user_details.address,
+                    'location': user_details.location,
+                }
+        except Exception:
+            # If UserDetail table doesn't exist yet or other error, just ignore
+            pass
+
+        # Initialize the form with this data (if any)
+        form = ProfileSectionForm(initial=initial_data)
 
     return render(
         request,

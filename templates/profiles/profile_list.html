@@ -1,48 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>My Profiles | BioStack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% extends 'dashboard_base.html' %}
+{% load static %}
 
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
-</head>
+{% block title %}My Profiles | BioStack{% endblock %}
 
-<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
-
-  {% if messages %}
-    <div class="max-w-5xl mx-auto px-6 mt-6">
-        {% for message in messages %}
-            <div class="p-4 mb-4 rounded-lg {% if message.tags == 'error' %}bg-red-500/10 text-red-400 border border-red-500/20{% else %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-  <div class="fixed inset-0 pointer-events-none z-0">
-    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.2),rgba(255,255,255,0))]"></div>
-  </div>
-
-  <div class="relative z-10 max-w-5xl mx-auto px-6 py-12">
+{% block dashboard_content %}
     
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 fade-in-up">
       <div>
         <h1 class="text-3xl font-bold text-white tracking-tight">My Profiles</h1>
         <p class="text-slate-400 mt-2">Manage your different identities. Switch between them instantly.</p>
       </div>
       
-      <a href="{% url 'dashboard:index' %}" class="text-sm font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        Back to Dashboard
+      <a href="{% url 'profiles:dashboard' %}" class="text-sm font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
       </a>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in-up delay-100">
 
       {% for profile in profiles %}
         {% if profile.id == active_profile_id %}
@@ -84,10 +58,10 @@
                   Set Active
                 </a>
 
-                <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete the profile &quot;{{ profile.slug }}&quot;? This cannot be undone.');">
+                <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Are you sure?');">
                     {% csrf_token %}
-                    <button type="submit" class="p-2.5 h-full bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-lg transition duration-200 flex items-center justify-center" title="Delete Profile">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    <button type="submit" class="p-2.5 h-full bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-lg transition duration-200 flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </form>
             </div>
@@ -98,14 +72,12 @@
 
       <a href="{% url 'profiles:create' %}" class="group flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-slate-700 hover:border-indigo-500 hover:bg-indigo-500/5 transition duration-300 min-h-[240px]">
         <div class="w-14 h-14 rounded-full bg-slate-800 group-hover:bg-indigo-500 text-slate-400 group-hover:text-white flex items-center justify-center transition duration-300 mb-4">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <i class="fa-solid fa-plus text-xl"></i>
         </div>
         <h3 class="text-lg font-semibold text-slate-300 group-hover:text-white transition">Create Profile</h3>
-        <p class="text-sm text-slate-500 text-center mt-2 group-hover:text-indigo-300 transition">Add a new identity to your stack</p>
+        <p class="text-sm text-slate-500 text-center mt-2 group-hover:text-indigo-300 transition">Add a new identity</p>
       </a>
 
     </div>
-  </div>
 
-</body>
-</html>
+{% endblock %}

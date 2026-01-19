@@ -1,18 +1,14 @@
+{% extends 'dashboard_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Manage Sections | BioStack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <script src="https://cdn.tailwindcss.com"></script>
+
+{% block title %}Manage Sections | BioStack{% endblock %}
+
+{% block dashboard_content %}
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    /* Kept your specific styles */
     input[type="date"] { color-scheme: dark; }
     .draggable-item { cursor: grab; touch-action: none; }
     .draggable-item:active { cursor: grabbing; }
@@ -30,40 +26,29 @@
     }
     .django-field-group input[type="checkbox"] { width: 1.25rem; height: 1.25rem; accent-color: #6366f1; }
   </style>
-</head>
 
-<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
-
-  {% if messages %}
-    <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4">
-        {% for message in messages %}
-            <div class="p-4 mb-2 rounded-xl shadow-lg border backdrop-blur-md flex items-center gap-3 animate-fade-in-down
-                {% if message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-200
-                {% else %}bg-emerald-500/10 border-emerald-500/20 text-emerald-200{% endif %}">
-                <span class="font-medium">{{ message }}</span>
-            </div>
-        {% endfor %}
-    </div>
-    <script>
-        setTimeout(() => {
-            const msgs = document.querySelectorAll('.animate-fade-in-down');
-            msgs.forEach(m => m.style.opacity = '0');
-            setTimeout(() => msgs.forEach(m => m.remove()), 500);
-        }, 3000);
-    </script>
-  {% endif %}
-
-  <div class="max-w-4xl mx-auto px-6 py-12 relative z-10">
+  <div class="fade-in-up">
     
     <div class="flex flex-col md:flex-row justify-between gap-4 mb-8">
       <div>
         <h2 class="text-3xl font-bold text-white">Profile Sections</h2>
         <p class="text-slate-400 mt-2">Create content and organize your profile structure.</p>
+        <p class="text-slate-400 mt-2 text-lg flex items-center gap-2">
+            Active Profile: 
+            <span class="text-white font-semibold border-b border-indigo-500/50 pb-0.5">
+                {% if profile %}
+                    {{ profile.full_name|default:profile.slug }}
+                {% else %}
+                    No Active Profile <a href="profile:list"> select </a>
+                {% endif %}
+            </span>
+          </p>
       </div>
-      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5 text-sm text-slate-300">
-        Back to Dashboard
+      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5 text-sm text-slate-300 transition">
+        <i class="fa-solid fa-arrow-left"></i> Back
       </a>
     </div>
+
 
     <div class="p-8 rounded-3xl bg-slate-900/50 border border-white/10 shadow-2xl mb-12 relative overflow-hidden">
       <div class="relative z-10">
@@ -327,26 +312,20 @@
 
     </div>
 
-</div>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
         
         // --- 1. THE SAVE FUNCTION ---
         function saveGlobalOrder() {
-            // A. Find all Group Blocks in the visual order (Personal, About, Exp...)
             const groupContainer = document.getElementById('main-groups-container');
-            // We use 'div.group-block' to ensure we only get the category containers
             const groups = Array.from(groupContainer.querySelectorAll('.group-block')); 
-            
             let globalOrderIds = [];
             
-            // B. Loop through groups in order
             groups.forEach(group => {
-                // Find the list container inside this group
                 const list = group.querySelector('.sortable-list');
                 if(list) {
-                    // C. Find all items inside this list in order
                     const items = Array.from(list.querySelectorAll('.draggable-item'));
                     items.forEach(item => {
                         const id = parseInt(item.getAttribute('data-id'));
@@ -355,9 +334,8 @@
                 }
             });
             
-            console.log("Saving Order:", globalOrderIds); // Debugging
+            console.log("Saving Order:", globalOrderIds); 
 
-            // D. Send to Backend
             if(globalOrderIds.length > 0) {
                 fetch("{% url 'profiles:reorder_sections' %}", {
                     method: 'POST',
@@ -380,7 +358,7 @@
                 ghostClass: 'sortable-ghost',
                 handle: '.cursor-grab',
                 onEnd: function (evt) {
-                    saveGlobalOrder(); // Save DB on item drop
+                    saveGlobalOrder(); 
                 }
             });
         });
@@ -392,10 +370,7 @@
             handle: '.group-handle', 
             ghostClass: 'sortable-ghost',
             onEnd: function (evt) {
-                // Save DB on Group Swap
                 saveGlobalOrder(); 
-                
-                // Also save preference to LocalStorage so groups stay there on refresh
                 var order = this.toArray();
                 localStorage.setItem(this.options.group.name, order.join('|'));
             },
@@ -405,7 +380,6 @@
                     return order ? order.split('|') : [];
                 },
                 set: function (sortable) {
-                    // Already handling save in onEnd, but required for load
                     var order = sortable.toArray();
                     localStorage.setItem(sortable.options.group.name, order.join('|'));
                 }
@@ -440,5 +414,5 @@
         if(typeSelect) { typeSelect.addEventListener('change', updateLayout); updateLayout(); }
     });
   </script>
-</body>
-</html>
+
+{% endblock %}

@@ -1,57 +1,87 @@
 {% load static %}
 
-  <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
-    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md border-b border-white/10"></div>
+<nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-md border-b border-white/10"></div>
+    
     <div class="max-w-7xl mx-auto px-6 py-4 relative flex items-center justify-between">
-      <div class="flex items-center gap-2 text-xl font-bold tracking-tight">
-        <a href = "/dashboard/"><img src="{% static 'images/main-logo.png' %}" alt="BioStack Logo" class="w-8 h-8 rounded-lg object-contain shadow-lg shadow-indigo-500/20"></a>
-        BioStack
+      
+      <div class="flex items-center gap-2 text-xl font-bold tracking-tight z-10">
+        <a href="/">
+            <img src="{% static 'images/main-logo.png' %}" alt="BioStack Logo" class="w-8 h-8 rounded-lg object-contain shadow-lg shadow-indigo-500/20">
+        </a>
+        <span class="text-white">BioStack</span>
       </div>
 
-      <div class="flex gap-4">
+      <div class="hidden md:flex items-center gap-6 z-10">
         {% if request.user.is_authenticated %}
-          <a href="{% url 'home' %}" class="hidden sm:block px-4 py-2 text-sm transition
-          {% if request.resolver_match.url_name == 'home' %}
-            text-white border-b-2 border-indigo-500
-          {% else %}
-            text-slate-300 hover:text-white
-          {% endif %}">Home</a>
+          <a href="{% url 'home' %}" class="text-sm transition {% if request.resolver_match.url_name == 'home' %}text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Home</a>
+          <a href="{% url 'pricing' %}" class="text-sm transition {% if request.resolver_match.url_name == 'pricing' %}text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Pricing</a>
+          <a href="{% url 'features' %}" class="text-sm transition {% if request.resolver_match.url_name == 'features' %}text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Features</a>
+          <a href="{% url 'about' %}" class="text-sm transition {% if request.resolver_match.url_name == 'about' %}text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">About</a>
+          <a href="{% url 'support' %}" class="text-sm transition {% if request.resolver_match.url_name == 'support' %}text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Support</a>
 
-          <a href="{% url 'pricing' %}" class="hidden sm:block px-4 py-2 text-sm transition
-          {% if request.resolver_match.url_name == 'pricing' %}
-            text-white border-b-2 border-indigo-500
-          {% else %}
-            text-slate-300 hover:text-white
-          {% endif %}">Pricing</a>
-         
-          <a href="{% url 'features' %}" class="hidden sm:block px-4 py-2 text-sm transition
-          {% if request.resolver_match.url_name == 'features' %}
-            text-white border-b-2 border-indigo-500
-          {% else %}
-            text-slate-300 hover:text-white
-          {% endif %}">Features</a>
-          <a href="{% url 'profiles:support' %}" class="hidden sm:block px-4 py-2 text-sm transition
-          {% if request.resolver_match.url_name == 'support' %}
-            text-white border-b-2 border-indigo-500
-          {% else %}
-            text-slate-300 hover:text-white
-          {% endif %}">Support</a>
-
-          <a href="{% url 'about' %}" class="hidden sm:block px-4 py-2 text-sm transition
-          {% if request.resolver_match.url_name == 'about' %}
-            text-white border-b-2 border-indigo-500
-          {% else %}
-            text-slate-300 hover:text-white
-          {% endif %}">About us</a>
-
-          <a href="/dashboard/" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Dashboard</a>
-
+          <div class="h-4 w-px bg-white/10"></div> <a href="{% url 'dashboard:index' %}" class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium text-white hover:bg-white/10 transition">
+            Dashboard
+          </a>
         {% else %}
-          <a href="{% url 'accounts:login' %}" class="hidden sm:block px-4 py-2 text-sm text-slate-300 hover:text-white transition">Sign In</a>
-          <a href="{% url 'accounts:signup' %}" class="px-5 py-2 text-sm rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+          <a href="{% url 'accounts:login' %}" class="text-sm font-medium text-slate-300 hover:text-white transition">Sign In</a>
+          <a href="{% url 'accounts:signup' %}" class="px-5 py-2 text-sm rounded-lg bg-white text-slate-950 font-bold hover:bg-slate-200 transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">
             Get Started
           </a>
         {% endif %}
       </div>
+
+      <button id="mobile-menu-btn" class="md:hidden z-10 p-2 text-slate-300 hover:text-white focus:outline-none">
+        <svg id="icon-bars" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
     </div>
-  </nav>
+
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-slate-950 border-b border-white/10 md:hidden hidden flex-col p-4 shadow-2xl">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'home' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'home' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Home</a>
+            <a href="{% url 'features' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'features' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Features</a>
+            <a href="{% url 'pricing' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'pricing' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Pricing</a>
+            <a href="{% url 'about' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'about' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">About Us</a>
+            <a href="{% url 'support' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'support' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Support</a>
+            
+            <div class="h-px w-full bg-white/10 my-2"></div>
+            
+            <a href="{% url 'dashboard:index' %}" class="block py-3 px-4 rounded-lg text-sm font-bold bg-indigo-600 text-white text-center">
+                Go to Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="block py-3 px-4 rounded-lg text-sm text-center text-slate-300 hover:text-white hover:bg-white/5">Sign In</a>
+            <a href="{% url 'accounts:signup' %}" class="block py-3 px-4 rounded-lg text-sm text-center font-bold bg-white text-slate-950 mt-2">Get Started</a>
+        {% endif %}
+    </div>
+
+</nav>
+
+<script>
+    // Mobile Menu Toggle Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const iconBars = document.getElementById('icon-bars');
+        const iconClose = document.getElementById('icon-close');
+
+        btn.addEventListener('click', function() {
+            // Toggle Visibility
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                // Switch Icons
+                iconBars.classList.add('hidden');
+                iconClose.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                // Switch Icons
+                iconBars.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+            }
+        });
+    });
+</script>

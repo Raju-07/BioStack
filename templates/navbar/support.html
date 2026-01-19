@@ -87,7 +87,7 @@
                 <p class="text-slate-400">Have a suggestion? Found a bug? We read every message.</p>
             </div>
 
-            <form method="POST" action="{% url 'profiles:support' %}">
+            <form method="POST" action="{% url 'support' %}">
                 {% csrf_token %}
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

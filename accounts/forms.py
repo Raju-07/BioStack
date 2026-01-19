@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate
 
-from .models import User
+from .models import User,UserDetail
 
 
 class SignupForm(forms.ModelForm):
@@ -49,3 +49,21 @@ class LoginForm(forms.Form):
             cleaned_data["user"] = user
 
         return cleaned_data
+    
+
+class UserDetailForm(forms.ModelForm):
+    class Meta:
+        model = UserDetail
+        exclude = ('user',)
+        widgets = {
+            'dob': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Style all fields to match your dashboard theme
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'
+            })
