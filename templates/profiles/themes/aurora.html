@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.full_name|default:profile.slug }} | Aurora</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'glass-border': 'rgba(255, 255, 255, 0.2)',
+                        'glass-bg': 'rgba(255, 255, 255, 0.1)',
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
+
+        .aurora-gradient-text {
+            background: linear-gradient(45deg, #FF9A8B, #FF6A88, #FF99AC, #FFB2C1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba( 255, 255, 255, 0.1 );
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.15 );
+            backdrop-filter: blur( 12px );
+            -webkit-backdrop-filter: blur( 12px );
+            border-radius: 24px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans text-slate-800 relative overflow-x-hidden selection:bg-pink-200 selection:text-pink-900 bg-[#f0f2f5]">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 blur-[150px] opacity-60 mix-blend-multiply animate-blob"></div>
+        <div class="absolute -bottom-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-r from-yellow-200 via-red-200 to-pink-300 blur-[150px] opacity-60 mix-blend-multiply animate-blob animation-delay-2000"></div>
+        <div class="absolute top-[20%] left-[30%] w-[60%] h-[60%] rounded-full bg-gradient-to-r from-green-200 via-cyan-200 to-blue-300 blur-[150px] opacity-60 mix-blend-multiply animate-blob animation-delay-4000"></div>
+    </div>
+
+    <main class="relative z-10 max-w-5xl mx-auto px-6 py-20">
+
+        <header class="text-center mb-20">
+            
+            <div class="relative mx-auto w-40 h-40 mb-8 group">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-400 to-indigo-500 blur-xl opacity-70 group-hover:opacity-100 transition duration-500 scale-95 group-hover:scale-110"></div>
+                
+                <div class="w-full h-full rounded-full overflow-hidden border-4 border-white/50 shadow-2xl relative z-10">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover">
+                    {% elif profile.user.details.profile_image %}
+                        <img src="{{ profile.user.details.profile_image.url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-white/80 text-pink-500">
+                            <span class="text-6xl font-bold">
+                                {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
+                            </span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-4 text-slate-900">
+                {{ profile.full_name|default:profile.slug }}
+            </h1>
+            
+            {% if profile.bio %}
+            <p class="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
+                {{ profile.bio }}
+            </p>
+            {% endif %}
+        </header>
+
+        <div class="space-y-16">
+            
+            {% regroup sections by section_type as section_list %}
+
+            {% for group in section_list %}
+                <section>
+                    
+                    {% if group.grouper == 'ABOUT' %}
+                        {% for s in group.list %}
+                        <div class="glass-card p-10 text-center max-w-3xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-6 aurora-gradient-text inline-block">About Me</h2>
+                            <p class="text-lg leading-8 text-slate-700">
+                                {{ s.data.content }}
+                            </p>
+                        </div>
+                        {% endfor %}
+
+                    {% elif group.grouper == 'EXPERIENCE' %}
+                        <h2 class="text-3xl font-bold mb-8 text-center">Experience</h2>
+                        <div class="space-y-6 max-w-3xl mx-auto">
+                            {% for s in group.list %}
+                            <div class="glass-card p-8 relative group hover:border-pink-300/30 transition">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                                    <h3 class="text-xl font-bold text-slate-800">{{ s.data.position }}</h3>
+                                    <span class="text-sm font-medium text-pink-500 bg-pink-50 px-3 py-1 rounded-full">{{ s.data.start_date }} — {% if s.data.is_current %}Present{% else %}{{ s.data.end_date }}{% endif %}</span>
+                                </div>
+                                <p class="text-base font-medium text-indigo-600 mb-4">{{ s.title }}</p>
+                                <p class="text-slate-600 leading-relaxed">{{ s.data.content }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    {% elif group.grouper == 'PROJECTS' %}
+                        <h2 class="text-3xl font-bold mb-8 text-center">Selected Projects</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {% for s in group.list %}
+                            <div class="glass-card p-8 group hover:-translate-y-1 transition-all duration-300">
+                                <h3 class="text-2xl font-bold text-slate-800 mb-3">{{ s.title }}</h3>
+                                <p class="text-slate-600 leading-relaxed mb-6 line-clamp-3">
+                                    {{ s.data.content }}
+                                </p>
+                                <span class="text-sm font-bold text-pink-500 flex items-center gap-2">
+                                    View Project <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    {% elif group.grouper == 'SKILLS' %}
+                         <div class="text-center glass-card p-10 max-w-3xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-8 aurora-gradient-text inline-block">Expertise</h2>
+                            <div class="flex flex-wrap justify-center gap-3">
+                                {% for s in group.list %}
+                                <div class="px-6 py-3 bg-white/50 backdrop-blur-sm rounded-xl font-medium text-slate-700 border border-white/60 shadow-sm hover:shadow-md transition cursor-default">
+                                    {{ s.data.name }}
+                                    {% if s.data.level %}
+                                    <span class="ml-2 text-sm text-pink-500 opacity-70">({{ s.data.level }})</span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    {% elif group.grouper == 'PERSONAL' %}
+                        <div class="glass-card p-8 max-w-4xl mx-auto my-12">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                {% for s in group.list %}
+                                    {% if s.data.email %}
+                                    <div>
+                                        <span class="block text-xs text-pink-500 uppercase tracking-widest mb-2 font-bold">Contact</span>
+                                        <span class="text-sm font-medium">{{ s.data.email }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% if s.data.location %}
+                                    <div>
+                                        <span class="block text-xs text-pink-500 uppercase tracking-widest mb-2 font-bold">Based In</span>
+                                        <span class="text-sm font-medium">{{ s.data.location }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% if s.data.phone %}
+                                    <div>
+                                        <span class="block text-xs text-pink-500 uppercase tracking-widest mb-2 font-bold">Phone</span>
+                                        <span class="text-sm font-medium">{{ s.data.phone }}</span>
+                                    </div>
+                                    {% endif %}
+                                     {% if s.data.nationality %}
+                                    <div>
+                                        <span class="block text-xs text-pink-500 uppercase tracking-widest mb-2 font-bold">Nationality</span>
+                                        <span class="text-sm font-medium">{{ s.data.nationality }}</span>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    {% elif group.grouper == 'LINKS' %}
+                        <div class="flex flex-col md:flex-row flex-wrap justify-center gap-4">
+                            {% for s in group.list %}
+                            <a href="{{ s.data.url }}" target="_blank" class="px-8 py-4 glass-card hover:bg-white/60 transition duration-300 text-sm font-bold text-center min-w-[200px] text-slate-800 flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
+                                {{ s.title }} <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-70"></i>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </section>
+            {% endfor %}
+
+        </div>
+
+        <footer class="mt-32 text-center pb-10">
+            <p class="text-sm text-slate-500 font-medium">
+                © {{ profile.full_name|default:profile.slug }}. All rights reserved.
+            </p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
