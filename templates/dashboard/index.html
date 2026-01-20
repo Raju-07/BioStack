@@ -27,7 +27,7 @@
         </a>
         
         {% if profile and profile.slug %}
-            <a href="{% url 'profiles:public' profile.slug %}" target="_blank" class="flex-1 xl:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 group hover:-translate-y-0.5">
+            <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="flex-1 xl:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 group hover:-translate-y-0.5">
                 View Live Page
                 <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500 group-hover:text-white transition"></i>
             </a>

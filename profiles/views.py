@@ -6,11 +6,13 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth import get_user_model
 
 from .models import Profile, ProfileSection,Theme
 from .forms import ProfileForm, ProfileSectionForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
+
 
 @login_required
 def profile_list(request):
@@ -68,11 +70,12 @@ def set_active_profile(request, profile_id):
     request.session["active_profile_id"] = profile.id
     request.session.modified = True  # CRITICAL
 
-    return redirect(reverse("profiles:dashboard"))
+    messages.success(request,f'Profile changed')
+    return redirect(reverse("profiles:list"))
 
 
 @login_required
-def profile_dashboard(request):
+def theme_store(request):
     profile = get_active_profile(request)
 
     if not profile:
@@ -111,7 +114,7 @@ def update_theme(request):
     profile.save()
 
     messages.success(request,f"Theme updated to {theme.name}")
-    return redirect("profiles:dashboard")
+    return redirect("profiles:themes")
 
 
 @login_required
@@ -154,63 +157,73 @@ def section_list_create(request):
     sections = profile.sections.all()
 
     if request.method == "POST":
-        # First, bind the data to a generic form to check the 'section_type'
-        form = ProfileSectionForm(request.POST)
+        # Bind the form initially
+        form = ProfileSectionForm(request.POST, request.FILES)
         
         if form.is_valid():
             section_type = form.cleaned_data.get("section_type")
 
-            # --- SINGLETON LOGIC (About / Personal) ---
-            # If the user is trying to add ABOUT or PERSONAL, check if it already exists.
+            # --- 1. IMAGE HANDLING (Profile Level) ---
+            if section_type == 'PERSONAL':
+                uploaded_image = request.FILES.get('profile_image')
+                if uploaded_image:
+                    profile.profile_image = uploaded_image
+                    profile.save()
+
+            # --- 2. DETERMINE IF UPDATE OR CREATE ---
+            existing_section = None
             if section_type in ['ABOUT', 'PERSONAL']:
                 existing_section = profile.sections.filter(section_type=section_type).first()
+            
+            # --- 3. EXECUTE LOGIC ---
+            if existing_section:
+                # === UPDATE PATH ===
+                # Re-bind form to the existing instance
+                form = ProfileSectionForm(request.POST, request.FILES, instance=existing_section)
                 
-                if existing_section:
-                    # UPDATE EXISTING: Re-bind the form with the existing instance
-                    form = ProfileSectionForm(request.POST, instance=existing_section)
-                    if form.is_valid():
-                        section = form.save(commit=False)
-                        # Profile is already attached to existing_section, but good to be safe
-                        section.save()
-                        messages.success(request, f"Updated your {section_type.lower()} section.")
-                        return redirect("profiles:sections")
+                if form.is_valid():
+                    section = form.save(commit=False)
+                    section.save()
+                    messages.success(request, f"Updated your {section_type.lower()} section.")
+                    return redirect("profiles:sections")
+                
+                # If form is INVALID, we do nothing here. 
+                # The code falls through to the 'render' at the bottom, which displays the errors.
 
-            # --- CREATE NEW LOGIC (Skills, Links, or first-time About) ---
-            section = form.save(commit=False)
-            section.profile = profile  # <--- CRITICAL: Link to the profile
+            else:
+                # === CREATE PATH ===
+                # Only run this if we are NOT updating an existing section
+                section = form.save(commit=False)
+                section.profile = profile
 
-            # Final safety check for Title (in case Form logic missed it)
-            if not section.title:
-                if section_type == 'ABOUT':
-                    section.title = "About Me"
-                elif section_type == 'PERSONAL':
-                    section.title = "Personal Details"
-                elif section_type == 'SKILLS':
-                    # Try to grab skill name from the form data payload if possible, else generic
-                    section.title = form.cleaned_data.get('skill_name', 'Skill') 
-                else:
-                    section.title = "Untitled Section"
+                # Title Logic
+                if not section.title:
+                    if section_type == 'ABOUT':
+                        section.title = "About Me"
+                    elif section_type == 'PERSONAL':
+                        section.title = "Personal Details"
+                    elif section_type == 'SKILLS':
+                        section.title = form.cleaned_data.get('skill_name', 'Skill') 
+                    else:
+                        section.title = "Untitled Section"
 
-            section.save()
-            messages.success(request, "Section added successfully.")
-            return redirect("profiles:sections")
+                section.save()
+                messages.success(request, "Section added successfully.")
+                return redirect("profiles:sections")
         
         else:
-            # --- DEBUGGING ---
-            # If the form is invalid, this prints the exact reason to your Visual Studio Code terminal.
             print("❌ Form Validation Failed:", form.errors)
             messages.error(request, "Please check the form for errors.")
 
     else:
-        # --- NEW LOGIC: Pre-fill from Global User Details ---
+        # Pre-fill logic (same as before)
         initial_data = {}
         try:
-            # Check if the user has global details saved (from the Accounts app)
             if hasattr(request.user, 'details'):
                 user_details = request.user.details
                 initial_data = {
                     'phone': user_details.phone,
-                    'email': request.user.email, # Always use account email
+                    'email': request.user.email,
                     'dob': user_details.dob,
                     'gender': user_details.gender,
                     'marital_status': user_details.marital_status,
@@ -219,10 +232,8 @@ def section_list_create(request):
                     'location': user_details.location,
                 }
         except Exception:
-            # If UserDetail table doesn't exist yet or other error, just ignore
             pass
 
-        # Initialize the form with this data (if any)
         form = ProfileSectionForm(initial=initial_data)
 
     return render(
@@ -245,9 +256,10 @@ def delete_section(request, section_id):
     messages.success(request, "Section removed successfully.")
     return redirect("profiles:sections")
 
-
-def public_profile_view(request, slug):
-    profile = get_object_or_404(Profile, slug=slug)
+User = get_user_model()
+def public_profile_view(request,username, profile_slug):
+    user_obj = get_object_or_404(User,username=username)
+    profile = get_object_or_404(Profile, user = user_obj, slug=profile_slug)
 
     if profile.visibility == Profile.PRIVATE:
         raise Http404()

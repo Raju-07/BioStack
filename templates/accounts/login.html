@@ -30,17 +30,10 @@
   </script>
 
   <style>
-    /* DJANGO FORM OVERRIDES 
-      Since {{ form.as_p }} renders plain HTML, we use these styles 
-      to force the inputs to look like modern Tailwind components.
-    */
-    
-    /* Spacing between fields */
     form p {
       margin-bottom: 1.5rem;
     }
 
-    /* Labels */
     form label {
       display: block;
       font-size: 0.875rem; /* text-sm */
@@ -55,10 +48,10 @@
     form input[type="email"],
     form input[type="number"] {
       width: 100%;
-      background-color: #1e293b; /* bg-slate-800 */
-      border: 1px solid #334155; /* border-slate-700 */
+      background-color: #1e293b; 
+      border: 1px solid #334155; 
       color: white;
-      border-radius: 0.75rem; /* rounded-xl */
+      border-radius: 0.75rem; 
       padding: 0.75rem 1rem;
       font-size: 1rem;
       transition: all 0.2s;
@@ -67,12 +60,12 @@
 
     /* Input Focus State */
     form input:focus {
-      border-color: #6366f1; /* indigo-500 */
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); /* ring */
-      background-color: #0f172a; /* darker bg on focus */
+      border-color: #6366f1; 
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
+      background-color: #0f172a; 
     }
 
-    /* Help text (if any) */
+    /* Help text */
     .helptext {
       font-size: 0.75rem;
       color: #64748b;
@@ -82,7 +75,7 @@
   </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center relative overflow-hidden">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center relative overflow-y-auto py-10">
 
   <div class="fixed inset-0 pointer-events-none z-0">
     <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>

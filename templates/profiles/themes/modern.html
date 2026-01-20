@@ -57,27 +57,39 @@
   <main class="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center gap-16">
 
     <header class="text-center w-full max-w-3xl fade-up" style="animation-delay: 0ms;">
-      <div class="relative mx-auto w-32 h-32 mb-6 group cursor-default">
-        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-        <div class="relative w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
-          <span class="text-4xl font-bold text-white tracking-wider">
-            {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
-          </span>
-        </div>
-      </div>
+        <div class="relative mx-auto w-32 h-32 mb-6 group cursor-default">
+            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
+            
+            <div class="relative w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
+                
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" 
+                        alt="{{ profile.full_name }}" 
+                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
 
-      <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
-        {{ profile.full_name|default:profile.slug }}
-      </h1>
-       {% if profile.bio %}
-        <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">
-          {{ profile.bio }}
-        </p>
-      {% endif %}
-      
-      {% if not sections and profile.bio %}
-        <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">{{ profile.bio }}</p>
-      {% endif %}
+                {% elif profile.user.details.profile_image %}
+                    <img src="{{ profile.user.details.profile_image.url }}" 
+                        alt="{{ profile.full_name }}" 
+                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+
+                {% else %}
+                    <span class="text-4xl font-bold text-white tracking-wider select-none">
+                        {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+            {{ profile.full_name|default:profile.slug }}
+        </h1>
+        
+        {% if profile.bio %}
+            <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">
+            {{ profile.bio }}
+            </p>
+        {% endif %}
+    
     </header>
 
     <div class="w-full max-w-4xl space-y-12">

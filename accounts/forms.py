@@ -5,12 +5,14 @@ from .models import User,UserDetail
 
 
 class SignupForm(forms.ModelForm):
+
+    username = forms.CharField(max_length=150,widget=forms.TextInput(attrs={'placeholder': 'Enter unique username'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}))
 
     class Meta:
         model = User
-        fields = ("email",)
+        fields = ("username", "email",)
         widgets = {
             'email': forms.EmailInput(attrs={'placeholder': 'Enter your Email'}),
         }
@@ -24,6 +26,12 @@ class SignupForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match")
 
         return cleaned_data
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
     def save(self, commit=True):
         user = super().save(commit=False)

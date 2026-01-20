@@ -14,7 +14,7 @@
         </div>
         
         {% if profile.slug %}
-        <a href="{% url 'profiles:public' profile.slug %}" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold text-sm transition shadow-lg shadow-indigo-500/25 flex items-center gap-2 group">
+        <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold text-sm transition shadow-lg shadow-indigo-500/25 flex items-center gap-2 group">
             <i class="fa-regular fa-eye group-hover:scale-110 transition-transform"></i>
             <span>View Live Profile</span>
         </a>

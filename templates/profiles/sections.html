@@ -35,7 +35,7 @@
         <h2 class="text-3xl font-bold text-white">Profile Sections</h2>
         <p class="text-slate-400 mt-2">Create content and organize your profile structure.</p>
       </div>
-      <a href="{% url 'profiles:dashboard' %}" class="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5 text-sm text-slate-300 transition">
+      <a href="{% url 'profiles:create' %}" class="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5 text-sm text-slate-300 transition">
         <i class="fa-solid fa-arrow-left"></i> Back
       </a>
     </div>
@@ -60,7 +60,7 @@
             Add New Section
         </h3>
 
-        <form method="post" id="section-form">
+        <form method="post" id="section-form" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="grid gap-5">
             
@@ -116,42 +116,77 @@
                 </div>
             </div>
 
-            <div id="group-personal" class="hidden space-y-5 p-5 bg-slate-800/50 rounded-xl border border-white/5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.phone.label }}</label>
-                        {{ form.phone }}
-                    </div>
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.email.label }}</label>
-                        {{ form.email }}
-                    </div>
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.dob.label }}</label>
-                        {{ form.dob }}
-                    </div>
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.gender.label }}</label>
-                        {{ form.gender }}
-                    </div>
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.marital_status.label }}</label>
-                        {{ form.marital_status }}
-                    </div>
-                    <div class="django-field-group">
-                        <label class="block text-sm text-slate-400 mb-2">{{ form.nationality.label }}</label>
-                        {{ form.nationality }}
-                    </div>
+        <div id="group-personal" class="hidden space-y-5 p-5 bg-slate-800/50 rounded-xl border border-white/5">
+            
+            <div class="flex items-center gap-6 mb-6 pb-6 border-b border-white/5">
+                <div class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-500/30 bg-slate-900 shadow-lg">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover" id="preview-image">
+                    
+                    {% elif request.user.details.profile_image %}
+                        <img src="{{ request.user.details.profile_image.url }}" class="w-full h-full object-cover opacity-80" id="preview-image">
+                    
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-500 bg-slate-800" id="preview-placeholder">
+                            <i class="fa-solid fa-user text-3xl"></i>
+                        </div>
+                        <img src="" class="hidden w-full h-full object-cover" id="preview-image">
+                    {% endif %}
+
                 </div>
-                <div class="django-field-group">
-                    <label class="block text-sm text-slate-400 mb-2">{{ form.address.label }}</label>
-                    {{ form.address }}
-                </div>
-                 <div class="django-field-group">
-                    <label class="block text-sm text-slate-400 mb-2">{{ form.location.label }}</label>
-                    {{ form.location }}
+
+                <div class="flex-1">
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Profile Photo</label>
+                    <div class="flex items-center gap-4">
+                        <label for="id_profile_image" class="cursor-pointer px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition border border-white/10 hover:border-white/30 flex items-center gap-2">
+                            <i class="fa-solid fa-camera"></i> Choose Image
+                        </label>
+                        <span id="file-name" class="text-xs text-slate-500 italic">No file chosen</span>
+                        
+                        {{ form.profile_image }} 
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">
+                        Supported formats: JPG, PNG. Max size: 5MB.
+                    </p>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.email.label }}</label>
+                    {{ form.email }}
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.dob.label }}</label>
+                    {{ form.dob }}
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.gender.label }}</label>
+                    {{ form.gender }}
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.marital_status.label }}</label>
+                    {{ form.marital_status }}
+                </div>
+                <div class="django-field-group">
+                    <label class="block text-sm text-slate-400 mb-2">{{ form.nationality.label }}</label>
+                    {{ form.nationality }}
+                </div>
+            </div>
+            
+            <div class="django-field-group">
+                <label class="block text-sm text-slate-400 mb-2">{{ form.address.label }}</label>
+                {{ form.address }}
+            </div>
+            <div class="django-field-group">
+                <label class="block text-sm text-slate-400 mb-2">{{ form.location.label }}</label>
+                {{ form.location }}
+            </div>
+        </div>
 
             <div id="group-content" class="django-field-group">
                 <label id="label-content" class="block text-sm text-slate-400 mb-2">Description</label>
@@ -416,6 +451,31 @@
 
         if(typeSelect) { typeSelect.addEventListener('change', updateLayout); updateLayout(); }
     });
+
+    // Image Upload Preview Logic
+    const imageInput = document.getElementById('id_profile_image');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // 1. Update the file name text
+                document.getElementById('file-name').textContent = file.name;
+
+                // 2. Read and Preview the image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview-image');
+                    const placeholder = document.getElementById('preview-placeholder');
+                    
+                    // Show image, hide placeholder
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    if(placeholder) placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
   </script>
 
 {% endblock %}

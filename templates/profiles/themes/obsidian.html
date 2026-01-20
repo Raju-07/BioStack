@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.full_name|default:profile.slug }} | Obsidian</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            100: '#F9F1D8',
+                            200: '#F0E0AA',
+                            300: '#E6CC77',
+                            400: '#D4AF37', # Classic Gold
+                            500: '#AA8C2C',
+                            600: '#806921',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        .gold-gradient-text {
+            background: linear-gradient(to right, #F9F1D8, #D4AF37, #F9F1D8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+    </style>
+</head>
+<body class="bg-[#050505] text-slate-300 min-h-screen relative overflow-x-hidden selection:bg-gold-400 selection:text-black">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-20 -left-20 w-96 h-96 bg-gold-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute top-1/3 right-0 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-0 left-1/4 w-full h-64 bg-gradient-to-t from-gold-500/5 to-transparent opacity-50"></div>
+    </div>
+
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-20">
+
+        <header class="text-center mb-24 animate-slide-up" style="animation-delay: 0.1s;">
+            
+            <div class="relative mx-auto w-40 h-40 mb-8 group">
+                <div class="absolute inset-0 rounded-full border border-gold-400/30 scale-110 group-hover:scale-125 transition duration-700"></div>
+                <div class="absolute inset-0 rounded-full border border-gold-400/10 scale-125 group-hover:scale-150 transition duration-1000"></div>
+                
+                <div class="w-full h-full rounded-full overflow-hidden border-2 border-gold-400 shadow-[0_0_30px_rgba(212,175,55,0.2)] bg-black relative z-10">
+                    
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    
+                    {% elif profile.user.details.profile_image %}
+                        <img src="{{ profile.user.details.profile_image.url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-110">
+                    
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-zinc-900 text-gold-400">
+                            <span class="text-5xl font-serif italic font-bold">
+                                {{ profile.full_name|default:profile.slug|slice:":1"|upper }}
+                            </span>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-serif font-bold tracking-tight mb-6 text-white">
+                {{ profile.full_name|default:profile.slug }}
+            </h1>
+            
+            {% if profile.bio %}
+            <div class="flex justify-center mb-8">
+                <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+            </div>
+            <p class="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed italic">
+                {{ profile.bio }}
+            </p>
+            {% endif %}
+        </header>
+
+        <div class="space-y-24">
+            
+            {% regroup sections by section_type as section_list %}
+
+            {% for group in section_list %}
+                <section class="animate-slide-up" style="animation-delay: {{ forloop.counter0|add:2 }}00ms;">
+                    
+                    {% if group.grouper == 'ABOUT' %}
+                        {% for s in group.list %}
+                        <div class="text-center max-w-2xl mx-auto">
+                            <span class="text-xs font-bold text-gold-400 tracking-[0.2em] uppercase mb-4 block">About</span>
+                            <p class="text-lg md:text-xl leading-8 text-slate-300 font-light">
+                                {{ s.data.content }}
+                            </p>
+                        </div>
+                        {% endfor %}
+
+                    {% elif group.grouper == 'EXPERIENCE' %}
+                        <div class="flex items-center gap-4 mb-10">
+                            <h2 class="text-3xl font-serif text-white">Experience</h2>
+                            <div class="h-[1px] flex-1 bg-white/10"></div>
+                        </div>
+                        <div class="border-l border-white/10 ml-3 space-y-12">
+                            {% for s in group.list %}
+                            <div class="relative pl-10 group">
+                                <div class="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full bg-zinc-800 border border-gold-500 group-hover:bg-gold-500 transition duration-300"></div>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
+                                    <h3 class="text-xl font-bold text-white group-hover:text-gold-300 transition">{{ s.data.position }}</h3>
+                                    <span class="text-sm font-mono text-slate-500">{{ s.data.start_date }} — {% if s.data.is_current %}Present{% else %}{{ s.data.end_date }}{% endif %}</span>
+                                </div>
+                                <p class="text-base text-gold-400/80 mb-3 font-serif italic">{{ s.title }}</p>
+                                <p class="text-slate-400 leading-relaxed max-w-2xl text-sm">{{ s.data.content }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    {% elif group.grouper == 'PROJECTS' %}
+                        <div class="flex items-center gap-4 mb-10">
+                            <h2 class="text-3xl font-serif text-white">Selected Works</h2>
+                            <div class="h-[1px] flex-1 bg-white/10"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {% for s in group.list %}
+                            <div class="group relative bg-zinc-900/40 border border-white/5 p-8 hover:bg-zinc-900/60 transition duration-500">
+                                <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold-500/50 to-transparent opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                                <h3 class="text-2xl font-serif text-white mb-3 group-hover:text-gold-200 transition">{{ s.title }}</h3>
+                                <p class="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                                    {{ s.data.content }}
+                                </p>
+                                <span class="text-xs font-bold text-gold-500 uppercase tracking-widest flex items-center gap-2">
+                                    View Project <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition"></i>
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    {% elif group.grouper == 'SKILLS' %}
+                         <div class="text-center">
+                            <span class="text-xs font-bold text-gold-400 tracking-[0.2em] uppercase mb-8 block">Expertise</span>
+                            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 max-w-3xl mx-auto">
+                                {% for s in group.list %}
+                                <div class="group flex items-center gap-2">
+                                    <span class="text-lg md:text-2xl text-slate-400 font-serif italic group-hover:text-white transition cursor-default">
+                                        {{ s.data.name }}
+                                    </span>
+                                    <span class="text-[10px] align-top text-gold-500 opacity-0 group-hover:opacity-100 transition -translate-y-2">
+                                        {{ s.data.level }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    {% elif group.grouper == 'PERSONAL' %}
+                        <div class="border-t border-b border-white/10 py-12 my-12">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                {% for s in group.list %}
+                                    {% if s.data.email %}
+                                    <div>
+                                        <span class="block text-xs text-gold-500 uppercase tracking-widest mb-2">Contact</span>
+                                        <span class="text-sm text-slate-300">{{ s.data.email }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% if s.data.location %}
+                                    <div>
+                                        <span class="block text-xs text-gold-500 uppercase tracking-widest mb-2">Based In</span>
+                                        <span class="text-sm text-slate-300">{{ s.data.location }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% if s.data.phone %}
+                                    <div>
+                                        <span class="block text-xs text-gold-500 uppercase tracking-widest mb-2">Phone</span>
+                                        <span class="text-sm text-slate-300">{{ s.data.phone }}</span>
+                                    </div>
+                                    {% endif %}
+                                     {% if s.data.nationality %}
+                                    <div>
+                                        <span class="block text-xs text-gold-500 uppercase tracking-widest mb-2">Nationality</span>
+                                        <span class="text-sm text-slate-300">{{ s.data.nationality }}</span>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    {% elif group.grouper == 'LINKS' %}
+                        <div class="flex flex-col md:flex-row flex-wrap justify-center gap-4">
+                            {% for s in group.list %}
+                            <a href="{{ s.data.url }}" target="_blank" class="px-8 py-4 border border-white/20 hover:border-gold-400 text-slate-300 hover:text-gold-200 transition duration-300 uppercase tracking-widest text-xs font-bold text-center min-w-[200px]">
+                                {{ s.title }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </section>
+            {% endfor %}
+
+        </div>
+
+        <footer class="mt-32 text-center pb-10">
+            <p class="text-xs text-slate-600 uppercase tracking-widest font-bold">
+                Designed with <span class="text-gold-500">BioStack Obsidian</span>
+            </p>
+        </footer>
+
+    </main>
+
+</body>
+</html>

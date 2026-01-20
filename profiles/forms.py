@@ -63,6 +63,9 @@ class ProfileSectionForm(forms.ModelForm):
         label="Proficiency"
     )
 
+    profile_image = forms.ImageField(required=False,label="Profile Photo",
+        widget=forms.FileInput(attrs={'class': 'hidden', 'id': 'id_profile_image'}))
+
     # --- 5. Personal Details Fields (UPDATED) ---
     phone = forms.CharField(required=False, label="Phone Number", max_length=50)
     email = forms.EmailField(required=False, label="Email Address")

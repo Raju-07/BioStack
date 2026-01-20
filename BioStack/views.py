@@ -17,7 +17,7 @@ def support(request):
         # Pre-fill email if user is logged in
         initial_data = {}
         if request.user.is_authenticated:
-            initial_data = {'email': request.user.email, }
+            initial_data = {'name':request.user.details.full_name,'email': request.user.email, }
         form = FeedbackForm(initial=initial_data)
 
     return render(request, 'navbar/support.html', {'form': form})

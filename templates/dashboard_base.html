@@ -74,13 +74,13 @@
         Switch Profile
       </a>
       
-      <a href="{% url 'profiles:list' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'list' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
-        <i class="fa-solid fa-theme w-5 text-center {% if request.resolver_match.url_name != 'list' %}group-hover:text-purple-400 transition{% endif %}"></i>
+      <a href="{% url 'profiles:themes' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'themes' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
+        <i class="fa-solid fa-store w-5 text-center {% if request.resolver_match.url_name != 'themes' %}group-hover:text-purple-400 transition{% endif %}"></i>
         Theme Store
       </a>
 
-      <a href="{% url 'accounts:settings' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'settings' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
-        <i class="fa-solid fa-user-gear w-5 text-center {% if request.resolver_match.url_name != 'settings' %}group-hover:text-pink-400 transition{% endif %}"></i>
+      <a href="{% url 'accounts:userdetails' %}" class="flex items-center gap-3 px-4 py-3.5 {% if request.resolver_match.url_name == 'userdetails' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-xl font-medium border transition group">
+        <i class="fa-solid fa-user-gear w-5 text-center {% if request.resolver_match.url_name != 'userdetails' %}group-hover:text-pink-400 transition{% endif %}"></i>
         Personal Information
       </a>
     </nav>
@@ -161,8 +161,8 @@
     {% endif %}
     <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0F172A]/90 backdrop-blur sticky top-0 z-30">
       <div class="font-bold text-lg text-white flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-xs">
-            <i class="fa-solid fa-layer-group"></i>
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs">
+            <img src="{% static 'images/main-logo.png' %}" alt="BioStack Logo" class="w-8 h-8 rounded-lg object-contain shadow-lg shadow-indigo-500/20">
         </div>
         BioStack
       </div>

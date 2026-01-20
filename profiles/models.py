@@ -38,10 +38,13 @@ class Profile(models.Model):
         related_name="profiles", 
     )
 
+# Profile Image 
+    profile_image = models.ImageField(upload_to="profile_images/",blank=True,null=True)
+
     full_name = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
 
-    slug = models.SlugField(unique=True, max_length=150)
+    slug = models.SlugField(max_length=150)
     visibility = models.CharField(
         max_length=10,
         choices=VISIBILITY_CHOICES,
@@ -53,15 +56,17 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [ models.UniqueConstraint(fields=['user', 'slug'],name='unique_user_profile_slug')]
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            base = slugify(self.user.email.split("@")[0])
-            slug = base
+            self.slug = slugify(self.full_name or "profile")
+            base = self.slug
             counter = 1
-            while Profile.objects.filter(slug=slug).exists():
-                slug = f"{base}-{counter}"
+            while Profile.objects.filter(user=self.user,slug = self.slug).exists():
+                self.slug = f"{base}-{counter}"
                 counter += 1
-            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):

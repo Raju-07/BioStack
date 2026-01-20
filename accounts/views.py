@@ -45,11 +45,12 @@ def user_details(request):
         UserDetail.objects.create(user=request.user)
 
     if request.method == 'POST':
-        form = UserDetailForm(request.POST, instance=request.user.details)
+        form = UserDetailForm(request.POST, request.FILES, instance=request.user.details)
+        
         if form.is_valid():
             form.save()
             messages.success(request, "Global personal details updated successfully.")
-            return redirect('accounts:userdetails')
+            return redirect('accounts:userdetails') 
     else:
         form = UserDetailForm(instance=request.user.details)
 
