@@ -4,6 +4,15 @@
 {% block content %}
 
 <style>
+    /* Styling for Feedback Forms */
+    .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+
+
   /* Gentle floating animation for the whole mockup setup */
   .mockup-float { animation: float 6s ease-in-out infinite; }
   @keyframes float {
@@ -310,4 +319,77 @@
     </div>
 </section>
 
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="max-w-3xl mx-auto fade-in-up delay-300 mb-6" id="feedback-form">
+            <div class="relative bg-[#0F172A]/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden">
+                
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-white mb-3">Send us Feedback</h2>
+                    <p class="text-slate-400">Have a suggestion? Found a bug? We read every message.</p>
+                </div>
+
+                <form method="POST" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-6">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Topic</label>
+                        <div class="relative">
+                            {{ form.subject }}
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-8">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Message</label>
+                        {{ form.message }}
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 group">
+                        <span>Submit Feedback</span>
+                        <i class="fa-solid fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition"></i>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    {% if messages %}
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center gap-3 animate-slide-in">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <style>
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .animate-slide-in { animation: slideIn 0.7s ease-out forwards; }
+    </style>
+    <script>
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.animate-slide-in');
+            toasts.forEach(t => t.style.display = 'none');
+        }, 4000);
+    </script>
+    {% endif %}
+</section>
 {% endblock content %}

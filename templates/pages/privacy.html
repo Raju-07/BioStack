@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy | BioStack{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen">
+    
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-6 py-20">
+        
+        <div class="text-center mb-16 fade-in-up">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Privacy Policy</h1>
+            <p class="text-slate-400">
+                Simple. Transparent. Secure. <br>
+                Last updated: <span class="text-indigo-400">January 20, 2026</span>
+            </p>
+        </div>
+
+        <div class="space-y-6 fade-in-up delay-100">
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl">
+                <p class="text-lg text-slate-300 leading-relaxed">
+                    At BioStack, we believe your data belongs to you. We only collect what is strictly necessary to provide our service, and we never sell your personal information to third parties.
+                </p>
+            </div>
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-database text-sm"></i></span>
+                    Data We Collect
+                </h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-4">
+                        <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                        <div>
+                            <strong class="text-slate-200 block text-sm">Account Info</strong>
+                            <p class="text-slate-400 text-sm">Your name, email address, and password hash.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                        <div>
+                            <strong class="text-slate-200 block text-sm">Profile Content</strong>
+                            <p class="text-slate-400 text-sm">Images, links, and text you voluntarily upload to your BioStack.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                        <div>
+                            <strong class="text-slate-200 block text-sm">Usage Data</strong>
+                            <p class="text-slate-400 text-sm">Anonymous analytics on how pages are viewed (to show you your stats).</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400"><i class="fa-solid fa-shield-halved text-sm"></i></span>
+                    Your Rights
+                </h2>
+                <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                    You have total control over your digital footprint. You can edit or delete your profile at any time directly from your dashboard.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl bg-white/5 border border-white/5 text-sm text-slate-300">
+                        <i class="fa-solid fa-download text-indigo-400 mr-2"></i> Request your data
+                    </div>
+                    <div class="p-4 rounded-xl bg-white/5 border border-white/5 text-sm text-slate-300">
+                        <i class="fa-solid fa-trash text-red-400 mr-2"></i> Delete account
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-8">
+                <p class="text-slate-500 text-sm mb-2">Questions about privacy?</p>
+                <a href="mailto:privacy@biostack.com" class="text-indigo-400 font-bold hover:text-white transition">privacy@biostack.com</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
