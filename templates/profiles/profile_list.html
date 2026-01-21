@@ -1,19 +1,83 @@
-<h2>My Profiles</h2>
+{% extends 'dashboard_base.html' %}
+{% load static %}
 
-<ul>
-  {% for profile in profiles %}
-    <li>
-      <strong>{{ profile.slug }}</strong>
+{% block title %}My Profiles | BioStack{% endblock %}
 
-      {% if profile.id == active_profile_id %}
-        <span style="color: green;">(Active)</span>
-      {% else %}
-        <a href="{% url 'profiles:set_active' profile.id %}">
-          Set Active
-        </a>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+{% block dashboard_content %}
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 fade-in-up">
+      <div>
+        <h1 class="text-3xl font-bold text-white tracking-tight">My Profiles</h1>
+        <p class="text-slate-400 mt-2">Manage your different identities. Switch between them instantly.</p>
+      </div>
+      
+      <a href="{% url 'profiles:themes' %}" class="text-sm font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
 
-<a href="{% url 'profiles:create' %}">Create new profile</a>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in-up delay-100">
+
+      {% for profile in profiles %}
+        {% if profile.id == active_profile_id %}
+          
+          <div class="relative group p-6 rounded-2xl bg-slate-900 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] transition hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]">
+            <div class="absolute top-4 right-4 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Active
+            </div>
+            
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white mb-4">
+               <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-1">{{ profile.slug }}</h3>
+            <p class="text-sm text-emerald-400/80 mb-6">Currently set in Edit mode</p>
+
+            <div class="w-full py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center rounded-lg font-medium text-sm cursor-default">
+              Selected
+            </div>
+          </div>
+
+        {% else %}
+
+          <div class="relative group p-6 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-indigo-500/30 hover:bg-slate-900 transition duration-300 flex flex-col h-full">
+            
+            <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition mb-4">
+              <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-200 group-hover:text-white transition mb-1">{{ profile.slug }}</h3>
+            <p class="text-sm text-slate-500 group-hover:text-slate-400 transition mb-6">Visible to public</p>
+
+            <div class="mt-auto flex gap-3">
+                <a href="{% url 'profiles:set_active' profile.id %}" class="flex-1 py-2.5 bg-white/5 hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-slate-300 hover:text-white text-center rounded-lg font-medium text-sm transition duration-200">
+                  Set Active
+                </a>
+
+                <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Are you sure?');">
+                    {% csrf_token %}
+                    <button type="submit" class="p-2.5 h-full bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-lg transition duration-200 flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+          </div>
+
+        {% endif %}
+      {% endfor %}
+
+      <a href="{% url 'profiles:create' %}" class="group flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-slate-700 hover:border-indigo-500 hover:bg-indigo-500/5 transition duration-300 min-h-[240px]">
+        <div class="w-14 h-14 rounded-full bg-slate-800 group-hover:bg-indigo-500 text-slate-400 group-hover:text-white flex items-center justify-center transition duration-300 mb-4">
+          <i class="fa-solid fa-plus text-xl"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-300 group-hover:text-white transition">Create Profile</h3>
+        <p class="text-sm text-slate-500 text-center mt-2 group-hover:text-indigo-300 transition">Add a new identity</p>
+      </a>
+
+    </div>
+
+{% endblock %}

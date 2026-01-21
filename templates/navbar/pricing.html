@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing | BioStack{% endblock title %}
+{% block content %}
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 reveal">Simple Pricing</h2>
+    <p class="text-center text-slate-400 mb-16 reveal">Start for free, upgrade when you go pro.</p>
+
+    <div class="grid md:grid-cols-3 gap-8 items-center">
+      
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Starter</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Public profile URL</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Basic modules</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Standard themes</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
+        </div>
+
+        <div class="relative p-8 rounded-3xl bg-slate-900 border border-indigo-500/50 shadow-2xl shadow-indigo-500/20 reveal scale-105 z-10">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-xs font-bold text-white uppercase tracking-wider">
+                Most Popular
+            </div>
+            <h3 class="text-lg font-medium text-indigo-300 mb-2">Professional</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹299<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-300">
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Everything in Free</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> <strong>Custom Domain</strong> (.com)</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Advanced Analytics</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Remove Branding</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Start Free Trial</a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Team</h3>
+            <div class="text-4xl font-bold text-white mb-6">Custom</div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All Pro Features</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Unified Billing</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Admin Dashboard</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Contact Sales</a>
+        </div>
+
+    </div>
+  </section>
+{% endblock content %}

@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    /* Styling for Feedback Forms */
+    .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+
+
+  /* Gentle floating animation for the whole mockup setup */
+  .mockup-float { animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+  }
+
+  /* Custom scrollbar for the mockups so they look clean */
+  .mockup-scroll::-webkit-scrollbar { width: 4px; }
+  .mockup-scroll::-webkit-scrollbar-track { background: transparent; }
+  .mockup-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+</style>
+
+<section class="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-24 text-center reveal overflow-hidden">
+    
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-8 animate-float">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+      </span>
+      v2.0 is now live
+    </div>
+
+    <h1 class="text-5xl sm:text-7xl font-bold tracking-tight mb-6">
+      Your professional identity,<br />
+      <span class="bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+        reimagined.
+      </span>
+    </h1>
+
+    <p class="mt-6 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      Stop sending static resumes. Create a dynamic, living profile that evolves with your career. 
+      Share once. Update forever.
+    </p>
+
+    <div class="mt-10 flex justify-center gap-4 flex-wrap mb-24">
+      <a href='{% url "profiles:create" %}' class="group relative px-8 py-4 rounded-xl bg-indigo-600 text-white font-semibold overflow-hidden transition-all hover:scale-105 shadow-lg shadow-indigo-500/30">
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+        <span class="relative">Create BioStack Free</span>
+      </a>
+      <a href="{% url 'templates' %}" class="px-8 py-4 rounded-xl border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition text-slate-300 hover:text-white">
+        View Demo Profile
+      </a>
+    </div>
+
+    <div class="relative mx-auto w-full max-w-5xl h-[600px] mt-16 perspective-1000">
+    
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80% ] h-[80%] bg-gradient-to-tr from-indigo-600/30 to-cyan-600/30 rounded-full blur-[120px] -z-10"></div>
+
+    <div class="relative w-full h-full mockup-float flex items-center justify-center">
+        
+        <div class="relative w-[70%] h-[450px] bg-[#0F172A] border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden transform -rotate-y-6 translate-x-10 translate-z-0 z-10">
+            <div class="h-8 bg-slate-800 flex items-center px-4 gap-2 border-b border-slate-700">
+                <div class="flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-red-400/60"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/60"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-green-400/60"></div>
+                </div>
+                <div class="flex-1 text-center">
+                    <div class="mx-auto w-1/2 h-5 bg-slate-900/50 rounded-md flex items-center justify-center text-[10px] text-slate-400 font-mono">
+                        <i class="fa-solid fa-lock text-[8px] mr-1"></i> biostack.dev/alex
+                    </div>
+                </div>
+            </div>
+            <div class="h-[calc(100%-32px)] overflow-y-auto mockup-scroll bg-[#020617]">
+                <div class="h-32 bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 relative">
+                     <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                </div>
+                
+                <div class="max-w-3xl mx-auto px-8 pb-12">
+                    <div class="flex flex-col md:flex-row gap-6 -mt-12 relative z-10">
+                        <div class="w-full md:w-1/3 flex flex-col">
+                            <div class="w-24 h-24 rounded-2xl border-4 border-[#020617] bg-slate-800 overflow-hidden shadow-xl mb-4">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AlexDev" class="w-full h-full object-cover">
+                            </div>
+                            <h1 class="text-2xl font-bold text-white">Alex Chen</h1>
+                            <p class="text-indigo-400 font-medium text-sm mb-2">Senior Frontend Engineer</p>
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4">Specializing in React, TypeScript, and building accessible UI systems. Open source contributor.</p>
+                            <div class="flex gap-2 flex-wrap mb-6">
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">React</span>
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">TypeScript</span>
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-slate-800 text-slate-300 border border-white/10">Next.js</span>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-slate-400"><i class="fa-brands fa-github"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-blue-400"><i class="fa-brands fa-twitter"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center text-pink-500"><i class="fa-brands fa-dribbble"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-2/3 pt-12 space-y-4">
+                            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Featured Projects</h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="group p-4 bg-slate-800/50 hover:bg-slate-800 border border-white/5 rounded-xl cursor-pointer transition">
+                                    <div class="h-24 bg-indigo-900/30 rounded-lg mb-3 overflow-hidden relative">
+                                        <div class="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center">↗</div>
+                                    </div>
+                                    <h3 class="text-white font-bold text-sm mb-1">E-commerce Dashboard</h3>
+                                    <p class="text-slate-400 text-xs">React & Tailwind Admin UI</p>
+                                </div>
+                                <div class="group p-4 bg-slate-800/50 hover:bg-slate-800 border border-white/5 rounded-xl cursor-pointer transition">
+                                    <div class="h-24 bg-emerald-900/30 rounded-lg mb-3 overflow-hidden relative">
+                                        <div class="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center">↗</div>
+                                    </div>
+                                    <h3 class="text-white font-bold text-sm mb-1">Analytics API</h3>
+                                    <p class="text-slate-400 text-xs">Node.js High-throughput service</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute right-[5%] w-[280px] h-[520px] bg-[#020617] border-[8px] border-slate-800 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden transform rotate-y-6 translate-z-10 z-20">
+            <div class="h-7 bg-slate-800 flex justify-center items-end pb-1 relative">
+                <div class="w-16 h-4 bg-black rounded-full absolute top-0"></div>
+                <div class="flex justify-between w-full px-4 text-[8px] text-slate-400 font-medium">
+                    <span>9:41</span>
+                    <div class="flex gap-1">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-[calc(100%-28px)] overflow-y-auto mockup-scroll bg-[#020617] pb-8">
+                <div class="h-24 bg-gradient-to-r from-indigo-900 to-purple-900 opacity-80"></div>
+                
+                <div class="px-4 -mt-12 flex flex-col items-center text-center relative z-10">
+                    <div class="w-24 h-24 rounded-full border-4 border-[#020617] bg-slate-800 overflow-hidden shadow-xl mb-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AlexDev" class="w-full h-full object-cover">
+                    </div>
+                    <h1 class="text-xl font-bold text-white">Alex Chen</h1>
+                    <p class="text-indigo-400 font-medium text-xs mb-2">Senior Frontend Engineer</p>
+                    <p class="text-slate-400 text-xs leading-snug mb-4 max-w-[200px]">Building scalable SaaS products. Python & React enthusiast.</p>
+
+                    <div class="flex gap-3 justify-center mb-6">
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-slate-300"><i class="fa-brands fa-github text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-blue-400"><i class="fa-brands fa-twitter text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-pink-500"><i class="fa-brands fa-dribbble text-sm"></i></div>
+                    </div>
+
+                    <div class="w-full space-y-3">
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white"><i class="fa-solid fa-laptop-code text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">My Portfolio Site</p></div>
+                            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                        </div>
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-white"><i class="fa-solid fa-file-lines text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">View Resume</p></div>
+                            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                        </div>
+                        <div class="p-3 bg-slate-800/60 border border-white/5 rounded-xl flex items-center gap-3">
+                             <div class="w-8 h-8 rounded bg-purple-600 flex items-center justify-center text-white"><i class="fa-solid fa-envelope text-xs"></i></div>
+                            <div class="flex-1 text-left"><p class="text-white text-sm font-bold">Contact Me</p></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-slate-600 rounded-full"></div>
+        </div>
+
+    </div>
+</div>
+
+</section>
+
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="text-center mb-20 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Everything you need to grow</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Built for developers, designers, and creators who value aesthetics and functionality.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-indigo-400 group-hover:text-white group-hover:bg-indigo-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Single Living Link</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Replace PDFs and multiple social links with one URL that you never have to change again.
+          </p>
+        </div>
+      </div>
+
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal delay-100 hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-cyan-400 group-hover:text-white group-hover:bg-cyan-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Real-time Editing</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Update your skills, projects, and bio instantly. Changes reflect immediately across the web.
+          </p>
+        </div>
+      </div>
+
+      <div class="group relative p-6 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-white/10 transition duration-300 reveal delay-200 hover:-translate-y-1">
+        <div class="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition duration-300"></div>
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-4 text-purple-400 group-hover:text-white group-hover:bg-purple-600 transition duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-100 mb-2">Deep Analytics</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Understand your audience. See who viewed your profile, clicked your links, and where they came from.
+          </p>
+        </div>
+      </div>
+    </div>
+</section>
+
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-28">
+    <div class="mb-12 text-center reveal">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Why upgrade your presence?</h2>
+        <p class="text-slate-400">The old way vs. The BioStack way.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+        
+        <div class="md:col-span-2 p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border border-white/5 relative overflow-hidden reveal group">
+            <div class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition duration-500">
+                <svg class="w-64 h-64 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+            </div>
+            <div class="relative z-10">
+                <h3 class="text-2xl font-bold mb-3 text-white">Always Current, Always Live</h3>
+                <p class="text-slate-400 max-w-md">Traditional resumes are static and rot the moment you send them. BioStack is dynamic. Finished a new project? Add it instantly. Got promoted? Update it on the fly.</p>
+                <div class="mt-6 inline-flex items-center gap-2 text-indigo-400 font-medium group-hover:gap-3 transition-all cursor-pointer">
+                    Start updating <span class="text-xl">→</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900 border border-white/5 reveal delay-100 flex flex-col justify-center hover:border-indigo-500/50 transition duration-300">
+            <div class="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-400 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Verified Skills</h3>
+            <p class="text-sm text-slate-400">Showcase certifications with clickable proof, not just text.</p>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900 border border-white/5 reveal delay-200 flex flex-col justify-center hover:border-cyan-500/50 transition duration-300">
+            <div class="w-10 h-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">High Performance</h3>
+            <p class="text-sm text-slate-400">Profiles load in under 100ms. Don't keep recruiters waiting.</p>
+        </div>
+    </div>
+</section>
+
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 reveal">Simple Pricing</h2>
+    <p class="text-center text-slate-400 mb-16 reveal">Start for free, upgrade when you go pro.</p>
+
+    <div class="grid md:grid-cols-3 gap-8 items-center">
+      
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Starter</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Public profile URL</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Basic modules</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Standard themes</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
+        </div>
+
+        <div class="relative p-8 rounded-3xl bg-slate-900 border border-indigo-500/50 shadow-2xl shadow-indigo-500/20 reveal scale-105 z-10">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-xs font-bold text-white uppercase tracking-wider">
+                Most Popular
+            </div>
+            <h3 class="text-lg font-medium text-indigo-300 mb-2">Professional</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹299<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-300">
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Everything in Free</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> <strong>Custom Domain</strong> (.com)</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Advanced Analytics</li>
+                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Remove Branding</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Start Free Trial</a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
+            <h3 class="text-lg font-medium text-slate-300 mb-2">Team</h3>
+            <div class="text-4xl font-bold text-white mb-6">Custom</div>
+            <ul class="space-y-4 mb-8 text-sm text-slate-400">
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All Pro Features</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Unified Billing</li>
+                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Admin Dashboard</li>
+            </ul>
+            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Contact Sales</a>
+        </div>
+
+    </div>
+</section>
+
+<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="max-w-3xl mx-auto fade-in-up delay-300 mb-6" id="feedback-form">
+            <div class="relative bg-[#0F172A]/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden">
+                
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-white mb-3">Send us Feedback</h2>
+                    <p class="text-slate-400">Have a suggestion? Found a bug? We read every message.</p>
+                </div>
+
+                <form method="POST" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-6">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Topic</label>
+                        <div class="relative">
+                            {{ form.subject }}
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-8">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Message</label>
+                        {{ form.message }}
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 group">
+                        <span>Submit Feedback</span>
+                        <i class="fa-solid fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition"></i>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    {% if messages %}
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center gap-3 animate-slide-in">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <style>
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .animate-slide-in { animation: slideIn 0.7s ease-out forwards; }
+    </style>
+    <script>
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.animate-slide-in');
+            toasts.forEach(t => t.style.display = 'none');
+        }, 4000);
+    </script>
+    {% endif %}
+</section>
+{% endblock content %}

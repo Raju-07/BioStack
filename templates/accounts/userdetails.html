@@ -1,0 +1,201 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Account Settings | BioStack{% endblock %}
+
+{% block dashboard_content %}
+    
+    <div class="w-full max-w-4xl mx-auto fade-in-up">
+        
+        <div class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Global Account Settings</h1>
+                <p class="text-slate-400 mt-2 text-sm">Manage your master profile data used across BioStack.</p>
+            </div>
+            <div class="hidden md:block">
+                {% if not request.user.details.full_name %}
+                    <span class="px-4 py-1.5 rounded-full bg-red-500/10 text-red-400 text-xs font-bold border border-red-500/20 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i> Action Required
+                    </span>
+                {% else %}
+                    <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold border border-indigo-500/20 uppercase tracking-wider">
+                        Master Profile
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="bg-[#0F172A]/80 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+            
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 mb-8 border-b border-white/5 pb-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 border border-white/5 flex items-center justify-center shadow-inner">
+                        <i class="fa-solid fa-user-gear text-lg"></i>
+                    </span>
+                    Personal Information
+                </h2>
+                <p class="text-xs text-slate-400 mt-2 ml-13 max-w-2xl leading-relaxed">
+                    This information serves as the <strong>Master Source</strong> for your new profiles. 
+                    Updating it here allows you to pre-fill future sections instantly.
+                </p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="relative z-10 custom-form">
+                {% csrf_token %}
+
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-10 p-6 bg-slate-900/50 rounded-2xl border border-white/5">
+                    
+                    <div class="relative group">
+                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-xl">
+                            {% if request.user.details.profile_image %}
+                                <img src="{{ request.user.details.profile_image.url }}" id="preview-image" class="w-full h-full object-cover">
+                            {% else %}
+                                <div id="preview-placeholder" class="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800">
+                                    <i class="fa-solid fa-user text-3xl"></i>
+                                </div>
+                                <img src="" id="preview-image" class="hidden w-full h-full object-cover">
+                            {% endif %}
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-slate-900 shadow-lg cursor-pointer hover:bg-indigo-500 transition">
+                            <i class="fa-solid fa-camera text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-white font-bold mb-1 text-sm">Profile Photo</h3>
+                        <p class="text-xs text-slate-500 mb-4">Visible on your public profiles and dashboard.</p>
+                        
+                        <div class="flex flex-col md:flex-row items-center gap-4">
+                            <label for="id_profile_image" class="cursor-pointer px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition border border-white/10 hover:border-white/30 flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-upload"></i> Upload New
+                            </label>
+                            <span id="file-name" class="text-[10px] text-slate-500 font-mono">No file chosen</span>
+                        </div>
+                        
+                        <div class="hidden">
+                            {{ form.profile_image }}
+                        </div>
+                        <p class="text-[10px] text-slate-600 mt-2 uppercase tracking-wider font-bold">
+                            Max size 5MB • JPG, PNG
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">
+                            Full Name
+                        </label>
+                        {{ form.full_name }}
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Phone Number</label>
+                            {{ form.phone }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Date of Birth</label>
+                            {{ form.dob }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Marital Status</label>
+                            {{ form.marital_status }}
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                         <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Nationality</label>
+                            {{ form.nationality }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Gender</label>
+                            {{ form.gender }}
+                        </div>
+                         <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Location / City</label>
+                            {{ form.location }}
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 mt-2">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Full Address</label>
+                        {{ form.address }}
+                    </div>
+
+                </div>
+
+                <div class="mt-10 pt-6 border-t border-white/10 flex items-center justify-end gap-4">
+                    <a href="{% url 'dashboard:index' %}" class="px-6 py-2.5 text-xs font-bold text-slate-400 hover:text-white transition">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2 transform hover:scale-[1.02]">
+                        <i class="fa-solid fa-check"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const imgInput = document.getElementById('id_profile_image');
+        if (imgInput) {
+            imgInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('file-name').textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('preview-image');
+                        const placeholder = document.getElementById('preview-placeholder');
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                        if(placeholder) placeholder.classList.add('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
+
+    <style>
+        /* Force Django rendered inputs to look like Tailwind inputs */
+        .custom-form input[type="text"],
+        .custom-form input[type="email"],
+        .custom-form input[type="number"],
+        .custom-form input[type="date"],
+        .custom-form input[type="url"],
+        .custom-form select,
+        .custom-form textarea {
+            width: 100%;
+            background-color: #0F172A; /* Slate 900 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #E2E8F0; /* Slate 200 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem; /* text-sm */
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .custom-form input:focus,
+        .custom-form select:focus,
+        .custom-form textarea:focus {
+            border-color: #6366F1; /* Indigo 500 */
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Specific fix for Date Input Icon color */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.5;
+            cursor: pointer;
+        }
+    </style>
+
+{% endblock %}

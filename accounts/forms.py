@@ -1,16 +1,21 @@
 from django import forms
 from django.contrib.auth import authenticate
 
-from .models import User
+from .models import User,UserDetail
 
 
 class SignupForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+
+    username = forms.CharField(max_length=150,widget=forms.TextInput(attrs={'placeholder': 'Enter unique username'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}))
 
     class Meta:
         model = User
-        fields = ("email",)
+        fields = ("username", "email",)
+        widgets = {
+            'email': forms.EmailInput(attrs={'placeholder': 'Enter your Email'}),
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -21,6 +26,12 @@ class SignupForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match")
 
         return cleaned_data
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -31,8 +42,8 @@ class SignupForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Enter your Email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -46,3 +57,21 @@ class LoginForm(forms.Form):
             cleaned_data["user"] = user
 
         return cleaned_data
+    
+
+class UserDetailForm(forms.ModelForm):
+    class Meta:
+        model = UserDetail
+        exclude = ('user',)
+        widgets = {
+            'dob': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Style all fields to match your dashboard theme
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'
+            })

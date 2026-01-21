@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm,UserDetailForm
 
 
 def signup_view(request):
@@ -35,3 +36,22 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("accounts:login")
+
+@login_required
+def user_details(request):
+    # Ensure the user has a UserDetail object (failsafe for old users)
+    if not hasattr(request.user, 'details'):
+        from .models import UserDetail
+        UserDetail.objects.create(user=request.user)
+
+    if request.method == 'POST':
+        form = UserDetailForm(request.POST, request.FILES, instance=request.user.details)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Global personal details updated successfully.")
+            return redirect('accounts:userdetails') 
+    else:
+        form = UserDetailForm(instance=request.user.details)
+
+    return render(request, 'accounts/userdetails.html', {'form': form})

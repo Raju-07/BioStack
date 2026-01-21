@@ -24,7 +24,24 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('',views.homepage),
+    path('',views.homepage,name='home'),
+    path('test/',views.test),
+    path('pricing/',views.pricing,name='pricing'),
+    path('support/',views.support,name='support'),
+    path('features/',views.features_view,name='features'),
+    path('about-us/',views.about_view,name='about'),
+
+    #Footer Views
+    path('blog/',views.blog_view,name='blog'),
+    path('showcase/',views.showcase_view,name='showcase'),
+    path('terms/',views.terms_view,name='terms'),
+    path('templates/',views.templates_view,name='templates'),
+    path('templates/preview/<int:theme_id>/', views.theme_preview_view, name='theme_preview'),
+    path('privacy/',views.privacy_view,name='privacy'),
+    path('careers/',views.career_view,name='careers'),
+
+    #docs
+    path('getting_started',views.getting_started,name='getting_started'),
 
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
@@ -41,4 +58,4 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

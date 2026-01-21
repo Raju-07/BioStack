@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Terms of Service | BioStack{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen">
+    
+    <div class="absolute top-0 right-1/2 translate-x-1/2 w-full max-w-3xl h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-6 py-20">
+        
+        <div class="text-center mb-16 fade-in-up">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Terms of Service</h1>
+            <p class="text-slate-400">
+                The rules of the road. <br>
+                Effective Date: <span class="text-cyan-400">January 20, 2026</span>
+            </p>
+        </div>
+
+        <div class="space-y-6 fade-in-up delay-100">
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl border-l-4 border-l-cyan-500">
+                <h3 class="text-lg font-bold text-white mb-2">1. Acceptance</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    By creating an account on BioStack, you agree to these terms. If you're using BioStack for an organization, you agree to these terms on behalf of that organization.
+                </p>
+            </div>
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400"><i class="fa-solid fa-user-check text-sm"></i></span>
+                    Your Responsibilities
+                </h2>
+                <div class="space-y-4">
+                    <p class="text-slate-400 text-sm">To keep BioStack safe for everyone, you agree not to:</p>
+                    <ul class="grid gap-3">
+                        <li class="flex items-center gap-3 text-sm text-slate-300 p-3 bg-white/5 rounded-xl">
+                            <i class="fa-solid fa-ban text-red-400"></i> Use the service for illegal activities.
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-slate-300 p-3 bg-white/5 rounded-xl">
+                            <i class="fa-solid fa-ban text-red-400"></i> Post spam or malicious links.
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-slate-300 p-3 bg-white/5 rounded-xl">
+                            <i class="fa-solid fa-ban text-red-400"></i> Attempt to hack or reverse-engineer the platform.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-3xl">
+                <h2 class="text-xl font-bold text-white mb-4">3. Content Ownership</h2>
+                <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                    <strong>You own your stuff.</strong> We don't claim ownership over the content you post. However, by posting, you give us permission to display it on your public profile.
+                </p>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    We reserve the right to remove content that violates our policies or the law.
+                </p>
+            </div>
+
+            <div class="text-center pt-8">
+                <p class="text-slate-500 text-sm mb-2">Questions about the terms?</p>
+                <a href="mailto:legal@biostack.com" class="text-cyan-400 font-bold hover:text-white transition">legal@biostack.com</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
