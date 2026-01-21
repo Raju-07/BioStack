@@ -1,153 +1,262 @@
 {% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}Overview | BioStack{% endblock %}
+{% block title %}Command Center | BioStack{% endblock %}
 
 {% block dashboard_content %}
   
-  <div class="mb-10 flex flex-col xl:flex-row xl:items-end justify-between gap-6 fade-in-up">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 fade-in-up">
     <div>
-      <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Dashboard</h1>
-      <p class="text-slate-400 mt-2 text-lg flex items-center gap-2">
-        Active Profile: 
-        <span class="text-white font-semibold border-b border-indigo-500/50 pb-0.5">
-            {% if profile %}
-                {{ profile.full_name|default:profile.slug }}
-            {% else %}
-                No Active Profile
-            {% endif %}
-        </span>
-      </p>
+        <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">Overview</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">
+            Welcome back, @{{ request.user.username }}
+        </h1>
+        <p class="text-slate-400 text-sm mt-2">
+            Here's what's happening with <span class="text-white font-semibold">{{ profile.full_name|default:profile.slug }}</span> today.
+        </p>
     </div>
     
-    <div class="flex flex-wrap gap-3 w-full xl:w-auto">
-        <a href="{% url 'profiles:sections' %}" class="flex-1 xl:flex-none px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 hover:-translate-y-0.5">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Edit Content
+    {% if profile and profile.slug %}
+    <div class="flex flex-wrap gap-3">
+        <button onclick="copyLink()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl font-semibold text-sm transition flex items-center gap-2 group relative active:scale-95">
+            <i class="fa-regular fa-copy text-indigo-400"></i> <span id="copyText">Copy Link</span>
+            <input type="hidden" id="shareUrl" value="{{ request.scheme }}://{{ request.get_host }}{% url 'profiles:public' profile.user.username profile.slug %}">
+        </button>
+        <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:-translate-y-0.5">
+            Visit Page <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
         </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-10 fade-in-up delay-100">
+
+    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-indigo-500/30 transition duration-300">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Views</p>
+                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.views }}</h3>
+                
+                <div class="mt-3 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                    {% if views_trend >= 0 %}
+                        <i class="fa-solid fa-arrow-trend-up text-xs text-indigo-400"></i>
+                    {% else %}
+                        <i class="fa-solid fa-arrow-trend-down text-xs text-slate-400"></i>
+                    {% endif %}
+                    <span class="text-xs font-medium text-indigo-300">
+                        {{ views_today }} today
+                    </span>
+                </div>
+            </div>
+            <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
+                <i class="fa-regular fa-eye text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-cyan-500/30 transition duration-300">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Link Clicks</p>
+                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.clicks }}</h3>
+                
+                <div class="mt-3 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                    <i class="fa-solid fa-computer-mouse text-xs text-cyan-400"></i>
+                    <span class="text-xs font-medium text-cyan-300">
+                        {{ clicks_today }} today
+                    </span>
+                </div>
+            </div>
+            <div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400">
+                <i class="fa-solid fa-computer-mouse text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition duration-300">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Click Rate</p>
+                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.ctr }}%</h3>
+                <p class="text-xs text-emerald-400 mt-3 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-check-circle"></i> Conversion Health
+                </p>
+            </div>
+            <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+                <i class="fa-solid fa-percent text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between relative group">
         
-        {% if profile and profile.slug %}
-            <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="flex-1 xl:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl font-semibold text-sm transition flex items-center justify-center gap-2 group hover:-translate-y-0.5">
-                View Live Page
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500 group-hover:text-white transition"></i>
+        <div class="flex items-center gap-4 mb-2">
+            <div class="relative w-14 h-14 shrink-0">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-slate-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                    <path class="text-purple-500 transition-all duration-1000 ease-out" stroke-dasharray="{{ completion_score }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">{{ completion_score }}%</div>
+            </div>
+            
+            <div class="min-w-0">
+                <h4 class="text-white font-bold text-sm truncate">Profile Health</h4>
+                {% if completion_score < 100 %}
+                    <p class="text-xs text-purple-400 font-medium cursor-pointer hover:underline decoration-dashed" onclick="document.getElementById('health-checklist').classList.toggle('hidden')">
+                        Tap to improve <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    </p>
+                {% else %}
+                    <p class="text-xs text-emerald-400 font-medium">Fully Optimized!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if completion_score < 100 %}
+        <div id="health-checklist" class="hidden mt-3 pt-3 border-t border-white/5 space-y-2 animate-fade-in">
+            {% for action in missing_actions %}
+            <a href="{% if action.url %}{% url action.url %}{% else %}#{% endif %}" class="flex items-center justify-between text-xs text-slate-400 hover:text-white hover:bg-white/5 p-1.5 rounded transition">
+                <span><i class="fa-regular fa-circle text-slate-600 mr-2"></i>{{ action.label }}</span>
+                <span class="text-purple-400 font-bold">+{{ action.points }}%</span>
             </a>
-        {% else %}
-            <button disabled class="flex-1 xl:flex-none px-6 py-3 bg-slate-800/50 text-slate-500 border border-white/5 rounded-xl font-semibold text-sm cursor-not-allowed flex items-center justify-center gap-2">
-                Live Page Unavailable
-            </button>
+            {% endfor %}
+        </div>
         {% endif %}
     </div>
+
+    <div class="md:col-span-3 glass-panel p-6 rounded-2xl">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-indigo-400"></i> Performance
+            </h3>
+            <div class="flex gap-2">
+                <span class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/50 px-2 py-1 rounded-lg border border-white/5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Views
+                </span>
+                <span class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/50 px-2 py-1 rounded-lg border border-white/5">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Clicks
+                </span>
+            </div>
+        </div>
+        <div class="h-64 w-full">
+            <canvas id="mainChart"></canvas>
+        </div>
+    </div>
+
+    <div class="md:col-span-1 glass-panel p-0 rounded-2xl overflow-hidden flex flex-col">
+        <div class="p-5 border-b border-white/5 bg-slate-900/50 flex justify-between items-center">
+            <h3 class="text-sm font-bold text-white">Live Activity</h3>
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+        </div>
+        <div class="flex-1 overflow-y-auto max-h-[300px] p-2 space-y-1">
+            {% for activity in recent_activity %}
+            <div class="flex items-start gap-3 p-3 hover:bg-white/5 rounded-xl transition group">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400 mt-0.5 group-hover:bg-indigo-500 group-hover:text-white transition">
+                    <i class="fa-regular fa-user text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-300 font-medium">Profile Visit</p>
+                    <p class="text-[10px] text-slate-500">{{ activity.timestamp|timesince }} ago</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-10 flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mb-2">
+                    <i class="fa-solid fa-ghost text-slate-600"></i>
+                </div>
+                <p class="text-slate-500 text-xs">No activity yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="md:col-span-2 glass-panel p-8 rounded-2xl bg-gradient-to-br from-indigo-900/40 to-slate-900 flex items-center justify-between group cursor-pointer hover:border-indigo-500/30 transition">
+        <div>
+            <h3 class="text-xl font-bold text-white mb-2">Customize Theme</h3>
+            <p class="text-slate-400 text-sm max-w-sm">
+                Change fonts, colors, and layouts to match your brand style.
+            </p>
+        </div>
+        <a href="{% url 'profiles:themes' %}" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-900 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition duration-300">
+            <i class="fa-solid fa-paintbrush"></i>
+        </a>
+    </div>
+
+    <div class="md:col-span-2 glass-panel p-8 rounded-2xl bg-gradient-to-br from-cyan-900/40 to-slate-900 flex items-center justify-between group cursor-pointer hover:border-cyan-500/30 transition">
+        <div>
+            <h3 class="text-xl font-bold text-white mb-2">Manage Links</h3>
+            <p class="text-slate-400 text-sm max-w-sm">
+                Add projects, social handles, and update your bio content.
+            </p>
+        </div>
+        <a href="{% url 'profiles:sections' %}" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-cyan-900 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition duration-300">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 fade-in-up delay-100">
-    <div class="glass-panel p-6 rounded-2xl hover:border-white/10 transition duration-300 group">
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <p class="text-sm font-medium text-slate-400">Total Profile Views</p>
-          <h3 class="text-3xl font-bold text-white mt-2 group-hover:text-indigo-400 transition">{{stats.views | default:"0"}}</h3>
-        </div>
-        <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
-          <i class="fa-regular fa-eye text-lg"></i>
-        </div>
-      </div>
-      <div class="flex items-center text-xs text-emerald-400 font-medium bg-emerald-500/10 w-fit px-2.5 py-1 rounded-md border border-emerald-500/20">
-        <i class="fa-solid fa-arrow-trend-up mr-1.5"></i>
-        <span>+12% vs last week</span>
-      </div>
-    </div>
-
-    <div class="glass-panel p-6 rounded-2xl hover:border-white/10 transition duration-300 group">
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <p class="text-sm font-medium text-slate-400">Link Clicks</p>
-          <h3 class="text-3xl font-bold text-white mt-2 group-hover:text-cyan-400 transition">{{stats.clicks | default:"0"}}</h3>
-        </div>
-        <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20">
-          <i class="fa-solid fa-computer-mouse text-lg"></i>
-        </div>
-      </div>
-      <div class="flex items-center text-xs text-emerald-400 font-medium bg-emerald-500/10 w-fit px-2.5 py-1 rounded-md border border-emerald-500/20">
-        <i class="fa-solid fa-arrow-trend-up mr-1.5"></i>
-        <span>+5% vs last week</span>
-      </div>
-    </div>
-
-    <div class="glass-panel p-6 rounded-2xl hover:border-white/10 transition duration-300 group">
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <p class="text-sm font-medium text-slate-400">Active Sections</p>
-          <h3 class="text-3xl font-bold text-white mt-2 group-hover:text-purple-400 transition">
-              {{ profile.sections.count|default:"0" }}
-          </h3>
-        </div>
-        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-          <i class="fa-solid fa-layer-group text-lg"></i>
-        </div>
-      </div>
-      <div class="flex items-center text-xs text-slate-400 font-medium bg-slate-800/50 w-fit px-2.5 py-1 rounded-md border border-white/5">
-        <span>Profile Content Blocks</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in-up delay-200">
-    <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
-      <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-semibold text-white">Engagement Overview</h3>
-          <select class="bg-[#0B1120] border border-white/10 text-xs text-slate-400 rounded-lg px-3 py-1.5 outline-none cursor-pointer hover:border-white/20 transition">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-          </select>
-      </div>
-      <div class="relative w-full h-72">
-         <canvas id="activityChart"></canvas>
-      </div>
-    </div>
-
-    <div class="p-8 bg-gradient-to-b from-indigo-900/30 to-[#0F172A] border border-indigo-500/30 rounded-2xl flex flex-col justify-between shadow-2xl relative overflow-hidden group">
-      <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-indigo-500/20 rounded-full blur-[60px] group-hover:bg-indigo-500/30 transition duration-700"></div>
-      
-      <div class="relative z-10">
-        <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-600/30">
-            <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
-        </div>
-        <h3 class="text-2xl font-bold text-white mb-3">Polish your Profile</h3>
-        <p class="text-slate-400 leading-relaxed text-sm mb-6">
-            Add your latest projects, update your bio, or rearrange sections to keep your audience engaged.
-        </p>
-      </div>
-      
-      <a href="{% url 'profiles:sections' %}" class="relative z-10 w-full py-3.5 bg-white text-indigo-950 font-bold text-center rounded-xl hover:bg-indigo-50 transition shadow-lg flex items-center justify-center gap-2">
-        Open Editor <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Chart Logic specific to this page
-    const ctx = document.getElementById('activityChart').getContext('2d');
-    let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // Indigo
-    gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+    // COPY FUNCTION
+    function copyLink() {
+        const urlInput = document.getElementById('shareUrl');
+        const copyText = document.getElementById('copyText');
+        
+        navigator.clipboard.writeText(urlInput.value).then(() => {
+            const original = copyText.innerText;
+            copyText.innerText = "Copied!";
+            setTimeout(() => copyText.innerText = original, 2000);
+        });
+    }
+
+    // CHART CONFIG
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    
+    // Gradients
+    let gradViews = ctx.createLinearGradient(0, 0, 0, 300);
+    gradViews.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); 
+    gradViews.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+    let gradClicks = ctx.createLinearGradient(0, 0, 0, 300);
+    gradClicks.addColorStop(0, 'rgba(34, 211, 238, 0.5)'); 
+    gradClicks.addColorStop(1, 'rgba(34, 211, 238, 0)');
+
+    // Data parsing
+    const labels = JSON.parse('{{ chart_labels|safe }}');
+    const viewsData = JSON.parse('{{ chart_views|safe }}');
+    const clicksData = JSON.parse('{{ chart_clicks|safe }}');
 
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [{
-          label: 'Views',
-          data: {{ chart_data | safe }}, 
-          borderColor: '#818cf8',
-          backgroundColor: gradient,
-          borderWidth: 3,
-          tension: 0.4,
-          fill: true,
-          pointBackgroundColor: '#0F172A',
-          pointBorderColor: '#818cf8',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        }]
+        labels: labels,
+        datasets: [
+            {
+                label: 'Views',
+                data: viewsData,
+                borderColor: '#818cf8', // Indigo
+                backgroundColor: gradViews,
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 6
+            },
+            {
+                label: 'Clicks',
+                data: clicksData,
+                borderColor: '#22d3ee', // Cyan
+                backgroundColor: gradClicks,
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 6
+            }
+        ]
       },
       options: {
         responsive: true,
@@ -155,25 +264,27 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#1e293b',
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#0f172a',
             titleColor: '#fff',
-            bodyColor: '#94a3b8',
+            bodyColor: '#cbd5e1',
             borderColor: 'rgba(255,255,255,0.1)',
             borderWidth: 1,
-            padding: 12,
-            displayColors: false,
+            padding: 10,
             cornerRadius: 8
           }
         },
         scales: {
           y: {
+            beginAtZero: true,
             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#64748b', font: { family: "'Plus Jakarta Sans', sans-serif" } },
+            ticks: { color: '#64748b', font: { family: 'sans-serif' }, stepSize: 1 },
             border: { display: false }
           },
           x: {
             grid: { display: false },
-            ticks: { color: '#64748b', font: { family: "'Plus Jakarta Sans', sans-serif" } },
+            ticks: { color: '#64748b' },
             border: { display: false }
           }
         }

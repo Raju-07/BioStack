@@ -146,3 +146,20 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+    
+# Creating model for Implimenting Analytics
+
+class ProfileView(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='views')
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+class LinkClick(models.Model):
+    profile_section = models.ForeignKey(ProfileSection, on_delete=models.CASCADE, related_name='clicks')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-timestamp']

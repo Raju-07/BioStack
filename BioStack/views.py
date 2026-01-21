@@ -165,3 +165,6 @@ def showcase_view(request):
 
 def terms_view(request):
     return render(request,'pages/terms.html')
+
+def getting_started(request):
+    return render(request,'docs/getting_started.html')

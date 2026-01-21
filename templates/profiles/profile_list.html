@@ -35,7 +35,7 @@
             </div>
 
             <h3 class="text-xl font-bold text-white mb-1">{{ profile.slug }}</h3>
-            <p class="text-sm text-emerald-400/80 mb-6">Currently visible to the public</p>
+            <p class="text-sm text-emerald-400/80 mb-6">Currently set in Edit mode</p>
 
             <div class="w-full py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center rounded-lg font-medium text-sm cursor-default">
               Selected
@@ -51,7 +51,7 @@
             </div>
 
             <h3 class="text-xl font-bold text-slate-200 group-hover:text-white transition mb-1">{{ profile.slug }}</h3>
-            <p class="text-sm text-slate-500 group-hover:text-slate-400 transition mb-6">Inactive</p>
+            <p class="text-sm text-slate-500 group-hover:text-slate-400 transition mb-6">Visible to public</p>
 
             <div class="mt-auto flex gap-3">
                 <a href="{% url 'profiles:set_active' profile.id %}" class="flex-1 py-2.5 bg-white/5 hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-slate-300 hover:text-white text-center rounded-lg font-medium text-sm transition duration-200">

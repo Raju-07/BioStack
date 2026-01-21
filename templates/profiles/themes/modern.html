@@ -270,7 +270,7 @@
                </h2>
                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                    {% for s in group.list %}
-                   <a href="{{ s.data.url }}" target="_blank" class="glass-card p-4 rounded-xl flex items-center gap-4 hover:bg-pink-500/10 hover:border-pink-500/40 transition duration-300 group">
+                   <a href="{% url 'profiles:track_click' s.id %}" target="_blank" class="glass-card p-4 rounded-xl flex items-center gap-4 hover:bg-pink-500/10 hover:border-pink-500/40 transition duration-300 group">
                        <div class="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center shrink-0 border border-white/5 group-hover:border-pink-500/30 transition shadow-inner">
                             <img src="https://www.google.com/s2/favicons?domain={{ s.data.url }}&sz=64" 
                                  class="w-5 h-5 opacity-70 group-hover:opacity-100 transition duration-300"

@@ -10,6 +10,7 @@ from .views import (
     delete_section,
     reorder_sections,
     update_theme,
+    track_link_click
 )
 
 app_name = "profiles"
@@ -27,4 +28,6 @@ urlpatterns = [
     path("me/sections/delete/<int:section_id>/",delete_section, name="delete_section"),
 
     path('me/theme/update/',update_theme,name='update_theme'),
+    #Tracking link click 
+    path('track/click/<int:section_id>',track_link_click,name='track_click'),
 ]

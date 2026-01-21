@@ -40,6 +40,9 @@ urlpatterns = [
     path('privacy/',views.privacy_view,name='privacy'),
     path('careers/',views.career_view,name='careers'),
 
+    #docs
+    path('getting_started',views.getting_started,name='getting_started'),
+
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),

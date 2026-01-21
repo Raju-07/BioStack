@@ -7,11 +7,23 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
 
-from .models import Profile, ProfileSection,Theme
+from .models import Profile, ProfileSection,Theme,ProfileView,LinkClick
 from .forms import ProfileForm, ProfileSectionForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
+
+
+# (Helper Function ) getting Ip address
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 @login_required
@@ -265,7 +277,15 @@ def public_profile_view(request,username, profile_slug):
         raise Http404()
     
     sections = profile.sections.filter(is_enabled=True)
+
+# implimenting Analytics logic 
+    session_key = f"profile_view_{profile.id}"
+    if not request.session.get("session_key"):
+        ProfileView.objects.create(profile=profile,ip_address=get_client_ip(request))
+        request.session[session_key] = True
+        request.session.set_expiry(60*30)  # Expiry in 30 minutes
     
+
     #logic for dynamic rendering
     if profile.theme:
         template_name = profile.theme.template_name
@@ -279,3 +299,13 @@ def public_profile_view(request,username, profile_slug):
         {"profile": profile, "sections": sections},
         content_type="text/html"
     )
+
+# View for tracking link clicks
+
+def track_link_click(request,section_id):
+    section = get_object_or_404(ProfileSection,id = section_id)
+    #capturing the click
+    LinkClick.objects.create(profile_section=section)
+
+    target_url = section.data.get('url','#')
+    return redirect(target_url)
