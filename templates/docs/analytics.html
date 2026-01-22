@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics Guide | BioStack Help{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0;
+    }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+</style>
+
+<div class="relative min-h-screen py-20 px-6">
+    
+    <div class="max-w-4xl mx-auto text-center mb-20 fade-in-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6">
+            <i class="fa-solid fa-chart-pie"></i> Feature Guide
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Master Your Audience Data</h1>
+        <p class="text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto">
+            Learn how BioStack tracks visits, clicks, and engagement to help you grow your digital presence.
+        </p>
+    </div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+        
+        <div class="bg-slate-900/50 backdrop-blur border border-white/10 rounded-3xl p-8 hover:border-indigo-500/30 transition duration-300 fade-in-up delay-100 group">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition duration-300 border border-indigo-500/20">
+                <i class="fa-regular fa-eye text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Profile Views</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                A view is counted whenever a unique visitor loads your profile page. We filter out bots to ensure your numbers represent real people.
+            </p>
+        </div>
+
+        <div class="bg-slate-900/50 backdrop-blur border border-white/10 rounded-3xl p-8 hover:border-emerald-500/30 transition duration-300 fade-in-up delay-200 group">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition duration-300 border border-emerald-500/20">
+                <i class="fa-solid fa-computer-mouse text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Link Clicks</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                Track exactly which buttons visitors are clicking. Whether it's your portfolio, YouTube channel, or store, know what drives interest.
+            </p>
+        </div>
+
+        <div class="bg-slate-900/50 backdrop-blur border border-white/10 rounded-3xl p-8 hover:border-pink-500/30 transition duration-300 fade-in-up delay-300 group">
+            <div class="w-14 h-14 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-400 mb-6 group-hover:scale-110 transition duration-300 border border-pink-500/20">
+                <i class="fa-solid fa-chart-line text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Click-Through Rate (CTR)</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                The percentage of visitors who actually click a link. A high CTR means your content is engaging and your layout is effective.
+            </p>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto mb-24 fade-in-up delay-200">
+        <div class="relative bg-slate-900 border border-white/10 rounded-3xl overflow-hidden">
+            
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                    <h2 class="text-3xl font-bold text-white mb-6">Deep Dive into Data</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 border border-white/5 shrink-0">1</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Time-Series Analysis</h4>
+                                <p class="text-slate-400 text-sm">See how your traffic changes over days, weeks, or months to identify trends.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 border border-white/5 shrink-0">2</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Device & Location</h4>
+                                <p class="text-slate-400 text-sm">Understand where your audience is coming from and what devices they use.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 border border-white/5 shrink-0">3</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Top Performing Links</h4>
+                                <p class="text-slate-400 text-sm">Identify your most popular content instantly with ranked lists.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/50 p-8 md:p-12 flex items-center justify-center border-t lg:border-t-0 lg:border-l border-white/5">
+                    <div class="w-full max-w-sm">
+                        <div class="flex items-end justify-between gap-2 h-40 mb-4 px-4">
+                            <div class="w-full bg-indigo-500/20 rounded-t-sm h-[40%] relative group"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-[10px] text-white opacity-0 group-hover:opacity-100 transition">40%</div></div>
+                            <div class="w-full bg-indigo-500/40 rounded-t-sm h-[60%] relative group"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-[10px] text-white opacity-0 group-hover:opacity-100 transition">60%</div></div>
+                            <div class="w-full bg-indigo-500/30 rounded-t-sm h-[30%] relative group"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-[10px] text-white opacity-0 group-hover:opacity-100 transition">30%</div></div>
+                            <div class="w-full bg-indigo-500 rounded-t-sm h-[85%] relative group shadow-[0_0_20px_rgba(99,102,241,0.5)]"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-[10px] text-white font-bold">85%</div></div>
+                            <div class="w-full bg-indigo-500/50 rounded-t-sm h-[50%] relative group"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-[10px] text-white opacity-0 group-hover:opacity-100 transition">50%</div></div>
+                        </div>
+                        <div class="h-px bg-slate-700 w-full mb-2"></div>
+                        <div class="flex justify-between text-[10px] text-slate-500 px-1">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto fade-in-up delay-300">
+        <h2 class="text-2xl font-bold text-white mb-8 text-center">Plan Capabilities</h2>
+        
+        <div class="overflow-hidden rounded-2xl border border-white/10">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-900/80 border-b border-white/10 text-sm uppercase tracking-wider text-slate-400">
+                        <th class="p-5 font-medium">Feature</th>
+                        <th class="p-5 font-medium w-1/4">Free Plan</th>
+                        <th class="p-5 font-medium w-1/4 text-indigo-400">Pro Plan</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 bg-slate-900/30">
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-5 text-slate-200 text-sm">Metric Retention</td>
+                        <td class="p-5 text-slate-400 text-sm">7 Days</td>
+                        <td class="p-5 text-white font-bold text-sm">Lifetime</td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-5 text-slate-200 text-sm">Visitor Locations</td>
+                        <td class="p-5 text-slate-500 text-sm"><i class="fa-solid fa-xmark"></i></td>
+                        <td class="p-5 text-emerald-400 text-sm"><i class="fa-solid fa-check"></i></td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-5 text-slate-200 text-sm">Device Types</td>
+                        <td class="p-5 text-slate-500 text-sm"><i class="fa-solid fa-xmark"></i></td>
+                        <td class="p-5 text-emerald-400 text-sm"><i class="fa-solid fa-check"></i></td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-5 text-slate-200 text-sm">Link-Level Data</td>
+                        <td class="p-5 text-slate-400 text-sm">Top 3 Only</td>
+                        <td class="p-5 text-white font-bold text-sm">Unlimited</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="{% url 'profiles:subscription' %}" class="inline-flex items-center gap-2 text-indigo-400 hover:text-white font-bold text-sm transition group">
+                Upgrade to unlock full analytics <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -4,7 +4,7 @@
 {% block title %}Support Center | BioStack{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/all.min.css' %}">
 <style>
   .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
   @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
@@ -72,7 +72,7 @@
         <ul class="space-y-4 text-slate-400">
             <li><a href="{% url 'getting_started' %}" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Getting Started</a></li>
             <li><a href="{% url 'templates' %}" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Customize your theme</a></li>
-            <li><a href="#" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Analytics (comming soon) </a></li>
+            <li><a href="{% url 'analytics' %}" class="hover:text-emerald-400 transition flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Analytics </a></li>
         </ul>
       </div>
 

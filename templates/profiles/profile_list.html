@@ -5,78 +5,174 @@
 
 {% block dashboard_content %}
     
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 fade-in-up">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 fade-in-up">
       <div>
-        <h1 class="text-3xl font-bold text-white tracking-tight">My Profiles</h1>
-        <p class="text-slate-400 mt-2">Manage your different identities. Switch between them instantly.</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Identity Hub</h1>
+        <p class="text-slate-400 mt-3 text-base max-w-lg leading-relaxed">
+            Manage your digital presence. Switch between your personal, professional, or creative identities instantly.
+        </p>
       </div>
       
-      <a href="{% url 'profiles:themes' %}" class="text-sm font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
-        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-      </a>
+      <div class="inline-flex items-center gap-4 px-5 py-3 bg-[#0F172A] border border-white/10 rounded-2xl shadow-2xl">
+        <div class="flex flex-col items-end">
+            <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Current Limit</span>
+            {% if request.user.subscription.is_pro %}
+                <span class="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                    <i class="fa-solid fa-infinity text-xs"></i> Unlimited
+                </span>
+            {% else %}
+                <div class="flex items-center gap-2 mt-0.5">
+                    <div class="h-1.5 w-16 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-white w-[{{ profiles.count }}00%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-white">{{ profiles.count }} / 1</span>
+                </div>
+            {% endif %}
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in-up delay-100">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up delay-100">
 
       {% for profile in profiles %}
         {% if profile.id == active_profile_id %}
           
-          <div class="relative group p-6 rounded-2xl bg-slate-900 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] transition hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]">
-            <div class="absolute top-4 right-4 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              Active
-            </div>
+          <div class="relative group rounded-3xl p-[1px] bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 shadow-[0_0_50px_rgba(99,102,241,0.25)] hover:shadow-[0_0_80px_rgba(99,102,241,0.4)] transition duration-500">
             
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white mb-4">
-               <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
+            <div class="absolute -top-3 -right-3 z-20">
+                <div class="relative flex items-center justify-center h-8 w-8 bg-[#0B1120] rounded-full border border-indigo-500/50 shadow-lg">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-500 opacity-20"></span>
+                    <i class="fa-solid fa-check text-indigo-400 text-sm"></i>
+                </div>
             </div>
 
-            <h3 class="text-xl font-bold text-white mb-1">{{ profile.slug }}</h3>
-            <p class="text-sm text-emerald-400/80 mb-6">Currently set in Edit mode</p>
+            <div class="h-full bg-[#0B1120] rounded-[23px] p-6 relative overflow-hidden flex flex-col">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none"></div>
 
-            <div class="w-full py-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center rounded-lg font-medium text-sm cursor-default">
-              Selected
+                <div class="relative z-10 flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-br from-white/20 to-transparent">
+                            <div class="w-full h-full rounded-[14px] overflow-hidden bg-slate-900">
+                                {% if profile.profile_image %}
+                                    <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center text-xl font-bold text-white bg-indigo-600">
+                                        {{ profile.slug|slice:":1"|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold uppercase tracking-wide mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> Live
+                            </div>
+                            <h3 class="text-xl font-bold text-white truncate max-w-[150px]">{{ profile.full_name|default:profile.slug }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8 relative z-10">
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Theme</p>
+                        <p class="text-sm font-semibold text-white truncate">{{ profile.theme.name|default:"Default" }}</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Handle</p>
+                        <p class="text-sm font-semibold text-white truncate">@{{ profile.slug }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-auto grid grid-cols-2 gap-3 relative z-10">
+                    <a href="{% url 'profiles:sections' %}" class="py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl text-center transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </a>
+                    <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-sm font-bold rounded-xl text-center transition border border-white/10 flex items-center justify-center gap-2">
+                        Preview
+                    </a>
+                </div>
             </div>
           </div>
 
         {% else %}
 
-          <div class="relative group p-6 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-indigo-500/30 hover:bg-slate-900 transition duration-300 flex flex-col h-full">
+          <div class="group relative rounded-3xl bg-slate-900 border border-white/5 hover:border-white/10 transition duration-300 flex flex-col h-full hover:-translate-y-1">
             
-            <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition mb-4">
-              <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
-            </div>
+            <div class="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition duration-500 rounded-3xl pointer-events-none"></div>
 
-            <h3 class="text-xl font-bold text-slate-200 group-hover:text-white transition mb-1">{{ profile.slug }}</h3>
-            <p class="text-sm text-slate-500 group-hover:text-slate-400 transition mb-6">Visible to public</p>
+            <div class="p-6 relative z-10">
+                <div class="flex items-start justify-between mb-6">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-white group-hover:bg-slate-700 transition overflow-hidden">
+                        {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition">
+                        {% else %}
+                            <span class="text-lg font-bold">{{ profile.slug|slice:":1"|upper }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                         <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition" title="View">
+                            <i class="fa-solid fa-eye text-xs"></i>
+                        </a>
+                        <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Delete this profile?');">
+                            {% csrf_token %}
+                            <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition" title="Delete">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
-            <div class="mt-auto flex gap-3">
-                <a href="{% url 'profiles:set_active' profile.id %}" class="flex-1 py-2.5 bg-white/5 hover:bg-indigo-600 border border-white/10 hover:border-indigo-500 text-slate-300 hover:text-white text-center rounded-lg font-medium text-sm transition duration-200">
-                  Set Active
-                </a>
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-slate-300 group-hover:text-white transition mb-1">{{ profile.full_name|default:profile.slug }}</h3>
+                    <p class="text-xs text-slate-500 group-hover:text-slate-400 transition font-mono">@{{ profile.slug }}</p>
+                </div>
 
-                <form action="{% url 'profiles:delete' profile.id %}" method="POST" onsubmit="return confirm('Are you sure?');">
-                    {% csrf_token %}
-                    <button type="submit" class="p-2.5 h-full bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-lg transition duration-200 flex items-center justify-center">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </form>
+                <div class="mt-auto">
+                    <a href="{% url 'profiles:set_active' profile.id %}" class="block w-full py-3 rounded-xl border border-white/10 text-slate-300 font-bold text-sm text-center hover:bg-white hover:text-slate-900 transition duration-300">
+                        Switch Profile
+                    </a>
+                </div>
             </div>
           </div>
 
         {% endif %}
       {% endfor %}
 
-      <a href="{% url 'profiles:create' %}" class="group flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-slate-700 hover:border-indigo-500 hover:bg-indigo-500/5 transition duration-300 min-h-[240px]">
-        <div class="w-14 h-14 rounded-full bg-slate-800 group-hover:bg-indigo-500 text-slate-400 group-hover:text-white flex items-center justify-center transition duration-300 mb-4">
-          <i class="fa-solid fa-plus text-xl"></i>
-        </div>
-        <h3 class="text-lg font-semibold text-slate-300 group-hover:text-white transition">Create Profile</h3>
-        <p class="text-sm text-slate-500 text-center mt-2 group-hover:text-indigo-300 transition">Add a new identity</p>
-      </a>
+      {% if not request.user.subscription.is_pro and profiles.count >= 1 %}
+        
+        <a href="{% url 'profiles:subscription' %}" class="group relative flex flex-col items-center justify-center p-6 rounded-3xl border border-dashed border-slate-700 bg-slate-900/30 hover:bg-slate-900 hover:border-indigo-500/50 transition duration-300 min-h-[260px] cursor-pointer overflow-hidden">
+            <div class="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.07] transition duration-500" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 16px 16px;"></div>
+
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="w-16 h-16 rounded-full bg-[#0B1120] border border-white/10 flex items-center justify-center mb-5 shadow-2xl group-hover:scale-110 transition duration-500">
+                    <i class="fa-solid fa-lock text-xl text-slate-500 group-hover:text-indigo-400 transition"></i>
+                </div>
+                
+                <h3 class="text-base font-bold text-white mb-2">Unlock Unlimited</h3>
+                <p class="text-xs text-slate-500 text-center max-w-[200px] mb-6 leading-relaxed">
+                    You've hit the free limit. Upgrade to Pro to create more identities.
+                </p>
+
+                <span class="px-5 py-2 bg-indigo-600 text-white text-xs font-bold rounded-full shadow-lg shadow-indigo-600/20 group-hover:bg-indigo-500 transition">
+                    View Plans
+                </span>
+            </div>
+        </a>
+
+      {% else %}
+
+        <a href="{% url 'profiles:create' %}" class="group relative flex flex-col items-center justify-center p-6 rounded-3xl border-2 border-dashed border-slate-700 hover:border-white/20 hover:bg-white/[0.02] transition duration-300 min-h-[260px] cursor-pointer">
+            <div class="w-16 h-16 rounded-2xl bg-slate-800 text-slate-400 group-hover:bg-white group-hover:text-slate-900 flex items-center justify-center transition duration-300 mb-5 shadow-lg transform group-hover:-translate-y-2">
+                <i class="fa-solid fa-plus text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-300 group-hover:text-white transition">Create New Profile</h3>
+            <p class="text-sm text-slate-500 text-center mt-1 group-hover:text-slate-400 transition">Add a new personal or work identity</p>
+        </a>
+
+      {% endif %}
 
     </div>
 

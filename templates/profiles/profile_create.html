@@ -1,98 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Create Profile | BioStack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Inter', sans-serif; } </style>
-</head>
+{% extends 'dashboard_base.html' %}
+{% load static %}
 
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center relative overflow-hidden">
+{% block title %}Create Profile | BioStack{% endblock %}
 
-  <div class="fixed inset-0 pointer-events-none z-0">
-    <div class="absolute top-0 right-1/3 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px]"></div>
-    <div class="absolute bottom-0 left-1/3 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]"></div>
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-  </div>
+{% block dashboard_content %}
 
-  <div class="relative z-10 w-full max-w-lg p-8 mx-4 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
+<div class="flex items-center justify-center min-h-[calc(100vh-120px)] fade-in-up">
     
-    <div class="flex items-start justify-between mb-8">
-      <div>
-        <h2 class="text-2xl font-bold text-white tracking-tight">Create New Profile</h2>
-        <p class="text-slate-400 text-sm mt-1">Give your new identity a unique name.</p>
-      </div>
-      <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-      </div>
-    </div>
-
-    <form method="post" class="space-y-5">
-      {% csrf_token %}
-      
-      {% for field in form %}
-        <div>
-          <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-400 mb-2">
-            {{ field.label }}
-          </label>
-          
-          <div class="relative">
-             <style>
-                /* Helper to target the Django rendered widget */
-                #div_id_{{ field.name }} input, 
-                #div_id_{{ field.name }} textarea, 
-                #div_id_{{ field.name }} select {
-                    width: 100%;
-                    background-color: #1e293b;
-                    border: 1px solid #334155;
-                    color: white;
-                    border-radius: 0.75rem;
-                    padding: 0.75rem 1rem;
-                    font-size: 1rem;
-                    outline: none;
-                    transition: all 0.2s;
-                }
-                #div_id_{{ field.name }} input:focus,
-                #div_id_{{ field.name }} textarea:focus, 
-                #div_id_{{ field.name }} select:focus {
-                    border-color: #6366f1;
-                    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); 
-                    background-color: #0f172a; 
-                }
-             </style>
-             
-             <div id="div_id_{{ field.name }}">
-                 {{ field }}
-             </div>
-          </div>
-
-          {% if field.help_text %}
-            <p class="mt-1 text-xs text-slate-500">{{ field.help_text }}</p>
-          {% endif %}
-
-          {% if field.errors %}
-            <div class="mt-2 text-sm text-red-400">
-              {{ field.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      {% endfor %}
-
-      <div class="pt-4 flex items-center gap-4">
-        <a href="{% url 'profiles:list' %}" class="flex-1 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-center rounded-xl transition duration-200">
-          Cancel
-        </a>
+    <div class="relative w-full max-w-lg">
         
-        <button type="submit" class="flex-[2] py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition duration-200 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2">
-          <span>Create Profile</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-        </button>
-      </div>
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
-    </form>
-  </div>
+        <div class="relative z-10 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
+            
+            <div class="p-8 border-b border-white/5 bg-slate-900/50 flex justify-between items-start">
+                <div>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Create New Profile</h2>
+                    <p class="text-slate-400 text-sm mt-1">Give your new identity a name.</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-800 border border-white/5 flex items-center justify-center text-slate-400">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+            </div>
 
-</body>
-</html>
+            <div class="p-8">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-bold text-slate-300 mb-2 ml-1">
+                                {{ field.label }}
+                            </label>
+                            
+                            <div class="relative group">
+                                {{ field }}
+                                
+                                <div class="absolute inset-0 rounded-xl ring-1 ring-inset ring-transparent group-focus-within:ring-indigo-500/50 pointer-events-none"></div>
+                            </div>
+
+                            {% if field.help_text %}
+                                <p class="mt-2 text-xs text-slate-500 ml-1">{{ field.help_text }}</p>
+                            {% endif %}
+
+                            {% if field.errors %}
+                                <div class="mt-2 text-sm text-red-400 flex items-center gap-2 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    {{ field.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="pt-6 flex items-center gap-4">
+                        <a href="{% url 'profiles:list' %}" class="flex-1 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 border border-white/5 hover:border-white/10 text-slate-300 font-bold text-center rounded-xl transition duration-200">
+                            Cancel
+                        </a>
+                        
+                        <button type="submit" class="flex-[2] py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold rounded-xl transition duration-200 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                            <span>Create Profile</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

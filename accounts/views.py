@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import SignupForm, LoginForm,UserDetailForm
+from .models import UserDetail
 
 
 def signup_view(request):
@@ -41,7 +42,6 @@ def logout_view(request):
 def user_details(request):
     # Ensure the user has a UserDetail object (failsafe for old users)
     if not hasattr(request.user, 'details'):
-        from .models import UserDetail
         UserDetail.objects.create(user=request.user)
 
     if request.method == 'POST':

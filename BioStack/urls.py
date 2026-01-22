@@ -25,7 +25,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('',views.homepage,name='home'),
-    path('test/',views.test),
     path('pricing/',views.pricing,name='pricing'),
     path('support/',views.support,name='support'),
     path('features/',views.features_view,name='features'),
@@ -39,6 +38,7 @@ urlpatterns = [
     path('templates/preview/<int:theme_id>/', views.theme_preview_view, name='theme_preview'),
     path('privacy/',views.privacy_view,name='privacy'),
     path('careers/',views.career_view,name='careers'),
+    path('analytics/',views.analytics,name='analytics'),
 
     #docs
     path('getting_started',views.getting_started,name='getting_started'),

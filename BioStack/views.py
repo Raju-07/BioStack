@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import get_user_model
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from profiles.forms import FeedbackForm
-from accounts.models import UserDetail
+from accounts.models import User
 from profiles.models import Profile,Theme
 
 class MockImage:
@@ -99,7 +100,7 @@ def theme_preview_view(request, theme_id):
         theme.template_name,
         {"profile": dummy_profile, "sections": dummy_sections}
     )
-@login_required
+
 def support(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
@@ -118,6 +119,8 @@ def support(request):
 
 
 def homepage(request):
+    total_users = User.objects.count()
+    print(total_users)
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -130,7 +133,7 @@ def homepage(request):
         if request.user.is_authenticated:
             initial_data = {'name':request.user.details.full_name,'email': request.user.email, }
         form = FeedbackForm(initial=initial_data)
-    return render(request,'home.html',{'form':form})
+    return render(request,'home.html',{'form':form,'total_users':total_users})
 
 def pricing(request):
     return render(request,'navbar/pricing.html')
@@ -140,14 +143,6 @@ def about_view(request):
 
 def features_view(request):
     return render(request,'navbar/features.html')
-
-@login_required
-def test(request):
-    user_details = None
-    if hasattr(request.user,'details'):
-        user_details = request.user.userdetails
-    return render(request,'test.html',{"my_details":user_details})
-
 
 #views for footer file:
 def blog_view(request):
@@ -168,3 +163,6 @@ def terms_view(request):
 
 def getting_started(request):
     return render(request,'docs/getting_started.html')
+
+def analytics(request):
+    return render(request,'docs/analytics.html')

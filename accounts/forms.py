@@ -5,25 +5,24 @@ from .models import User,UserDetail
 
 
 class SignupForm(forms.ModelForm):
-
-    username = forms.CharField(max_length=150,widget=forms.TextInput(attrs={'placeholder': 'Enter unique username'}))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}))
+    
+    username = forms.CharField(label="Username",max_length=150,widget=forms.TextInput(attrs={'placeholder': 'Choose a unique username','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
+    email = forms.EmailField(label="Email Address",widget=forms.EmailInput(attrs={'placeholder': 'name@example.com','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
+    password1 = forms.CharField(label="Password",widget=forms.PasswordInput(attrs={'placeholder': 'Create a strong password','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
+    password2 = forms.CharField(label="Confirm Password",widget=forms.PasswordInput(attrs={'placeholder': 'Repeat your password','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
 
     class Meta:
         model = User
-        fields = ("username", "email",)
-        widgets = {
-            'email': forms.EmailInput(attrs={'placeholder': 'Enter your Email'}),
-        }
+        fields = ("username", "email")
 
+    # --- Validation Logic ---
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
 
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords do not match")
+            self.add_error('password2', "Passwords do not match") # Add error specifically to the field
 
         return cleaned_data
     

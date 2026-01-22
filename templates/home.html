@@ -48,7 +48,7 @@
       Share once. Update forever.
     </p>
 
-    <div class="mt-10 flex justify-center gap-4 flex-wrap mb-24">
+    <div class="mt-10 flex justify-center gap-4 flex-wrap mb-16">
       <a href='{% url "profiles:create" %}' class="group relative px-8 py-4 rounded-xl bg-indigo-600 text-white font-semibold overflow-hidden transition-all hover:scale-105 shadow-lg shadow-indigo-500/30">
         <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
         <span class="relative">Create BioStack Free</span>
@@ -56,6 +56,31 @@
       <a href="{% url 'templates' %}" class="px-8 py-4 rounded-xl border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition text-slate-300 hover:text-white">
         View Demo Profile
       </a>
+    </div>
+
+    <div class="flex justify-center mb-16 fade-in-up delay-100">
+        <div class="relative group cursor-default">
+            
+            <div class="absolute -inset-0.5 bg-emerald-500/20 rounded-lg blur opacity-40 group-hover:opacity-70 transition duration-500"></div>
+
+            <div class="relative inline-flex items-center gap-4 px-6 py-3 bg-[#4468BB] border border-emerald-500/30 rounded-lg shadow-xl">
+                
+                <div class="flex items-center gap-2 pr-4 border-r border-white/10">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live</span>
+                </div>
+
+                <div class="flex items-center gap-3 font-mono text-sm text-emerald-100/80">
+                    <i class="fa-solid fa-users text-emerald-500"></i>
+                    <span>Total Users:</span>
+                    <span class="font-bold text-white text-base tracking-wide">{{ total_users|default:"2,140" }}</span>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <div class="relative mx-auto w-full max-w-5xl h-[600px] mt-16 perspective-1000">
@@ -281,39 +306,42 @@
       
         <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
             <h3 class="text-lg font-medium text-slate-300 mb-2">Starter</h3>
-            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/forever</span></div>
             <ul class="space-y-4 mb-8 text-sm text-slate-400">
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Public profile URL</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Basic modules</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Standard themes</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> 1 Active Profile</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Basic Themes</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-xmark text-slate-500"></i> Advanced Analytics</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-xmark text-slate-500"></i> Remove Branding</li>
             </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
+            <a href="{% url 'profiles:create' %}" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
         </div>
 
         <div class="relative p-8 rounded-3xl bg-slate-900 border border-indigo-500/50 shadow-2xl shadow-indigo-500/20 reveal scale-105 z-10">
             <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-xs font-bold text-white uppercase tracking-wider">
-                Most Popular
+                Most Flexible
             </div>
-            <h3 class="text-lg font-medium text-indigo-300 mb-2">Professional</h3>
-            <div class="text-4xl font-bold text-white mb-6">₹299<span class="text-sm font-normal text-slate-500">/mo</span></div>
+            <h3 class="text-lg font-medium text-indigo-300 mb-2">Pro Monthly</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹59<span class="text-sm font-normal text-slate-500">/mo</span></div>
             <ul class="space-y-4 mb-8 text-sm text-slate-300">
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Everything in Free</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> <strong>Custom Domain</strong> (.com)</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Advanced Analytics</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Remove Branding</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-400"></i> <strong>Unlimited Profiles</strong></li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-400"></i> Premium Themes</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-400"></i> Click & CTR Analytics</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-400"></i> Custom Themes</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-indigo-400"></i> Priority Support</li>
             </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Start Free Trial</a>
+            <a href="{% url 'profiles:subscription' %}" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Subscribe Monthly</a>
         </div>
 
         <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
-            <h3 class="text-lg font-medium text-slate-300 mb-2">Team</h3>
-            <div class="text-4xl font-bold text-white mb-6">Custom</div>
+            <h3 class="text-lg font-medium text-emerald-400 mb-2">Pro Yearly</h3>
+            <div class="text-4xl font-bold text-white mb-6">₹499<span class="text-sm font-normal text-slate-500">/yr</span></div>
             <ul class="space-y-4 mb-8 text-sm text-slate-400">
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All Pro Features</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Unified Billing</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Admin Dashboard</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> All Pro Features</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Priority Support</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Early Access to Features</li>
+                <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500"></i> Extra 1 Month</li>
             </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Contact Sales</a>
+            <a href="{% url 'profiles:subscription' %}" class="block w-full py-3 text-center rounded-xl border border-emerald-500/20 hover:bg-emerald-500/10 text-emerald-400 transition">Subscribe Yearly</a>
         </div>
 
     </div>
