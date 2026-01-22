@@ -6,11 +6,11 @@
   <title>{% block title %}Dashboard | BioStack{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+  <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
   <link rel='icon' type='image/x-icon' href="{% static 'images/main-logo.png' %}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'css/chart.js' %}"></script>
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -49,9 +49,9 @@
     <div class="h-16 flex items-center justify-between px-5 border-b border-white/5">
       <div class="flex items-center gap-3 font-bold text-lg tracking-tight text-white">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white">
-            <img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-7 h-7 rounded-md object-contain">
+            <a href="/"><img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-7 h-7 rounded-md object-contain">
         </div>
-        <span>BioStack</span>
+        <span>BioStack</span></a>
       </div>
       <button onclick="closeSidebar()" class="md:hidden text-slate-400 hover:text-white transition">
         <i class="fa-solid fa-xmark text-lg"></i>
