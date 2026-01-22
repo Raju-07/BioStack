@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import get_user_model
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from profiles.forms import FeedbackForm
-from accounts.models import UserDetail
+from accounts.models import User
 from profiles.models import Profile,Theme
 
 class MockImage:
@@ -118,6 +119,8 @@ def support(request):
 
 
 def homepage(request):
+    total_users = User.objects.count()
+    print(total_users)
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -130,7 +133,7 @@ def homepage(request):
         if request.user.is_authenticated:
             initial_data = {'name':request.user.details.full_name,'email': request.user.email, }
         form = FeedbackForm(initial=initial_data)
-    return render(request,'home.html',{'form':form})
+    return render(request,'home.html',{'form':form,'total_users':total_users})
 
 def pricing(request):
     return render(request,'navbar/pricing.html')
