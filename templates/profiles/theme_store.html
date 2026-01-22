@@ -1,0 +1,273 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Theme Store | BioStack{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="max-w-7xl mx-auto fade-in-up">
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div>
+            <h1 class="text-4xl font-bold text-white tracking-tight">Theme Library</h1>
+            <p class="text-slate-400 mt-2 text-lg">Define the visual identity of <span class="text-white font-medium">{{ profile.slug }}</span>.</p>
+        </div>
+        
+        {% if profile.slug %}
+        <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold text-sm transition shadow-lg shadow-indigo-500/25 flex items-center gap-2 group">
+            <i class="fa-regular fa-eye group-hover:scale-110 transition-transform"></i>
+            <span>View Live Profile</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="mb-16">
+        <h2 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Currently Active
+        </h2>
+
+        <div class="relative w-full rounded-3xl overflow-hidden bg-slate-900 border border-indigo-500/50 shadow-[0_0_50px_rgba(99,102,241,0.15)] group">
+            
+            <div class="absolute inset-0 z-0">
+                {% if profile.theme.thumbnail %}
+                    <img src="{{ profile.theme.thumbnail.url }}" class="w-full h-full object-cover opacity-30 blur-xl scale-110">
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-indigo-900/40 to-slate-950"></div>
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
+                <div class="w-full md:w-1/3 aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 rotate-1 group-hover:rotate-0 transition duration-500">
+                    {% if profile.theme.thumbnail %}
+                        <img src="{{ profile.theme.thumbnail.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500">
+                            <i class="fa-regular fa-image text-4xl"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-check-circle"></i> Live on Profile
+                    </div>
+                    <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">{{ profile.theme.name|default:"Default System Theme" }}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed max-w-lg mb-6">
+                        This template is currently determining how your visitors see your data.
+                    </p>
+                    <button disabled class="px-8 py-3 bg-white text-slate-900 font-bold rounded-xl cursor-default opacity-50 flex items-center gap-2 mx-auto md:mx-0">
+                        Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-20">
+        <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+            <h2 class="text-xl font-bold text-white">Available Templates</h2>
+            <div class="flex gap-1 bg-slate-900 p-1 rounded-lg border border-white/5">
+                <button onclick="filterGallery('all')" class="filter-btn active px-3 py-1.5 bg-slate-800 text-white text-xs font-bold rounded shadow-sm transition" id="btn-all">All</button>
+                <button onclick="filterGallery('free')" class="filter-btn px-3 py-1.5 text-slate-400 hover:text-white text-xs font-medium transition" id="btn-free">Free</button>
+                <button onclick="filterGallery('premium')" class="filter-btn px-3 py-1.5 text-slate-400 hover:text-indigo-300 text-xs font-medium transition" id="btn-premium">Premium</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            {% for theme in themes %}
+            {% if theme.is_premium and not request.user.subscription.is_pro %}
+                
+                <div class="theme-card h-full" data-type="premium">
+                    <button type="button" onclick="document.getElementById('upgradeModal').classList.remove('hidden')" class="w-full text-left h-full group relative perspective-1000">
+                        <div class="bg-slate-900 border border-white/5 rounded-2xl overflow-hidden transition-all duration-500 ease-out relative hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] opacity-75 hover:opacity-100">
+                            
+                            <div class="aspect-[4/3] w-full bg-slate-950 relative overflow-hidden group-hover:border-b border-white/5">
+                                {% if theme.thumbnail %}
+                                    <img src="{{ theme.thumbnail.url }}" class="w-full h-full object-cover grayscale transition duration-700 group-hover:grayscale-0">
+                                {% else %}
+                                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 bg-slate-900">
+                                        <i class="fa-solid fa-palette text-3xl mb-2 opacity-50"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[1px]">
+                                    <span class="w-12 h-12 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </span>
+                                </div>
+
+                                <div class="absolute top-3 left-3">
+                                    <span class="px-2 py-1 bg-amber-400 text-amber-950 text-[10px] font-bold rounded uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                        <i class="fa-solid fa-crown"></i> Pro
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="p-5 bg-gradient-to-b from-slate-900 to-[#0B1120]">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-slate-400 group-hover:text-white transition">{{ theme.name }}</h4>
+                                </div>
+                                <p class="text-xs text-slate-600 line-clamp-2">Premium Template</p>
+                                
+                                <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                                    <span class="text-[11px] font-bold text-amber-500 uppercase tracking-wider">Paid</span>
+                                    <span class="text-xs text-indigo-400 font-bold group-hover:underline">Unlock</span>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+            {% else %}
+
+                <div class="theme-card h-full" data-type="{% if theme.is_premium %}premium{% else %}free{% endif %}">
+                    <form action="{% url 'profiles:update_theme' %}" method="POST" class="h-full">
+                        {% csrf_token %}
+                        <input type="hidden" name="theme_id" value="{{ theme.id }}">
+                        
+                        <button type="submit" class="w-full text-left h-full group relative perspective-1000">
+                            <div class="bg-slate-900 border border-white/5 rounded-2xl overflow-hidden transition-all duration-500 ease-out relative hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]
+                                {% if profile.theme == theme %}ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-950{% endif %}">
+                                
+                                <div class="aspect-[4/3] w-full bg-slate-950 relative overflow-hidden group-hover:border-b border-white/5">
+                                    {% if theme.thumbnail %}
+                                        <img src="{{ theme.thumbnail.url }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                                    {% else %}
+                                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 bg-slate-900">
+                                            <span class="text-xs font-medium">No Preview</span>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if profile.theme != theme %}
+                                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                                            <span class="px-5 py-2.5 bg-white text-slate-950 rounded-xl font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition duration-300 flex items-center gap-2">
+                                                <i class="fa-solid fa-wand-magic-sparkles"></i> Apply Theme
+                                            </span>
+                                        </div>
+                                    {% else %}
+                                        <div class="absolute inset-0 bg-indigo-900/40 flex items-center justify-center">
+                                            <span class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg text-lg">
+                                                <i class="fa-solid fa-check"></i>
+                                            </span>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if theme.is_premium %}
+                                        <div class="absolute top-3 left-3">
+                                            <span class="px-2 py-1 bg-amber-400 text-amber-950 text-[10px] font-bold rounded uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                                <i class="fa-solid fa-crown"></i> Pro
+                                            </span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="p-5 bg-gradient-to-b from-slate-900 to-[#0B1120]">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-slate-100 group-hover:text-indigo-400 transition">{{ theme.name }}</h4>
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-2">
+                                        {% if theme.is_premium %}Premium Design{% else %}Free Template{% endif %}
+                                    </p>
+                                    
+                                    <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                            {% if theme.is_premium %}Paid{% else %}Free{% endif %}
+                                        </span>
+                                        {% if profile.theme == theme %}
+                                            <span class="text-xs text-indigo-400 font-bold">Active</span>
+                                        {% else %}
+                                            <span class="text-xs text-slate-600 group-hover:text-white transition">Select</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+
+            {% endif %}
+            {% endfor %}
+
+            <div class="theme-card h-full" data-type="premium">
+                {% if request.user.subscription.is_pro %}
+                    <div class="h-full min-h-[300px] border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 text-center bg-slate-900/30 cursor-not-allowed">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 mb-4">
+                            <i class="fa-solid fa-code text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold mb-1">Custom Code</h4>
+                        <p class="text-xs text-slate-500 max-w-[150px] leading-relaxed mb-4">
+                            Inject custom CSS/JS into your profile.
+                        </p>
+                        <span class="px-3 py-1 bg-slate-800 border border-white/10 rounded text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                            Coming Soon
+                        </span>
+                    </div>
+                {% else %}
+                    <button onclick="document.getElementById('upgradeModal').classList.remove('hidden')" class="w-full h-full min-h-[300px] border-2 border-dashed border-slate-700 hover:border-indigo-500/50 rounded-2xl flex flex-col items-center justify-center p-6 text-center bg-slate-900/30 hover:bg-slate-900 transition duration-300 group">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 border border-white/5 flex items-center justify-center text-slate-500 mb-4 group-hover:text-indigo-400 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-lock text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold mb-1">Custom Code</h4>
+                        <p class="text-xs text-slate-500 max-w-[150px] leading-relaxed mb-4">
+                            Inject custom CSS/JS.
+                        </p>
+                        <span class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-full group-hover:bg-indigo-500 transition shadow-lg">
+                            Upgrade to Unlock
+                        </span>
+                    </button>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div id="upgradeModal" class="fixed inset-0 z-50 hidden fade-in-up">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[#0F172A] border border-white/10 rounded-3xl p-8 shadow-2xl text-center">
+        <div class="w-16 h-16 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto mb-6 border border-indigo-500/20">
+            <i class="fa-solid fa-crown text-2xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Unlock Premium</h3>
+        <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+            Get access to all premium templates, custom CSS, and remove BioStack branding.
+        </p>
+        <div class="space-y-3">
+            <a href="{% url 'profiles:subscription' %}" class="block w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/25">
+                View Plans
+            </a>
+            <button onclick="document.getElementById('upgradeModal').classList.add('hidden')" class="block w-full py-3.5 text-slate-400 hover:text-white font-bold text-sm transition">
+                Maybe Later
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterGallery(type) {
+        // 1. Update Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-slate-800', 'text-white', 'shadow-sm');
+            btn.classList.add('text-slate-400');
+        });
+        document.getElementById('btn-' + type).classList.add('bg-slate-800', 'text-white', 'shadow-sm');
+        document.getElementById('btn-' + type).classList.remove('text-slate-400');
+
+        // 2. Hide/Show Cards
+        const cards = document.querySelectorAll('.theme-card');
+        cards.forEach(card => {
+            if (type === 'all' || card.dataset.type === type) {
+                card.style.display = 'block';
+                card.parentElement.classList.remove('hidden'); // Ensure parent grid cell is visible
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+{% endblock %}

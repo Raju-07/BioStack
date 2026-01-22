@@ -67,7 +67,7 @@
       
       <a href="{% url 'profiles:sections' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'sections' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
         <i class="fa-solid fa-pen-to-square w-5 text-center {% if request.resolver_match.url_name != 'sections' %}group-hover:text-cyan-400 transition{% endif %}"></i>
-        Edit Content
+        Edit Section
       </a>
 
       <a href="{% url 'profiles:list' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'list' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
@@ -97,6 +97,11 @@
                 <i class="fa-solid fa-circle-exclamation text-red-500 text-xs" title="Action Required"></i>
             </div>
         {% endif %}
+      </a>
+
+      <a href="{% url 'profiles:subscription' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'subscription' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
+        <i class="fa-solid fa-bell w-5 text-center {% if request.resolver_match.url_name != 'subscription' %}group-hover:text-purple-400 transition{% endif %}"></i>
+        Subscription 
       </a>
     </nav>
 

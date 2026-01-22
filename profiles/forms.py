@@ -206,6 +206,21 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ("full_name", "bio", "slug", "visibility")
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None) # Extract user from kwargs
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            try:
+                # Access subscription safely
+                if not hasattr(self.user, 'subscription') or not self.user.subscription.is_pro:
+                    if 'slug' in self.fields:
+                        del self.fields['slug']
+            except Exception:
+
+                if 'slug' in self.fields:
+                    del self.fields['slug']
+
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback

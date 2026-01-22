@@ -1,50 +1,88 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Pricing | BioStack{% endblock title %}
+{% block title %}Upgrade to Pro | BioStack{% endblock %}
+
 {% block content %}
-<section class="relative z-10 max-w-7xl mx-auto px-6 py-24">
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 reveal">Simple Pricing</h2>
-    <p class="text-center text-slate-400 mb-16 reveal">Start for free, upgrade when you go pro.</p>
+<div class="relative min-h-screen py-20 px-6">
+    
+    <div class="text-center mb-16 fade-in-up">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
+        <p class="text-slate-400 text-lg">Choose the plan that fits your growth.</p>
+    </div>
 
-    <div class="grid md:grid-cols-3 gap-8 items-center">
-      
-        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
-            <h3 class="text-lg font-medium text-slate-300 mb-2">Starter</h3>
-            <div class="text-4xl font-bold text-white mb-6">₹0<span class="text-sm font-normal text-slate-500">/mo</span></div>
-            <ul class="space-y-4 mb-8 text-sm text-slate-400">
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Public profile URL</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Basic modules</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Standard themes</li>
-            </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Get Started</a>
-        </div>
-
-        <div class="relative p-8 rounded-3xl bg-slate-900 border border-indigo-500/50 shadow-2xl shadow-indigo-500/20 reveal scale-105 z-10">
-            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-xs font-bold text-white uppercase tracking-wider">
-                Most Popular
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="bg-slate-900 border border-white/10 rounded-3xl p-8 flex flex-col hover:border-slate-600 transition duration-300 fade-in-up delay-100">
+            <h3 class="text-xl font-bold text-slate-300">Starter</h3>
+            <div class="my-4">
+                <span class="text-4xl font-bold text-white">Free</span>
             </div>
-            <h3 class="text-lg font-medium text-indigo-300 mb-2">Professional</h3>
-            <div class="text-4xl font-bold text-white mb-6">₹299<span class="text-sm font-normal text-slate-500">/mo</span></div>
-            <ul class="space-y-4 mb-8 text-sm text-slate-300">
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Everything in Free</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> <strong>Custom Domain</strong> (.com)</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Advanced Analytics</li>
-                <li class="flex items-center gap-3"><span class="text-indigo-400">✓</span> Remove Branding</li>
+            <p class="text-slate-500 text-sm mb-8">Perfect for getting started.</p>
+            
+            <ul class="space-y-4 mb-8 flex-1">
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> 1 Active Profile</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Basic Themes</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Standard Analytics</li>
+                <li class="flex items-center gap-3 text-slate-500 text-sm"><i class="fa-solid fa-xmark"></i> BioStack Branding</li>
+                <li class="flex items-center gap-3 text-slate-500 text-sm"><i class="fa-solid fa-xmark"></i> Custom Slug</li>
             </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:opacity-90 transition text-white font-semibold shadow-lg">Start Free Trial</a>
+
+            <button class="w-full py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5 transition">
+                Current Plan
+            </button>
         </div>
 
-        <div class="p-8 rounded-3xl bg-slate-900/40 border border-white/5 reveal hover:bg-slate-900 transition duration-300">
-            <h3 class="text-lg font-medium text-slate-300 mb-2">Team</h3>
-            <div class="text-4xl font-bold text-white mb-6">Custom</div>
-            <ul class="space-y-4 mb-8 text-sm text-slate-400">
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> All Pro Features</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Unified Billing</li>
-                <li class="flex items-center gap-3"><span class="text-emerald-400">✓</span> Admin Dashboard</li>
+        <div class="relative bg-slate-900 border border-indigo-500/50 rounded-3xl p-8 flex flex-col hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition duration-300 fade-in-up delay-200 transform md:-translate-y-4">
+            <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl uppercase tracking-wider">
+                Popular
+            </div>
+            <h3 class="text-xl font-bold text-indigo-400">Pro Monthly</h3>
+            <div class="my-4 flex items-end gap-1">
+                <span class="text-4xl font-bold text-white">₹99</span>
+                <span class="text-slate-500 mb-1">/mo</span>
+            </div>
+            <p class="text-slate-500 text-sm mb-8">For serious creators.</p>
+            
+            <ul class="space-y-4 mb-8 flex-1">
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> <strong>Unlimited Profiles</strong></li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> All Premium Themes</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Subdomain slug</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Remove Branding</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Priority Support</li>
             </ul>
-            <a href="#" class="block w-full py-3 text-center rounded-xl border border-white/10 hover:bg-white/5 transition text-slate-300">Contact Sales</a>
+
+            <button onclick="checkout('MONTHLY')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-lg shadow-indigo-500/25">
+                Subscribe Monthly
+            </button>
+        </div>
+
+        <div class="bg-slate-900 border border-white/10 rounded-3xl p-8 flex flex-col hover:border-emerald-500/50 transition duration-300 fade-in-up delay-300">
+            <h3 class="text-xl font-bold text-emerald-400">Pro Yearly</h3>
+            <div class="my-4 flex items-end gap-1">
+                <span class="text-4xl font-bold text-white">₹899</span>
+                <span class="text-slate-500 mb-1">/yr</span>
+            </div>
+            <p class="text-emerald-500/80 text-sm mb-8 font-medium">Save ₹289 per year!</p>
+            
+            <ul class="space-y-4 mb-8 flex-1">
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> <strong>Everything in Monthly</strong></li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> 2 Months Free</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Priority Support</li>
+            </ul>
+
+            <button onclick="checkout('YEARLY')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition border border-white/10">
+                Subscribe Yearly
+            </button>
         </div>
 
     </div>
-  </section>
-{% endblock content %}
+</div>
+
+<script>
+    function checkout(plan) {
+        // Placeholder for Payment Integration
+        alert("Payment Gateway integration coming next! You selected: " + plan);
+    }
+</script>
+{% endblock %}

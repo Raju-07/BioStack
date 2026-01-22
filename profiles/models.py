@@ -2,7 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import UniqueConstraint,Q
 from django.utils.text import slugify
-
+from django.utils import timezone
+import secrets
 
     
 # Model for theme
@@ -61,12 +62,16 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.full_name or "profile")
-            base = self.slug
-            counter = 1
-            while Profile.objects.filter(user=self.user,slug = self.slug).exists():
-                self.slug = f"{base}-{counter}"
-                counter += 1
+            if self.full_name:
+                base_slug = slugify(self.full_name)
+            else:
+                base_slug = "user-biostack"
+            
+            if Profile.objects.filter(slug = base_slug).exists():
+                random_suffix = secrets.urlsafe(4).lower()
+                self.slug = f"{base_slug}-{random_suffix}"
+            else:
+                self.slug = base_slug
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -163,3 +168,40 @@ class LinkClick(models.Model):
     
     class Meta:
         ordering = ['-timestamp']
+
+#model for subscription 
+
+class Subscription(models.Model):
+    PLAN_CHOICE = (
+        ('FREE', 'Free Plan'),
+        ('MONTHLY', 'Pro Monthly'),
+        ('YEARLY', 'Pro Yearly')
+    )
+    
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscription')
+    plan_type = models.CharField(
+        max_length=20, 
+        choices=PLAN_CHOICE,   
+        default='FREE',        
+        blank=True, 
+        null=True
+    )
+    
+    is_active = models.BooleanField(default=True)
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    stripe_subscription_id = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        plan_display = self.get_plan_type_display() if self.plan_type else "No Plan"
+        return f"{self.user.username} - {plan_display}"
+    
+    @property
+    def is_pro(self):
+        if not self.plan_type or self.plan_type == 'FREE':
+            return False
+        
+        if self.end_date and timezone.now() > self.end_date:
+            return False
+        
+        return True
