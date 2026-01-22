@@ -100,10 +100,6 @@ DATABASES = {
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
-# print(RAZORPAY_KEY_ID)
-# print(RAZORPAY_KEY_SECRET)
-# RAZORPAY_KEY_ID = "rzp_test_S6rQ5QH6eDRQC1"
-# RAZORPAY_KEY_SECRET = "PunWDKXcSP3Wy4x3EY0is41s"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
