@@ -112,7 +112,7 @@
                 <p class="text-xs text-indigo-400 uppercase tracking-wider mt-1 font-bold">Most Flexible</p>
             </div>
             <div class="mb-6">
-                <span class="text-4xl font-bold text-white">₹99</span>
+                <span class="text-4xl font-bold text-white">₹59</span>
                 <span class="text-slate-500">/month</span>
             </div>
 
@@ -120,8 +120,8 @@
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> <strong>Unlimited Profiles</strong></li>
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Premium Themes</li>
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Click & CTR Analytics</li>
-                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Remove Branding</li>
-                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Custom Templates</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Custom Themes</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Priority Support</li>
             </ul>
 
             {% if request.user.subscription.plan_type == 'MONTHLY' %}
@@ -141,15 +141,16 @@
                 <p class="text-xs text-emerald-600 uppercase tracking-wider mt-1 font-bold">Best Value</p>
             </div>
             <div class="mb-6">
-                <span class="text-4xl font-bold text-white">₹899</span>
+                <span class="text-4xl font-bold text-white">499</span>
                 <span class="text-slate-500">/year</span>
-                <p class="text-[10px] text-emerald-500 mt-2 font-bold bg-emerald-500/10 inline-block px-2 py-1 rounded">Save 25% vs Monthly</p>
+                <p class="text-[10px] text-emerald-500 mt-2 font-bold bg-emerald-500/10 inline-block px-2 py-1 rounded">Save 35% vs Monthly</p>
             </div>
 
             <ul class="space-y-3 mb-8 flex-1">
                 <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> All Pro Features</li>
                 <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Priority Support</li>
                 <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Early Access to Features</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Extra 1 Month</li>
             </ul>
 
             {% if request.user.subscription.plan_type == 'YEARLY' %}
@@ -181,26 +182,90 @@
 
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<form id="success-form" action="{% url 'profiles:payment_success' %}" method="POST" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="razorpay_payment_id" id="rzp_payment_id">
+    <input type="hidden" name="razorpay_order_id" id="rzp_order_id">
+    <input type="hidden" name="razorpay_signature" id="rzp_signature">
+    <input type="hidden" name="plan_type_hidden" id="plan_type_hidden">
+</form>
+
 <script>
     function scrollToPlans() {
         document.getElementById('plans-section').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function initiatePayment(planType) {
-        // This is where we will hook up Razorpay later
-        console.log("User wants to buy:", planType);
-        
-        // Temporary feedback for UI testing
+    // Your Javascript Logic
+    async function initiatePayment(planType) {
         const btn = event.currentTarget;
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
         btn.disabled = true;
 
-        setTimeout(() => {
-            alert(`Integration Pending: You selected ${planType}. Payment gateway needed.`);
+        try {
+            // 1. Create Order on Backend
+            const response = await fetch("{% url 'profiles:create_checkout' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ 'plan_type': planType })
+            });
+            
+            const data = await response.json();
+            
+            if(data.error) {
+                alert("Error: " + data.error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 2. Open Razorpay
+            var options = {
+                "key": data.key, 
+                "amount": data.amount, 
+                "currency": data.currency,
+                "name": "BioStack Pro",
+                "description": "Upgrade to " + planType,
+                "image": "{% static 'images/main-logo.png' %}",
+                "order_id": data.order_id, 
+                "handler": function (response){
+                    // 3. Payment Success - Submit Form
+                    document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('rzp_order_id').value = response.razorpay_order_id;
+                    document.getElementById('rzp_signature').value = response.razorpay_signature;
+                    document.getElementById('plan_type_hidden').value = planType;
+                    
+                    document.getElementById('success-form').submit();
+                },
+                "prefill": {
+                    "email": data.user_email,
+                    "contact": data.user_phone
+                },
+                "theme": {
+                    "color": "#6366F1" // Indigo
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                alert("Payment Failed: " + response.error.description);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+            
+            rzp1.open();
+
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong");
             btn.innerHTML = originalText;
             btn.disabled = false;
-        }, 1000);
+        }
     }
 </script>
 

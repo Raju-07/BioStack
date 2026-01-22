@@ -206,6 +206,29 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ("full_name", "bio", "slug", "visibility")
 
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'placeholder': 'e.g. Raju Yadav',
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'
+            }),
+            'bio': forms.Textarea(attrs={
+                'placeholder': 'Tell the world a little about yourself...',
+                'rows': 4,
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500 resize-none'
+            }),
+            'slug': forms.TextInput(attrs={
+                'placeholder': 'my-custom-handle',
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'
+            }),
+            'visibility': forms.Select(attrs={
+                'class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition cursor-pointer'
+            }),
+        }
+        labels = {
+            "full_name": "Display Name",
+            "slug": "Profile URL Handle",
+        }
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None) # Extract user from kwargs
         super().__init__(*args, **kwargs)

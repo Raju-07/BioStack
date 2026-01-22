@@ -42,7 +42,7 @@ class Profile(models.Model):
 # Profile Image 
     profile_image = models.ImageField(upload_to="profile_images/",blank=True,null=True)
 
-    full_name = models.CharField(max_length=255, blank=True)
+    full_name = models.CharField(max_length=255, blank=True,)
     bio = models.TextField(blank=True)
 
     slug = models.SlugField(max_length=150)
@@ -190,7 +190,7 @@ class Subscription(models.Model):
     is_active = models.BooleanField(default=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True, blank=True)
-    stripe_subscription_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         plan_display = self.get_plan_type_display() if self.plan_type else "No Plan"

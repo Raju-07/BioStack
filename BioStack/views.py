@@ -99,7 +99,7 @@ def theme_preview_view(request, theme_id):
         theme.template_name,
         {"profile": dummy_profile, "sections": dummy_sections}
     )
-@login_required
+
 def support(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
@@ -141,14 +141,6 @@ def about_view(request):
 def features_view(request):
     return render(request,'navbar/features.html')
 
-@login_required
-def test(request):
-    user_details = None
-    if hasattr(request.user,'details'):
-        user_details = request.user.userdetails
-    return render(request,'test.html',{"my_details":user_details})
-
-
 #views for footer file:
 def blog_view(request):
     return render(request,'pages/blog.html')
@@ -168,3 +160,6 @@ def terms_view(request):
 
 def getting_started(request):
     return render(request,'docs/getting_started.html')
+
+def analytics(request):
+    return render(request,'docs/analytics.html')

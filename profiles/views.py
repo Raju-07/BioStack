@@ -1,8 +1,10 @@
+import razorpay
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.urls import reverse
+from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -15,6 +17,8 @@ from .forms import ProfileForm, ProfileSectionForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
 
+# Initialize Client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 # (Helper Function ) getting Ip address
 def get_client_ip(request):
@@ -325,3 +329,94 @@ def track_link_click(request,section_id):
 # Subscription section 
 def subscription(request):
     return render(request,'pages/subscription.html')
+
+
+@login_required
+@require_POST
+def create_checkout_session(request):
+    """
+    1. Receive Plan Type (MONTHLY/YEARLY)
+    2. Calculate Amount
+    3. Create Razorpay Order
+    4. Return Order ID to Frontend
+    """
+    data = json.loads(request.body)
+    plan_type = data.get('plan_type')
+    
+    # Pricing Logic (In Paise: 100 paise = 1 Rupee)
+    if plan_type == 'MONTHLY':
+        amount = 59 * 100 
+    elif plan_type == 'YEARLY':
+        amount = 499 * 100
+    else:
+        return JsonResponse({'error': 'Invalid Plan'}, status=400)
+
+    # Create Order
+    currency = "INR"
+    order_data = {
+        'amount': amount,
+        'currency': currency,
+        'payment_capture': '1', # Auto capture
+        'notes': {
+            'user_id': str(request.user.id),
+            'plan_type': plan_type
+        }
+    }
+    
+    order = razorpay_client.order.create(data=order_data)
+    
+    return JsonResponse({
+        'order_id': order['id'],
+        'amount': amount,
+        'currency': currency,
+        'key': settings.RAZORPAY_KEY_ID,
+        'user_email': request.user.email,
+        'user_contact': request.user.details.phone if hasattr(request.user, 'details') else ''
+    })
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        data = request.POST
+        try:
+            # 1. Verify Signature
+            params_dict = {
+                'razorpay_order_id': data['razorpay_order_id'],
+                'razorpay_payment_id': data['razorpay_payment_id'],
+                'razorpay_signature': data['razorpay_signature']
+            }
+            razorpay_client.utility.verify_payment_signature(params_dict)
+
+            # 2. Signature Valid - Update Database
+            order = razorpay_client.order.fetch(data['razorpay_order_id'])
+            user_id = order['notes']['user_id']
+            plan_type = order['notes']['plan_type']
+            
+            user = User.objects.get(id=user_id)
+            sub = user.subscription
+            
+            sub.plan_type = plan_type
+            sub.payment_id = data['razorpay_payment_id']
+            sub.start_date = timezone.now()
+            
+            if plan_type == 'MONTHLY':
+                sub.end_date = timezone.now() + timedelta(days=31)
+            elif plan_type == 'YEARLY':
+                sub.end_date = timezone.now() + timedelta(days=399)
+            
+            sub.save()
+            messages.success(request, f"Welcome to Pro! You are now on the {plan_type} plan.")
+            return redirect('profiles:subscription')
+
+        except razorpay.errors.SignatureVerificationError:
+            # FIX 1: Don't crash. Show error and redirect.
+            messages.error(request, "Payment verification failed. Please contact support.")
+            return redirect('profiles:subscription')
+            
+        except Exception as e:
+            # FIX 2: Handle generic errors gracefully
+            print(f"Payment Error: {e}")
+            messages.error(request, "An error occurred while processing your payment.")
+            return redirect('profiles:subscription')
+            
+    return redirect('profiles:subscription')

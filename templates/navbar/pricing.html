@@ -4,14 +4,40 @@
 {% block title %}Upgrade to Pro | BioStack{% endblock %}
 
 {% block content %}
-<div class="relative min-h-screen py-20 px-6">
+
+<style>
+    /* The sliding animation keyframes */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px); /* Start 30px down */
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0); /* End at normal position */
+        }
+    }
+
+    /* Base class to apply the animation */
+    .fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; /* Smooth easing */
+        opacity: 0; /* Hidden by default until animation starts */
+    }
+
+    /* Staggered delays so they don't all slide in at once */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+</style>
+
+<div class="relative min-h-screen py-20 px-6 ">
     
-    <div class="text-center mb-16 fade-in-up">
+    <div class="text-center mb-16 mt-16 fade-in-up">
         <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
         <p class="text-slate-400 text-lg">Choose the plan that fits your growth.</p>
     </div>
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div id="plans-section" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <div class="bg-slate-900 border border-white/10 rounded-3xl p-8 flex flex-col hover:border-slate-600 transition duration-300 fade-in-up delay-100">
             <h3 class="text-xl font-bold text-slate-300">Starter</h3>
@@ -28,9 +54,15 @@
                 <li class="flex items-center gap-3 text-slate-500 text-sm"><i class="fa-solid fa-xmark"></i> Custom Slug</li>
             </ul>
 
-            <button class="w-full py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5 transition">
-                Current Plan
-            </button>
+            {% if request.user.is_authenticated and request.user.subscription.plan_type == 'FREE' %}
+                <button disabled class="w-full py-3 rounded-xl bg-slate-800 text-slate-500 font-bold border border-white/5 cursor-not-allowed">
+                    Current Plan
+                </button>
+            {% else %}
+                <button class="w-full py-3 rounded-xl border border-white/20 text-slate-300 hover:bg-white/5 transition font-bold cursor-default">
+                    Free Forever
+                </button>
+            {% endif %}
         </div>
 
         <div class="relative bg-slate-900 border border-indigo-500/50 rounded-3xl p-8 flex flex-col hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition duration-300 fade-in-up delay-200 transform md:-translate-y-4">
@@ -39,7 +71,7 @@
             </div>
             <h3 class="text-xl font-bold text-indigo-400">Pro Monthly</h3>
             <div class="my-4 flex items-end gap-1">
-                <span class="text-4xl font-bold text-white">₹99</span>
+                <span class="text-4xl font-bold text-white">₹59</span>
                 <span class="text-slate-500 mb-1">/mo</span>
             </div>
             <p class="text-slate-500 text-sm mb-8">For serious creators.</p>
@@ -47,42 +79,158 @@
             <ul class="space-y-4 mb-8 flex-1">
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> <strong>Unlimited Profiles</strong></li>
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> All Premium Themes</li>
-                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Subdomain slug</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Click & CTR Analytics</li>
+                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Custom Themes</li>
                 <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Remove Branding</li>
-                <li class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-check text-indigo-400"></i> Priority Support</li>
             </ul>
 
-            <button onclick="checkout('MONTHLY')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-lg shadow-indigo-500/25">
-                Subscribe Monthly
-            </button>
+            {% if request.user.is_authenticated and request.user.subscription.plan_type == 'MONTHLY' %}
+                <button disabled class="w-full py-3 rounded-xl bg-indigo-600/20 text-indigo-400 font-bold border border-indigo-500/20 cursor-not-allowed flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> Active
+                </button>
+            {% else %}
+                <button onclick="initiatePayment('MONTHLY')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2">
+                    Subscribe Monthly
+                </button>
+            {% endif %}
         </div>
 
         <div class="bg-slate-900 border border-white/10 rounded-3xl p-8 flex flex-col hover:border-emerald-500/50 transition duration-300 fade-in-up delay-300">
             <h3 class="text-xl font-bold text-emerald-400">Pro Yearly</h3>
             <div class="my-4 flex items-end gap-1">
-                <span class="text-4xl font-bold text-white">₹899</span>
+                <span class="text-4xl font-bold text-white">₹499</span>
                 <span class="text-slate-500 mb-1">/yr</span>
             </div>
-            <p class="text-emerald-500/80 text-sm mb-8 font-medium">Save ₹289 per year!</p>
+            <p class="text-emerald-500/80 text-sm mb-8 font-medium">Save 35% vs Monthly</p>
             
             <ul class="space-y-4 mb-8 flex-1">
-                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> <strong>Everything in Monthly</strong></li>
-                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> 2 Months Free</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> <strong>All Pro Features</strong></li>
                 <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Priority Support</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Early Access to Features</li>
+                <li class="flex items-center gap-3 text-slate-300 text-sm"><i class="fa-solid fa-check text-emerald-500"></i> Extra 1 Month</li>
             </ul>
 
-            <button onclick="checkout('YEARLY')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition border border-white/10">
-                Subscribe Yearly
-            </button>
+            {% if request.user.is_authenticated and request.user.subscription.plan_type == 'YEARLY' %}
+                <button disabled class="w-full py-3 rounded-xl bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 cursor-not-allowed flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> Active
+                </button>
+            {% else %}
+                <button onclick="initiatePayment('YEARLY')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition border border-white/10 flex items-center justify-center gap-2">
+                    Subscribe Yearly
+                </button>
+            {% endif %}
         </div>
 
     </div>
+
+    <div class="mt-24 max-w-4xl mx-auto border-t border-white/5 pt-10 fade-in-up delay-300">
+        <h3 class="text-2xl font-bold text-white mb-8 text-center">Frequently Asked Questions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition">
+                <h4 class="font-bold text-slate-200 mb-2 text-base">Can I cancel anytime?</h4>
+                <p class="text-slate-400 leading-relaxed">Yes, you can cancel your subscription at any time. Your pro features will remain active until the end of your billing period.</p>
+            </div>
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition">
+                <h4 class="font-bold text-slate-200 mb-2 text-base">What happens if I downgrade?</h4>
+                <p class="text-slate-400 leading-relaxed">Your extra profiles will be paused (hidden from public) until you upgrade again. You won't lose your data.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<form id="success-form" action="{% url 'profiles:payment_success' %}" method="POST" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="razorpay_payment_id" id="rzp_payment_id">
+    <input type="hidden" name="razorpay_order_id" id="rzp_order_id">
+    <input type="hidden" name="razorpay_signature" id="rzp_signature">
+    <input type="hidden" name="plan_type_hidden" id="plan_type_hidden">
+</form>
+
 <script>
-    function checkout(plan) {
-        // Placeholder for Payment Integration
-        alert("Payment Gateway integration coming next! You selected: " + plan);
+    // Logic to initiate Razorpay Payment
+    async function initiatePayment(planType) {
+        
+        // 1. Check if user is logged in
+        const isUserAuthenticated = "{{ request.user.is_authenticated|yesno:'true,false' }}";
+        
+        if (isUserAuthenticated === 'false') {
+            // Redirect to login if trying to buy without account
+            window.location.href = "{% url 'accounts:login' %}?next={{ request.path }}";
+            return;
+        }
+
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        try {
+            // 2. Create Order on Backend
+            const response = await fetch("{% url 'profiles:create_checkout' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ 'plan_type': planType })
+            });
+            
+            const data = await response.json();
+            
+            if(data.error) {
+                alert("Error: " + data.error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 3. Open Razorpay Modal
+            var options = {
+                "key": data.key, 
+                "amount": data.amount, 
+                "currency": data.currency,
+                "name": "BioStack Pro",
+                "description": "Upgrade to " + planType,
+                "image": "{% static 'images/main-logo.png' %}",
+                "order_id": data.order_id, 
+                "handler": function (response){
+                    // 4. Payment Success - Submit Form
+                    document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('rzp_order_id').value = response.razorpay_order_id;
+                    document.getElementById('rzp_signature').value = response.razorpay_signature;
+                    document.getElementById('plan_type_hidden').value = planType;
+                    
+                    document.getElementById('success-form').submit();
+                },
+                "prefill": {
+                    "email": data.user_email,
+                    "contact": data.user_phone
+                },
+                "theme": {
+                    "color": "#6366F1" // Indigo
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            
+            // Handle Payment Failure
+            rzp1.on('payment.failed', function (response){
+                alert("Payment Failed: " + response.error.description);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+            
+            rzp1.open();
+
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong. Please try again.");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     }
 </script>
+
 {% endblock %}
