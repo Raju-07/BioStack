@@ -27,13 +27,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 #staticfiles 
@@ -81,9 +81,9 @@ DATABASES = {
 # S3 / Supabase Storage Settings
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'media'
+AWS_STORAGE_BUCKET_NAME = 'media'  # The name of the bucket you created
 AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL')
-AWS_S3_REGION_NAME = 'ap-south-1' 
+AWS_S3_REGION_NAME = 'ap-south-1' # Or your specific region
 AWS_DEFAULT_ACL = 'public-read'
 
 STORAGES = {
@@ -135,7 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 # Link for Static Files
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR,'static'
 ]
@@ -155,7 +155,7 @@ DEFAULT_FROM_EMAIL = "noreply@biostack.local"
 
 #SMTP Integration 
 
-if DEBUG:
+if DEBUG == "True":
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
