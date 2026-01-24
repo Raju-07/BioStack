@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
@@ -25,14 +24,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',   
 ]
 
 #staticfiles 
@@ -104,8 +103,6 @@ RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "accounts.User"
-
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -126,11 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -147,8 +141,6 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
-
 LOGIN_URL = "/auth/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/auth/login/"
@@ -158,7 +150,7 @@ DEFAULT_FROM_EMAIL = "noreply@biostack.local"
 
 #SMTP Integration 
 
-if DEBUG == "True":
+if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -169,8 +161,6 @@ else:
 
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-
     SITE_ID = 1
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
