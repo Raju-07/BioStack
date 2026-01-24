@@ -1,21 +1,16 @@
 {
-  "builds": [
-    {
-      "src": "BioStack/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "buildCommand": "python manage.py collectstatic --noinput"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/staticfiles/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "BioStack/wsgi.py"
-    }
-  ]
+    "builds": [{
+        "src": "BioStack/wsgi.py",
+        "use": "@vercel/python"
+    }],
+    "routes": [
+        {
+            "src": "/_vercel/insights/(.*)",
+            "dest": "/_vercel/insights/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "BioStack/wsgi.py"
+        }
+    ]
 }
