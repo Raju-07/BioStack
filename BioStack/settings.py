@@ -5,8 +5,8 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = True
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+DEBUG = False
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","*").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -35,8 +35,8 @@ MIDDLEWARE = [
 ]
 
 #staticfiles 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage",
 
 ROOT_URLCONF = 'BioStack.urls'
 
@@ -89,7 +89,7 @@ STORAGES = {
         "BACKEND": "storages.backends.s3.S3Storage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
 

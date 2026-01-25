@@ -5,8 +5,8 @@
     }],
     "routes": [
         {
-            "src": "/_vercel/insights/(.*)",
-            "dest": "/_vercel/insights/$1"
+            "src": "/_vercel/static/(.*)",
+            "dest": "/_vercel/static/$1"
         },
         {
             "src": "/(.*)",
