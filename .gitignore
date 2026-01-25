@@ -22,3 +22,5 @@ Thumbs.db
 #tailwindcss dev
 tailwindcss_dev/
 .json/
+.vercel
+.env*.local
