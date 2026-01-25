@@ -50,16 +50,13 @@
                     <div class="relative group">
                         <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-xl">
                             {% if request.user.details.profile_image %}
-                                <img src="{{ request.user.details.profile_image.url }}" id="preview-image" class="w-full h-full object-cover">
+                                <img src="{{ request.user.details.profile_image.url }}" id="upload-preview-image" class="w-full h-full object-cover">
                             {% else %}
-                                <div id="preview-placeholder" class="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800">
+                                <div id="upload-preview-placeholder" class="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800">
                                     <i class="fa-solid fa-user text-3xl"></i>
                                 </div>
-                                <img src="" id="preview-image" class="hidden w-full h-full object-cover">
+                                <img src="" id="upload-preview-image" class="hidden w-full h-full object-cover">
                             {% endif %}
-                        </div>
-                        <div class="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-slate-900 shadow-lg cursor-pointer hover:bg-indigo-500 transition">
-                            <i class="fa-solid fa-camera text-xs"></i>
                         </div>
                     </div>
 
@@ -151,8 +148,8 @@
                     document.getElementById('file-name').textContent = file.name;
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const preview = document.getElementById('preview-image');
-                        const placeholder = document.getElementById('preview-placeholder');
+                        const preview = document.getElementById('upload-preview-image');
+                        const placeholder = document.getElementById('upload-preview-placeholder');
                         preview.src = e.target.result;
                         preview.classList.remove('hidden');
                         if(placeholder) placeholder.classList.add('hidden');
