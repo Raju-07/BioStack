@@ -1,6 +1,6 @@
 {
     "builds": [{
-        "src": "biostack/wsgi.py",
+        "src": "BioStack/wsgi.py",
         "use": "@vercel/python"
     }],
     "routes": [
@@ -10,7 +10,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "biostack/wsgi.py"
+            "dest": "BioStack/wsgi.py"
         }
     ]
 }
