@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 def validate_image_size(image):
     file_size = image.size
-    limit_mb = 5
+    limit_mb = 4
     if file_size > limit_mb * 1024 * 1024:
         raise ValidationError(f"Max size of the file is {limit_mb} MB")
 
@@ -35,7 +35,7 @@ class UserDetail(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='details')
     
     #profile Image
-    profile_image = models.ImageField(upload_to="profile_images/",blank=True,null=True,validators=[validate_image_size],help_text="Upload a Image (max 5MB)")
+    profile_image = models.ImageField(upload_to="profile_images/",blank=True,null=True,validators=[validate_image_size],help_text="Upload a Image (max 4MB)")
 
     # Personal Fields
     full_name = models.CharField(max_length=255, blank=True)

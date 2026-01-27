@@ -50,7 +50,19 @@ def user_details(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Global personal details updated successfully.")
-            return redirect('accounts:userdetails') 
+            return redirect('accounts:userdetails')
+            
+        else:
+            # --- CHANGE IS HERE ---
+            # If the form is invalid (e.g., file too big), catch the error
+            if 'profile_image' in form.errors:
+                # Get the specific error message from forms.py (e.g., "The image file is too large")
+                error_msg = form.errors['profile_image'][0]
+                messages.error(request, f"Upload Failed: {error_msg}")
+            else:
+                # Handle other form errors (like invalid phone number, etc.)
+                messages.error(request, "Please correct the errors below.")
+                
     else:
         form = UserDetailForm(instance=request.user.details)
 

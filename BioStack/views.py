@@ -120,6 +120,7 @@ def support(request):
 
 def homepage(request):
     total_users = User.objects.count()
+
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
