@@ -5,7 +5,7 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","*").split(",")
 
 # Application definition
@@ -77,10 +77,10 @@ DATABASES = {
 }
 
 # S3 / Supabase Storage Settings
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('BIOS_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('BIOS_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'media'  # The name of the bucket you created
-AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL')
+AWS_S3_ENDPOINT_URL = os.environ.get('BIOS_AWS_S3_ENDPOINT_URL')
 AWS_S3_REGION_NAME = 'ap-south-1' # Or your specific region
 AWS_DEFAULT_ACL = 'public-read'
 

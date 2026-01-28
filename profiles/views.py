@@ -1,5 +1,6 @@
 import razorpay
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404, HttpResponseForbidden, JsonResponse
@@ -13,7 +14,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 from .models import Profile, ProfileSection,Theme,ProfileView,LinkClick,Subscription
-from .forms import ProfileForm, ProfileSectionForm
+from .forms import ProfileForm, ProfileSectionForm,UserUpdateForm,ProfileUpdateForm
 from .constants import FREE_PROFILE_LIMIT
 from .utils import get_active_profile
 
@@ -420,3 +421,84 @@ def payment_success(request):
             return redirect('profiles:subscription')
             
     return redirect('profiles:subscription')
+
+@login_required
+def account_settings(request):
+    user = request.user
+    
+    # 1. Get Active Profile
+    active_profile_id = request.session.get('active_profile_id')
+    if active_profile_id:
+        active_profile = Profile.objects.filter(id=active_profile_id, user=user).first()
+    else:
+        active_profile = Profile.objects.filter(user=user).first()
+        if active_profile:
+            request.session['active_profile_id'] = active_profile.id
+
+    # 2. Handle Form Submissions
+    if request.method == 'POST':
+        # Check which form was submitted based on a hidden input or button name
+        if 'update_account' in request.POST:
+            user_form = UserUpdateForm(request.POST, instance=user)
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, "Account username updated successfully.")
+                return redirect('profiles:account')
+            else:
+                messages.error(request, "Error updating username. Please check requirements.")
+        
+        elif 'update_profile' in request.POST and active_profile:
+            profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=active_profile)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, "Profile updated successfully.")
+                return redirect('profiles:account')
+            else:
+                messages.error(request, "Error updating profile.")
+
+    # 3. Initialize Forms (GET request or after failed POST)
+    user_form = UserUpdateForm(instance=user)
+    profile_form = ProfileUpdateForm(instance=active_profile) if active_profile else None
+    
+    # 4. Get Inactive Profiles
+    inactive_profiles = Profile.objects.filter(user=user).exclude(id=active_profile.id) if active_profile else []
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'active_profile': active_profile,
+        'inactive_profiles': inactive_profiles,
+        'is_premium': getattr(user.details, 'tier', 'free') == 'premium' # Adjust based on your model
+    }
+    return render(request, 'profiles/account.html', context)
+
+@login_required
+@require_POST
+def verify_delete_account(request):
+    """
+    Verifies that the user sent the 'DELETE' confirmation string 
+    and then permanently deletes their account.
+    """
+    try:
+        data = json.loads(request.body)
+        confirmation = data.get('confirmation', '').strip()
+        
+        # 1. Verify the 'DELETE' keyword
+        if confirmation != 'DELETE':
+            return JsonResponse({
+                'success': False, 
+                'message': 'Confirmation failed. Please type "DELETE" exactly.'
+            }, status=400)
+
+        # 2. Delete User (Cascades to Profiles automatically)
+        user = request.user
+        user.delete()
+        
+        # 3. Logout
+        logout(request)
+        
+        return JsonResponse({'success': True, 'message': 'Account deleted successfully.'})
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+

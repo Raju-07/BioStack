@@ -14,6 +14,8 @@ from .views import (
     subscription,
     payment_success,
     create_checkout_session,
+    account_settings,
+    verify_delete_account,
 )
 
 app_name = "profiles"
@@ -40,5 +42,7 @@ urlpatterns = [
     path("delete/<int:profile_id>", delete_profile, name='delete'),
     path('track/click/<int:section_id>', track_link_click, name='track_click'),
 
+    path('delete/verify/', verify_delete_account, name='verify_delete_account'),
+    path('account/', account_settings, name='account'),
     path("<str:username>/<slug:profile_slug>/", public_profile_view, name="public"),
 ]

@@ -1,0 +1,411 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Account Settings | BioStack{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-5xl mx-auto pb-20 space-y-10 fade-in-up">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">Settings</h1>
+            <p class="text-slate-400 mt-1">Manage your login details and public profile settings.</p>
+        </div>
+        <div class="glass-panel px-4 py-2 rounded-full flex items-center gap-3 bg-white/5 border border-white/10">
+            <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">User ID</p>
+                <p class="text-xs text-white font-mono">{{ request.user.id|stringformat:"06d" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-4 flex flex-col items-center text-center space-y-4">
+            <div class="relative group">
+                <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-2xl relative">
+                    {% if request.user.details.profile_image %}
+                        <img src="{{ request.user.details.profile_image.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800 text-5xl">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">{{ request.user.username }}</h2>
+                <p class="text-sm text-slate-500">{{ request.user.email }}</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8 bg-[#0F172A]/50 border border-white/5 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-shield-cat text-slate-400"></i> Login Credentials
+            </h3>
+            
+            <form method="POST" id="account-form" onsubmit="handleFormSubmit(event, 'account')" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="update_account" value="true">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+                        <input type="text" name="username" 
+                               value="{{ user_form.username.value|default:request.user.username }}" 
+                               data-original="{{ request.user.username }}"
+                               class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 focus:outline-none transition">
+                        
+                        <p class="text-[10px] text-slate-500 mt-1.5 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-info"></i> No spaces allowed. Use '_' or '-'
+                        </p>
+                        {% if user_form.username.errors %}
+                            <p class="text-red-400 text-xs mt-1">{{ user_form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
+                        <div class="relative opacity-60">
+                            <span class="absolute left-4 top-3.5 text-slate-500"><i class="fa-solid fa-lock"></i></span>
+                            <input type="email" value="{{ request.user.email }}" readonly
+                                   class="w-full bg-slate-900 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-slate-400 cursor-not-allowed focus:outline-none">
+                        </div>
+                        <p class="text-[10px] text-slate-600 mt-1.5">Email cannot be changed for security.</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-2 rounded-lg text-sm font-medium transition">
+                        Update Username
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+    <div class="bg-[#0F172A] border border-white/5 rounded-3xl p-1 relative overflow-hidden shadow-2xl">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div class="bg-slate-900/40 rounded-[22px] p-6 md:p-10 relative z-10 backdrop-blur-xl">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-lg font-bold text-white">Active Profile Settings</h3>
+                    <p class="text-sm text-slate-400">Manage the public details of your active page.</p>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-bold text-emerald-400">Live</span>
+                </div>
+            </div>
+
+            {% if active_profile %}
+            <form method="POST" id="profile-form" onsubmit="handleFormSubmit(event, 'profile')" class="space-y-8">
+                {% csrf_token %}
+                <input type="hidden" name="update_profile" value="true">
+
+                <div class="space-y-6 max-w-3xl">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Profile Name</label>
+                        <input type="text" name="full_name" value="{{ active_profile.full_name }}" 
+                               class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition placeholder-slate-600 font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Custom URL</label>
+                        <div class="flex rounded-xl bg-slate-900 border border-white/10 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition overflow-hidden">
+                            <div class="bg-white/5 px-3 py-3 text-slate-500 text-sm border-r border-white/5 select-none flex items-center gap-1">
+                                <span class="hidden sm:inline">biostack.site/profile/</span>
+                                <span class="text-slate-300 font-bold">{{ request.user.username }}/</span>
+                            </div>
+                            <input type="text" name="slug" 
+                                   value="{{ active_profile.slug }}" 
+                                   data-original="{{ active_profile.slug }}"
+                                   class="flex-1 bg-transparent px-4 py-3 text-white focus:outline-none placeholder-slate-600 font-mono text-sm"
+                                   placeholder="slug">
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">
+                            Full URL: <span class="text-indigo-400">biostack.site/profile/{{ request.user.username }}/<span class="font-bold text-white">{{ active_profile.slug }}</span></span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bio / Headline</label>
+                        <textarea name="bio" rows="3" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition placeholder-slate-600 resize-none">{{ active_profile.bio }}</textarea>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-white/5 flex justify-start">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition transform hover:scale-[1.02]">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <div class="text-center py-10">
+                <p class="text-slate-400">No active profile selected.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if inactive_profiles %}
+    <div>
+        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Other Profiles</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for p in inactive_profiles %}
+            <div class="group flex items-center justify-between p-4 bg-[#0F172A]/30 border border-white/5 rounded-xl hover:border-white/10 transition">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center overflow-hidden">
+                        {% if p.image %}
+                            <img src="{{ p.image.url }}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition">
+                        {% else %}
+                            <span class="text-xs text-slate-500 font-bold">{{ p.full_name|slice:":1" }}</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-400 group-hover:text-white transition">{{ p.full_name }}</p>
+                        <p class="text-[10px] text-slate-600">{{ p.slug }}</p>
+                    </div>
+                </div>
+                <form action="{% url 'profiles:switch_profile' p.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="text-xs bg-white/5 hover:bg-indigo-500 hover:text-white px-3 py-1.5 rounded-lg transition text-slate-400 font-medium">Switch</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mt-12 pt-8 border-t border-white/5">
+        <h3 class="text-sm font-bold text-red-400 uppercase tracking-widest mb-4">Danger Zone</h3>
+        <div class="bg-red-500/5 border border-red-500/10 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+                <h4 class="text-white font-bold mb-1">Delete Account</h4>
+                <p class="text-sm text-slate-400 max-w-lg">
+                    Once you delete your account, there is no going back. All your profiles, data, and settings will be permanently removed.
+                </p>
+            </div>
+            <button onclick="openDeleteModal()" class="shrink-0 bg-red-500/10 hover:bg-red-600 hover:text-white text-red-500 border border-red-500/20 px-6 py-2.5 rounded-xl font-bold transition text-sm">
+                Delete Account
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div id="warning-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeWarningModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#0F172A] border border-orange-500/30 rounded-3xl p-8 shadow-2xl transform transition-all scale-95 opacity-0" id="warning-modal-content">
+        
+        <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xl mx-auto mb-4">
+                <i class="fa-solid fa-link-slash"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">Warning: Link Breakage</h3>
+            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                Changing your <span id="warning-field" class="text-orange-400 font-bold"></span> will break existing links. 
+                Any URLs previously shared on social media or QR codes will <strong class="text-white">stop working</strong> immediately.
+            </p>
+        </div>
+
+        <div class="space-y-3">
+            <button onclick="confirmChanges()" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-orange-500/20">
+                I Understand, Make Changes
+            </button>
+            <button onclick="closeWarningModal()" class="w-full bg-transparent hover:bg-white/5 text-slate-400 hover:text-white py-2 rounded-xl transition text-sm">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="delete-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+    
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#0F172A] border border-red-500/30 rounded-3xl p-8 shadow-2xl transform transition-all scale-95 opacity-0" id="delete-modal-content">
+        
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center text-2xl mx-auto mb-4 border border-red-500/20">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">Permanently Delete Account?</h3>
+        </div>
+
+        <div class="bg-red-500/5 border border-red-500/10 rounded-xl p-4 mb-6 text-left">
+            <p class="text-xs text-red-200/80 leading-relaxed mb-2">
+                <strong class="text-red-400">Warning:</strong> This action cannot be undone. 
+            </p>
+            <ul class="text-xs text-red-200/60 list-disc pl-4 space-y-1">
+                <li>Your master account <strong>{{ request.user.username }}</strong> will be deleted.</li>
+                <li>All active and inactive profiles will be removed immediately.</li>
+                <li>All analytics data, images, and settings will be lost.</li>
+                <li>Your profile URLs will be released.</li>
+            </ul>
+        </div>
+
+        <div class="space-y-4">
+            <label class="block text-xs text-slate-400 text-center">
+                Type <span class="font-bold text-white select-none">DELETE</span> to confirm
+            </label>
+            
+            <input type="text" id="delete-confirm-input" 
+                   placeholder="" 
+                   maxlength="6"
+                   autocomplete="off"
+                   oninput="this.value = this.value.toUpperCase(); checkDeleteInput()"
+                   class="w-full bg-slate-900 border border-white/20 rounded-xl px-4 py-3 text-white text-center tracking-widest font-bold focus:border-red-500 focus:outline-none transition uppercase placeholder-slate-700">
+            
+            <button onclick="confirmDestroy()" id="confirm-btn" disabled
+                    class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                Confirm Deletion
+            </button>
+        </div>
+
+        <button onclick="closeDeleteModal()" class="w-full mt-4 text-sm text-slate-500 hover:text-white transition">Cancel</button>
+    </div>
+</div>
+
+<script>
+    // --- VARIABLES ---
+    let pendingForm = null;
+
+    // --- WARNING MODAL LOGIC (Existing) ---
+    const warningModal = document.getElementById('warning-modal');
+    const warningContent = document.getElementById('warning-modal-content');
+
+    function handleFormSubmit(event, formType) {
+        event.preventDefault(); // Stop immediate submission
+        
+        let isCriticalChange = false;
+        let changeType = "";
+
+        if (formType === 'account') {
+            const input = document.querySelector('input[name="username"]');
+            if (input.value !== input.getAttribute('data-original')) {
+                isCriticalChange = true;
+                changeType = "Username";
+            }
+            pendingForm = document.getElementById('account-form');
+        } 
+        else if (formType === 'profile') {
+            const input = document.querySelector('input[name="slug"]');
+            if (input.value !== input.getAttribute('data-original')) {
+                isCriticalChange = true;
+                changeType = "Profile URL (Slug)";
+            }
+            pendingForm = document.getElementById('profile-form');
+        }
+
+        if (isCriticalChange) {
+            document.getElementById('warning-field').textContent = changeType;
+            openWarningModal();
+        } else {
+            pendingForm.submit();
+        }
+    }
+
+    function openWarningModal() {
+        warningModal.classList.remove('hidden');
+        setTimeout(() => {
+            warningContent.classList.remove('scale-95', 'opacity-0');
+            warningContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeWarningModal() {
+        warningContent.classList.remove('scale-100', 'opacity-100');
+        warningContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => { warningModal.classList.add('hidden'); }, 300);
+        pendingForm = null;
+    }
+
+    function confirmChanges() {
+        if(pendingForm) pendingForm.submit();
+    }
+
+
+    // --- DELETE MODAL LOGIC (FIXED) ---
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteContent = document.getElementById('delete-modal-content');
+    const deleteInput = document.getElementById('delete-confirm-input');
+    const confirmBtn = document.getElementById('confirm-btn');
+
+    function openDeleteModal() {
+        deleteModal.classList.remove('hidden');
+        
+        // RESET STATE: Clear input and disable button every time modal opens
+        deleteInput.value = '';
+        confirmBtn.disabled = true;
+        confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        confirmBtn.classList.remove('shadow-lg', 'shadow-red-500/20');
+
+        setTimeout(() => {
+            deleteContent.classList.remove('scale-95', 'opacity-0');
+            deleteContent.classList.add('scale-100', 'opacity-100');
+            deleteInput.focus();
+        }, 10);
+    }
+
+    function closeDeleteModal() {
+        deleteContent.classList.remove('scale-100', 'opacity-100');
+        deleteContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => { deleteModal.classList.add('hidden'); }, 300);
+    }
+
+    // Function: Unlock button ONLY if input matches "DELETE" exactly
+    function checkDeleteInput() {
+        const val = deleteInput.value; // It is forced uppercase by oninput
+        
+        if (val === 'DELETE') {
+            // UNLOCK BUTTON
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            confirmBtn.classList.add('shadow-lg', 'shadow-red-500/20');
+        } else {
+            // LOCK BUTTON
+            confirmBtn.disabled = true;
+            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            confirmBtn.classList.remove('shadow-lg', 'shadow-red-500/20');
+        }
+    }
+
+    function confirmDestroy() {
+        if(deleteInput.value !== 'DELETE') return;
+
+        confirmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+        confirmBtn.disabled = true;
+
+        fetch("{% url 'profiles:verify_delete_account' %}", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}" 
+            },
+            body: JSON.stringify({ confirmation: deleteInput.value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                window.location.href = "/";
+            } else {
+                alert(data.message || "Confirmation failed.");
+                confirmBtn.innerHTML = 'Confirm Deletion';
+                confirmBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred. Please try again.");
+            confirmBtn.innerHTML = 'Confirm Deletion';
+            confirmBtn.disabled = false;
+        });
+    }
+</script>
+{% endblock %}

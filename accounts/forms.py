@@ -1,12 +1,14 @@
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,get_user_model
+from django.core.validators import RegexValidator
 
 from .models import User,UserDetail
 
+User = get_user_model()
 
 class SignupForm(forms.ModelForm):
     
-    username = forms.CharField(label="Username",max_length=150,widget=forms.TextInput(attrs={'placeholder': 'Choose a unique username','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
+    username = forms.CharField(label="Username",max_length=150,validators=[RegexValidator(regex=r'^[\w-]+$',message='Username can only contain letters, numbers, underscores, and hyphens (no spaces).',code='invalid_username')],widget=forms.TextInput(attrs={'placeholder': 'Choose a unique username','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
     email = forms.EmailField(label="Email Address",widget=forms.EmailInput(attrs={'placeholder': 'name@example.com','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
     password1 = forms.CharField(label="Password",widget=forms.PasswordInput(attrs={'placeholder': 'Create a strong password','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
     password2 = forms.CharField(label="Confirm Password",widget=forms.PasswordInput(attrs={'placeholder': 'Repeat your password','class': 'w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500'}))
@@ -28,6 +30,9 @@ class SignupForm(forms.ModelForm):
     
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        if username:
+            username = username.lower()
+
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError("This username is already taken.")
         return username
@@ -35,6 +40,8 @@ class SignupForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        if user.username:
+            user.username = user.username.lower()
         if commit:
             user.save()
         return user

@@ -108,6 +108,11 @@
         <i class="fa-solid fa-bell w-5 text-center {% if request.resolver_match.url_name != 'subscription' %}group-hover:text-purple-400 transition{% endif %}"></i>
         Subscription 
       </a>
+      
+      <a href="{% url 'profiles:account' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'account' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
+        <i class="fa-solid fa-gear w-5 text-center {% if request.resolver_match.url_name != 'account' %}group-hover:text-purple-400 transition{% endif %}"></i>
+        Account 
+      </a>
     </nav>
 
     <div class="p-4 border-t border-white/5 bg-[#0B1120]">

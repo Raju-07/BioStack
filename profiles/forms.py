@@ -1,6 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from .models import ProfileSection, Profile,Feedback
 
+User = get_user_model()
 class ProfileSectionForm(forms.ModelForm):
     # --- 1. General Content Field ---
     content = forms.CharField(
@@ -265,3 +268,40 @@ class FeedbackForm(forms.ModelForm):
                 'placeholder': 'How can we improve BioStack?'
             }),
         }
+
+class UserUpdateForm(forms.ModelForm):
+    username = forms.CharField(
+        validators=[
+            RegexValidator(
+                regex=r'^[\w-]+$',
+                message='Username can only contain letters, numbers, underscores, and hyphens (no spaces).',
+                code='invalid_username'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-indigo-500 focus:outline-none transition',
+            'placeholder': 'username'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ['username']
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
+
+class ProfileUpdateForm(forms.ModelForm):
+    slug = forms.SlugField(
+        widget=forms.TextInput(attrs={
+            'class': 'flex-1 bg-transparent px-4 py-3 text-white focus:outline-none placeholder-slate-600',
+            'placeholder': 'slug'
+        })
+    )
+    
+    class Meta:
+        model = Profile
+        fields = ['full_name', 'slug', 'bio',]
