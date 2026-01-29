@@ -144,10 +144,6 @@ def about_view(request):
 def features_view(request):
     return render(request,'navbar/features.html')
 
-#views for footer file:
-def blog_view(request):
-    return render(request,'pages/blog.html')
-
 def career_view(request):
     return render(request,'pages/careers.html')
 

@@ -31,7 +31,6 @@ urlpatterns = [
     path('about-us/',views.about_view,name='about'),
 
     #Footer Views
-    path('blog/',views.blog_view,name='blog'),
     path('showcase/',views.showcase_view,name='showcase'),
     path('terms/',views.terms_view,name='terms'),
     path('templates/',views.templates_view,name='templates'),
@@ -46,6 +45,7 @@ urlpatterns = [
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
+    path('blogs/',include(("blogs.urls","blogs"),namespace="blogs")),
 
     # PASSWORD RESET 
     path("password-reset/", auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html",),name="password_reset", ),
