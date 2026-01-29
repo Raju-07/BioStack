@@ -17,10 +17,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #Apps
+    'tinymce',
     'accounts',
     'dashboard',
     'profiles',
     'django.contrib.sites',
+    'blogs',
 ]
 
 MIDDLEWARE = [
@@ -160,3 +162,12 @@ else:
     SITE_ID = 1
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Tinymce configuration
+TINYMCE_DEFAULT_CONFIG = {
+    "height": "360",
+    "width": "100%",
+    "menubar": "file edit view insert format tools table help",
+    "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount",
+    "toolbar": "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help",
+}
