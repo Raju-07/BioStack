@@ -43,7 +43,7 @@
 
     </div>
 
-    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-slate-950 border-b border-white/10 md:hidden hidden flex-col p-4 shadow-2xl">
+    <div id="mobile-menu" class="absolute top-full left-0 w-[40%] h-[50vh] bg-slate-950 border-r border-b border-white/10 md:hidden flex flex-col p-4 shadow-2xl transition-transform duration-300 ease-in-out -translate-x-full">
         {% if request.user.is_authenticated %}
             <a href="{% url 'home' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'home' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Home</a>
             <a href="{% url 'features' %}" class="block py-3 px-4 rounded-lg text-sm {% if request.resolver_match.url_name == 'features' %}bg-indigo-600/10 text-indigo-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">Features</a>
@@ -71,7 +71,6 @@
 </nav>
 
 <script>
-    // Mobile Menu Toggle Logic
     document.addEventListener('DOMContentLoaded', function() {
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
@@ -79,16 +78,18 @@
         const iconClose = document.getElementById('icon-close');
 
         btn.addEventListener('click', function() {
-            // Toggle Visibility
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                menu.classList.add('flex');
+            // Updated Logic: Toggle the translate class instead of hidden
+            if (menu.classList.contains('-translate-x-full')) {
+                // OPEN: Remove negative translate (slide in)
+                menu.classList.remove('-translate-x-full');
+                
                 // Switch Icons
                 iconBars.classList.add('hidden');
                 iconClose.classList.remove('hidden');
             } else {
-                menu.classList.add('hidden');
-                menu.classList.remove('flex');
+                // CLOSE: Add negative translate (slide out)
+                menu.classList.add('-translate-x-full');
+                
                 // Switch Icons
                 iconBars.classList.remove('hidden');
                 iconClose.classList.add('hidden');
