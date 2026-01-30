@@ -76,65 +76,12 @@
   </script>
   {% endif %}
 
-  <div id="mobile-menu-overlay" onclick="closeMobileMenu()" class="fixed inset-0 bg-black/80 z-[60] hidden transition-opacity duration-300 md:hidden"></div>
-
-  <aside id="mobile-sidebar" 
-         class="fixed inset-y-0 left-0 z-[70] w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 md:hidden flex flex-col shadow-2xl"
-         style="transform: translateX(-100%); transition: transform 0.3s ease-in-out;">
-    
-    <div class="p-5 flex items-center justify-between border-b border-white/10">
-      <div class="flex items-center gap-3 font-bold text-lg text-white">
-        <img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-8 h-8 rounded-lg">
-        <span>BioStack</span>
-      </div>
-      <button onclick="closeMobileMenu()" class="text-slate-400 hover:text-white transition p-2 bg-white/5 rounded-lg">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
-    </div>
-
-    <nav class="flex-1 p-5 space-y-2 overflow-y-auto">
-        <a href="/" class="block px-4 py-3 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition font-medium">Home</a>
-        <a href="#" class="block px-4 py-3 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition font-medium">Features</a>
-        <a href="#" class="block px-4 py-3 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition font-medium">Pricing</a>
-        
-        <div class="my-4 border-t border-white/10"></div>
-
-        {% if user.is_authenticated %}
-            <a href="{% url 'dashboard:index' %}" class="flex items-center gap-3 px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition font-bold justify-center shadow-lg shadow-indigo-500/20">
-                Go to Dashboard <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        {% else %}
-            <a href="{% url 'accounts:login' %}" class="block px-4 py-3 text-center text-slate-300 hover:text-white font-medium">Log In</a>
-            <a href="{% url 'accounts:signup' %}" class="block px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition font-bold text-center mt-2">Get Started</a>
-        {% endif %}
-    </nav>
-  </aside>
-
   {% include "partials/navbar.html" %}
 
   {% block content %}
   {% endblock content %}
 
   {% include "partials/footer.html" %}
-
-  <script>
-    const mobileSidebar = document.getElementById('mobile-sidebar');
-    const mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-    function openMobileMenu() {
-        // Slide In: Change transform to 0
-        mobileSidebar.style.transform = 'translateX(0)';
-        mobileOverlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Lock Scroll
-    }
-
-    function closeMobileMenu() {
-        // Slide Out: Change transform back to -100%
-        mobileSidebar.style.transform = 'translateX(-100%)';
-        mobileOverlay.classList.add('hidden');
-        document.body.style.overflow = ''; // Unlock Scroll
-    }
-  </script>
 
 </body>
 </html>
