@@ -1,5 +1,227 @@
-{% extends "base.html" %}
-{% block title %}
-{{blog.title}}
-{% endblock title %}
+{% extends 'base.html' %}
+{% load static %}
 
+{% block title %}{{ blog.title }} | BioStack Blog{% endblock %}
+
+{% block content %}
+<style>
+    /* --- TYPOGRAPHY SYSTEM --- */
+    
+    /* Base Article Text */
+    .article-content {
+        color: #e2e8f0; /* brighter slate for high contrast */
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.15rem; 
+        line-height: 1.85;
+    }
+
+    /* Headings */
+    .article-content h1, .article-content h2, .article-content h3 {
+        color: white;
+        font-weight: 800;
+        margin-top: 2.2em;
+        margin-bottom: 0.8em;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+    }
+    .article-content h1 { font-size: 2.5em; }
+    .article-content h2 { 
+        font-size: 1.8em; 
+        border-bottom: 1px solid rgba(255,255,255,0.1); 
+        padding-bottom: 0.4em; 
+        margin-bottom: 1em;
+    }
+    .article-content h3 { font-size: 1.5em; color: #f8fafc; }
+
+    /* Paragraphs & Lists */
+    .article-content p { margin-bottom: 1.6em; }
+    .article-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.6em; color: #cbd5e1; }
+    .article-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1.6em; color: #cbd5e1; }
+    .article-content li { margin-bottom: 0.6em; padding-left: 0.5em; }
+
+    /* Links inside content */
+    .article-content a {
+        color: #818cf8;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-color: rgba(129, 140, 248, 0.4);
+        transition: all 0.2s;
+    }
+    .article-content a:hover { color: #a5b4fc; text-decoration-color: #a5b4fc; }
+
+    /* Enhanced Blockquotes */
+    .article-content blockquote {
+        border-left: 4px solid #818cf8;
+        background: linear-gradient(to right, rgba(129, 140, 248, 0.1), transparent);
+        padding: 1.5em 2em;
+        border-radius: 0.5rem;
+        margin: 2.5em 0;
+        font-style: italic;
+        color: #e2e8f0;
+        font-size: 1.1em;
+    }
+
+    /* Images inside text */
+    .article-content img {
+        border-radius: 1rem;
+        margin: 3em auto;
+        display: block;
+        max-width: 100%;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Code Blocks */
+    .article-content pre {
+        background: #0f172a;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(255,255,255,0.1);
+        overflow-x: auto;
+        margin: 2rem 0;
+    }
+</style>
+
+<div class="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 z-[100]" id="progress-bar" style="width: 0%"></div>
+
+<div class="relative min-h-screen pt-32 md:pt-40 pb-32 overflow-x-hidden bg-[#020617]">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-indigo-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-cyan-600/10 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+        
+        <div class="flex items-center justify-between mb-12 fade-in-up">
+            <a href="/blogs" class="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition text-sm font-bold text-slate-300 hover:text-white">
+                <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                Back to Blog
+            </a>
+
+            <div class="hidden md:flex items-center gap-3 text-sm text-slate-500 font-medium">
+                <span>{{ blog.category|default:"Update" }}</span>
+                <span class="w-1 h-1 rounded-full bg-slate-600"></span>
+                <span>BioStack</span>
+            </div>
+        </div>
+
+        <header class="max-w-4xl mx-auto text-center mb-16 fade-in-up delay-100">
+            
+            <div class="mb-8 flex justify-center">
+                {% if blog.category == "THEME UPDATE" %}
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-purple-500/10 text-purple-300 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Theme Update
+                    </span>
+                {% elif blog.category == "TUTORIAL" %}
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                        <i class="fa-solid fa-book-open"></i> Tutorial
+                    </span>
+                {% else %}
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-blue-500/10 text-blue-300 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                        <i class="fa-solid fa-bullhorn"></i> Update
+                    </span>
+                {% endif %}
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] mb-8 drop-shadow-2xl">
+                {{ blog.title }}
+            </h1>
+
+            <p class="text-xl md:text-2xl text-slate-400 leading-relaxed font-medium max-w-3xl mx-auto">
+                {{ blog.sub_desc }}
+            </p>
+        </header>
+
+        <div class="max-w-5xl mx-auto mb-20 p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent fade-in-up delay-200">
+            <div class="rounded-[20px] overflow-hidden bg-slate-900 shadow-2xl relative aspect-video md:aspect-[2.4/1] rounded-2xl">
+                {% if blog.thumbnail %}
+                    <img src="{{ blog.thumbnail.url }}" alt="{{ blog.title }}" class="w-full h-full object-cover hover:scale-105 transition duration-[2s]">
+                {% else %}
+                    <div class="w-full h-full flex flex-col items-center justify-center bg-slate-800/50">
+                        <i class="fa-regular fa-image text-6xl text-slate-700 mb-4"></i>
+                        <span class="text-slate-500 font-bold tracking-widest uppercase">No Cover Image</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+            
+            <aside class="lg:col-span-2 hidden lg:block">
+                <div class="sticky top-40 flex flex-col items-center gap-6">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest vertical-text lg:rotate-0">Share</p>
+
+                    <button onclick="window.open('https://twitter.com/intent/tweet?text={{ blog.title }}&url={{ request.build_absolute_uri }}', '_blank')" class="w-12 h-12 rounded-2xl bg-[#0F172A] hover:bg-[#1DA1F2] hover:text-white text-slate-400 border border-white/10 hover:border-transparent transition-all flex items-center justify-center shadow-lg group">
+                        <i class="fa-brands fa-x-twitter text-lg group-hover:scale-110 transition-transform"></i>
+                    </button>
+                    
+                    <button onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}', '_blank')" class="w-12 h-12 rounded-2xl bg-[#0F172A] hover:bg-[#0077b5] hover:text-white text-slate-400 border border-white/10 hover:border-transparent transition-all flex items-center justify-center shadow-lg group">
+                        <i class="fa-brands fa-linkedin-in text-lg group-hover:scale-110 transition-transform"></i>
+                    </button>
+                    
+                    <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied!')" class="w-12 h-12 rounded-2xl bg-[#0F172A] hover:bg-emerald-500 hover:text-white text-slate-400 border border-white/10 hover:border-transparent transition-all flex items-center justify-center shadow-lg group">
+                        <i class="fa-solid fa-link text-lg group-hover:scale-110 transition-transform"></i>
+                    </button>
+
+                    <div class="w-px h-20 bg-gradient-to-b from-slate-800 to-transparent mt-4"></div>
+                </div>
+            </aside>
+
+            <article class="lg:col-span-8 article-content">
+                {{ blog.description|safe }}
+                
+                <div class="lg:hidden mt-12 pt-8 border-t border-white/10">
+                    <p class="text-sm font-bold text-white mb-4">Share this article</p>
+                    <div class="flex gap-4">
+                        <button onclick="window.open('https://twitter.com/intent/tweet?text={{ blog.title }}&url={{ request.build_absolute_uri }}', '_blank')" class="text-slate-400 hover:text-white"><i class="fa-brands fa-x-twitter text-2xl"></i></button>
+                        <button onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}', '_blank')" class="text-slate-400 hover:text-white"><i class="fa-brands fa-linkedin text-2xl"></i></button>
+                        <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied!')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-link text-2xl"></i></button>
+                    </div>
+                </div>
+            </article>
+            
+            <div class="hidden lg:block lg:col-span-2"></div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mt-24 pt-12 pb-12 border-t border-white/10">
+            <h3 class="text-2xl font-bold text-white mb-8">More from BioStack</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="/" class="group block bg-[#A9B9E0] border border-white/5 rounded-2xl p-6 hover:border-indigo-500/30 hover:bg-[#0F172A]/80 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Product</span>
+                        <i class="fa-solid fa-arrow-right text-slate-500 group-hover:text-white transition -translate-x-2 group-hover:translate-x-0"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white group-hover:text-indigo-300 transition mb-2">Create your BioStack Profile</h4>
+                    <p class="text-sm text-slate-400">Get started for free and build your professional identity in minutes.</p>
+                </a>
+
+                <a href="/blogs" class="group block bg-[#A9B9E0] border border-white/5 rounded-2xl p-6 hover:border-emerald-500/30 hover:bg-[#0F172A]/80 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Archive</span>
+                        <i class="fa-solid fa-list text-slate-500 group-hover:text-white transition -translate-x-2 group-hover:translate-x-0"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white group-hover:text-emerald-300 transition mb-2">View All Updates</h4>
+                    <p class="text-sm text-slate-400">Browse our library of tutorials, theme releases, and platform news.</p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+</div>
+
+<script>
+    // Scroll Progress Bar Logic
+    window.onscroll = function() {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        document.getElementById("progress-bar").style.width = scrolled + "%";
+    };
+</script>
+
+{% endblock %}
