@@ -47,24 +47,16 @@
     <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(0,0,0,0))]"></div>
   </div>
 
-  <div id="sidebar-overlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/80 z-40 hidden transition-opacity duration-300 md:hidden"></div>
-
-  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0F172A] border-r border-white/5 transform -translate-x-full md:translate-x-0 md:static md:flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
+  <aside id="sidebar" class="hidden md:flex w-64 bg-[#0F172A] border-r border-white/5 flex-col h-full z-50">
     
-    <div class="h-16 flex items-center justify-between px-5 border-b border-white/5">
-      <div class="flex items-center gap-3 font-bold text-lg tracking-tight text-white">
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-white/5 font-bold text-lg tracking-tight text-white">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white">
-            <a href="/"><img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-7 h-7 rounded-md object-contain">
+            <a href="/"><img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-7 h-7 rounded-md object-contain"></a>
         </div>
-        <span>BioStack</span></a>
-      </div>
-      <button onclick="closeSidebar()" class="md:hidden text-slate-400 hover:text-white transition">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
+        <span>BioStack</span>
     </div>
 
     <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-      
       <a href="{% url 'dashboard:index' %}" class="flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'index' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
         <i class="fa-solid fa-chart-pie w-5 text-center {% if request.resolver_match.url_name != 'index' %}group-hover:text-cyan-400 transition{% endif %}"></i>
         Overview
@@ -92,14 +84,12 @@
       <a href="{% url 'accounts:userdetails' %}" class="relative flex items-center gap-3 px-3 py-2.5 text-sm {% if request.resolver_match.url_name == 'userdetails' %}bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-inner{% else %}text-slate-400 hover:text-white hover:bg-white/5 border-transparent{% endif %} rounded-lg font-medium border transition group">
         <i class="fa-solid fa-user-gear w-5 text-center {% if request.resolver_match.url_name != 'userdetails' %}group-hover:text-pink-400 transition{% endif %}"></i>
         Personal Info
-        
         {% if not request.user.details.full_name %}
             <div class="ml-auto flex items-center gap-2">
                 <span class="relative flex h-2 w-2">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                 </span>
-                <i class="fa-solid fa-circle-exclamation text-red-500 text-xs" title="Action Required"></i>
             </div>
         {% endif %}
       </a>
@@ -122,12 +112,10 @@
             <img src="{{ profile.profile_image.url }}" class="w-full h-full object-cover" id="preview-image">        
             {% elif request.user.details.profile_image %}
               <img src="{{ request.user.details.profile_image.url }}" class="w-full h-full object-cover opacity-80" id="preview-image">
-                    
             {% else %}
                 <div class="w-full h-full flex items-center justify-center text-slate-500 bg-slate-800" id="preview-placeholder">
                     <i class="fa-solid fa-user text-3xl"></i>
                   </div>
-                  <img src="" class="hidden w-full h-full object-cover" id="preview-image">
               {% endif %}
         </div>
         <div class="overflow-hidden">
@@ -143,62 +131,39 @@
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 w-full scroll-smooth">
+  <main class="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 w-full scroll-smooth pb-24 md:pb-0">
     
     {% if messages %}
-    <div id="toast-container" class="fixed top-20 left-4 right-4 md:top-24 md:right-6 md:left-auto md:w-full md:max-w-sm z-50 flex flex-col gap-3 pointer-events-none">
+    <div id="toast-container" class="fixed top-20 left-4 right-4 md:top-24 md:right-6 md:left-auto md:w-full md:max-w-sm z-[60] flex flex-col gap-3 pointer-events-none">
         {% for message in messages %}
             <div class="toast-message pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl backdrop-blur-xl border transform transition-all duration-500 ease-out translate-x-10 opacity-0
-                {% if message.tags == 'error' %}
-                    bg-red-500/10 border-red-500/20 text-red-200
-                {% else %}
-                    bg-emerald-500/10 border-emerald-500/20 text-emerald-200
-                {% endif %}">
-                
+                {% if message.tags == 'error' %} bg-red-500/10 border-red-500/20 text-red-200
+                {% else %} bg-emerald-500/10 border-emerald-500/20 text-emerald-200 {% endif %}">
                 <div class="mt-0.5">
-                    {% if message.tags == 'error' %}
-                        <i class="fa-solid fa-circle-exclamation text-red-500"></i>
-                    {% else %}
-                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                    {% endif %}
+                    <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-red-500{% else %}fa-circle-check text-emerald-500{% endif %}"></i>
                 </div>
-
-                <div class="flex-1 text-sm font-medium leading-relaxed break-words">
-                    {{ message }}
-                </div>
-
-                <button onclick="this.parentElement.remove()" class="text-white/40 hover:text-white transition shrink-0">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <div class="flex-1 text-sm font-medium leading-relaxed break-words">{{ message }}</div>
+                <button onclick="this.parentElement.remove()" class="text-white/40 hover:text-white transition shrink-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
         {% endfor %}
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const toasts = document.querySelectorAll('.toast-message');
-            toasts.forEach((toast, index) => {
+            document.querySelectorAll('.toast-message').forEach((toast, index) => {
                 setTimeout(() => { toast.classList.remove('translate-x-10', 'opacity-0'); }, 100 * index);
-                setTimeout(() => { dismissToast(toast); }, 5000 + (100 * index));
+                setTimeout(() => { toast.remove(); }, 5000 + (100 * index));
             });
-            function dismissToast(element) {
-                element.classList.add('opacity-0', '-translate-y-2');
-                setTimeout(() => { if(element) element.remove(); }, 500);
-            }
         });
     </script>
     {% endif %}
 
-    <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0F172A]/90 backdrop-blur sticky top-0 z-30">
+    <header class="md:hidden flex items-center justify-center p-4 border-b border-white/5 bg-[#0F172A]/90 backdrop-blur sticky top-0 z-30">
       <div class="font-bold text-sm text-white flex items-center gap-2">
         <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs">
             <a href="/" ><img src="{% static 'images/main-logo.png' %}" alt="Logo" class="w-6 h-6 rounded-md object-contain"></a>
         </div>
         BioStack
       </div>
-      <button onclick="openSidebar()" class="text-slate-300 hover:text-white p-2 rounded-lg hover:bg-white/10 transition">
-        <i class="fa-solid fa-bars text-lg"></i>
-      </button>
     </header>
 
     <div class="p-6 md:p-10 max-w-7xl mx-auto w-full">
@@ -207,11 +172,31 @@
 
   </main>
 
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    function openSidebar() { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
-    function closeSidebar() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-  </script>
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-[#0F172A]/95 backdrop-blur-xl border-t border-white/10 px-6 py-3 pb-safe flex justify-between items-center h-16 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]">
+    
+    <a href="{% url 'dashboard:index' %}" class="flex flex-col items-center gap-1 transition group {% if request.resolver_match.url_name == 'index' %}text-indigo-400{% else %}text-slate-500 hover:text-white{% endif %}">
+        <i class="fa-solid fa-chart-pie text-xl mb-0.5 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </a>
+
+    <a href="{% url 'profiles:sections' %}" class="flex flex-col items-center gap-1 transition group {% if request.resolver_match.url_name == 'sections' %}text-indigo-400{% else %}text-slate-500 hover:text-white{% endif %}">
+        <i class="fa-solid fa-pen-to-square text-xl mb-0.5 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </a>
+
+    <a href="{% url 'profiles:list' %}" class="flex flex-col items-center gap-1 transition group {% if request.resolver_match.url_name == 'list' %}text-indigo-400{% else %}text-slate-500 hover:text-white{% endif %}">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center {% if request.resolver_match.url_name == 'list' %}bg-indigo-500/20 text-indigo-400{% else %}bg-white/5 text-slate-400 group-hover:bg-white/10 group-hover:text-white{% endif %} transition-all">
+            <i class="fa-solid fa-users text-sm"></i>
+        </div>
+    </a>
+
+    <a href="{% url 'profiles:themes' %}" class="flex flex-col items-center gap-1 transition group {% if request.resolver_match.url_name == 'themes' %}text-indigo-400{% else %}text-slate-500 hover:text-white{% endif %}">
+        <i class="fa-solid fa-store text-xl mb-0.5 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </a>
+
+    <a href="{% url 'profiles:account' %}" class="flex flex-col items-center gap-1 transition group {% if request.resolver_match.url_name == 'account' %}text-indigo-400{% else %}text-slate-500 hover:text-white{% endif %}">
+        <i class="fa-solid fa-gear text-xl mb-0.5 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </a>
+
+  </nav>
+
 </body>
 </html>
