@@ -5,13 +5,16 @@ certifi==2026.1.4
 charset-normalizer==3.4.4
 dj-database-url==3.1.0
 Django==6.0
+django-autoslug==1.9.9
 django-storages==1.14.6
+django-tinymce==5.0.0
 dotenv==0.9.9
 gunicorn==24.0.0
 idna==3.11
 jmespath==1.1.0
 packaging==26.0
 pillow==12.1.0
+psycopg==3.3.2
 psycopg2-binary==2.9.11
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
@@ -20,5 +23,7 @@ requests==2.32.5
 s3transfer==0.16.0
 six==1.17.0
 sqlparse==0.5.5
+typing_extensions==4.15.0
 urllib3==2.6.2
+uv==0.8.18
 whitenoise==6.11.0
