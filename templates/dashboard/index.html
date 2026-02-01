@@ -35,7 +35,7 @@
         <div class="flex justify-between items-start">
             <div>
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Views</p>
-                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.views }}</h3>
+                <h3 id="live-views" class="text-3xl font-bold text-white mt-2">{{ stats.views }}</h3>
                 
                 <div class="mt-3 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
                     {% if views_trend >= 0 %}
@@ -58,7 +58,7 @@
         <div class="flex justify-between items-start">
             <div>
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Link Clicks</p>
-                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.clicks }}</h3>
+                <h3 id="live-clicks" class="text-3xl font-bold text-white mt-2">{{ stats.clicks }}</h3>
                 
                 <div class="mt-3 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                     <i class="fa-solid fa-computer-mouse text-xs text-cyan-400"></i>
@@ -77,7 +77,7 @@
         <div class="flex justify-between items-start">
             <div>
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Click Rate</p>
-                <h3 class="text-3xl font-bold text-white mt-2">{{ stats.ctr }}%</h3>
+                <h3 id="live-ctr" class="text-3xl font-bold text-white mt-2">{{ stats.ctr }}%</h3>
                 <p class="text-xs text-emerald-400 mt-3 font-medium flex items-center gap-1">
                     <i class="fa-solid fa-check-circle"></i> Conversion Health
                 </p>
@@ -150,7 +150,7 @@
               <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
         </div>
-        <div class="flex-1 overflow-y-auto max-h-[300px] p-2 space-y-1">
+        <div id="activity-feed" class="flex-1 overflow-y-auto max-h-[300px] p-2 space-y-1">
             {% for activity in recent_activity %}
             <div class="flex items-start gap-3 p-3 hover:bg-white/5 rounded-xl transition group">
                 <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400 mt-0.5 group-hover:bg-indigo-500 group-hover:text-white transition">
@@ -198,7 +198,6 @@
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // COPY FUNCTION
     function copyLink() {
@@ -211,10 +210,12 @@
             setTimeout(() => copyText.innerText = original, 2000);
         });
     }
-
-    // CHART CONFIG
-    const ctx = document.getElementById('mainChart').getContext('2d');
+    </script>
     
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const ctx = document.getElementById('mainChart').getContext('2d');
     // Gradients
     let gradViews = ctx.createLinearGradient(0, 0, 0, 300);
     gradViews.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); 
@@ -229,66 +230,108 @@
     const viewsData = JSON.parse('{{ chart_views|safe }}');
     const clicksData = JSON.parse('{{ chart_clicks|safe }}');
 
-    new Chart(ctx, {
+    window.myChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [
-            {
-                label: 'Views',
-                data: viewsData,
-                borderColor: '#818cf8', // Indigo
-                backgroundColor: gradViews,
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                pointRadius: 0,
-                pointHoverRadius: 6
-            },
-            {
-                label: 'Clicks',
-                data: clicksData,
-                borderColor: '#22d3ee', // Cyan
-                backgroundColor: gradClicks,
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                pointRadius: 0,
-                pointHoverRadius: 6
-            }
+            { label: 'Views', data: viewsData, borderColor: '#818cf8', backgroundColor: gradViews, borderWidth: 3, tension: 0.4, fill: true, pointRadius: 0, pointHoverRadius: 6 },
+            { label: 'Clicks', data: clicksData, borderColor: '#22d3ee', backgroundColor: gradClicks, borderWidth: 3, tension: 0.4, fill: true, pointRadius: 0, pointHoverRadius: 6 }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: '#0f172a',
-            titleColor: '#fff',
-            bodyColor: '#cbd5e1',
-            borderColor: 'rgba(255,255,255,0.1)',
-            borderWidth: 1,
-            padding: 10,
-            cornerRadius: 8
-          }
-        },
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
         scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#64748b', font: { family: 'sans-serif' }, stepSize: 1 },
-            border: { display: false }
-          },
-          x: {
-            grid: { display: false },
-            ticks: { color: '#64748b' },
-            border: { display: false }
-          }
+          y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, border: { display: false } },
+          x: { grid: { display: false }, border: { display: false } }
         }
       }
     });
-  </script>
+
+    // --- 2. SUPABASE DEBUG & CONNECTION ---
+    const sbUrl = "{{ SUPABASE_URL }}";
+    const sbKey = "{{ SUPABASE_ANON_KEY }}";
+
+    if (sbUrl && sbKey && sbUrl !== 'None') {
+        const sbClient = supabase.createClient(sbUrl, sbKey);
+
+        const channel = sbClient.channel('dashboard-debug')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles_profileview' }, (payload) => {
+                updateMetrics('view');
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles_linkclick' }, (payload) => {
+                updateMetrics('click');
+            })
+            .subscribe((status) => {
+                
+                if (status === 'SUBSCRIBED') {
+                    console.log("Successfully connected to Supabase ");
+                } else if (status === 'CHANNEL_ERROR') {
+                    console.error("Connection Error: Check your URL, Key, or Table Name.");
+                } else if (status === 'TIMED_OUT') {
+                    console.error("Connection Timed Out. Firewall blocking?");
+                }
+            });
+
+    } else {
+        console.error("Supabase Keys are MISSING in the template.");
+    }
+
+    // --- 3. UPDATE UI ---
+    function updateMetrics(type) {
+        console.log("Updating Dashboard UI for:", type);
+        
+        const viewsEl = document.getElementById('live-views');
+        const clicksEl = document.getElementById('live-clicks');
+        const ctrEl = document.getElementById('live-ctr');
+
+        let countViews = parseInt(viewsEl.innerText.replace(/,/g, ''));
+        let countClicks = parseInt(clicksEl.innerText.replace(/,/g, ''));
+
+        if (type === 'view') {
+            countViews = countViews + 1; 
+            viewsEl.innerText = countViews.toLocaleString(); 
+            
+            // Update Chart (Views)
+            const lastIndex = window.myChart.data.datasets[0].data.length - 1;
+            window.myChart.data.datasets[0].data[lastIndex] += 1;
+            
+            addLog("Profile Visit");
+
+        } else if (type === 'click') {
+            countClicks = countClicks + 1; 
+            clicksEl.innerText = countClicks.toLocaleString(); 
+            
+            // Update Chart (Clicks)
+            const lastIndex = window.myChart.data.datasets[1].data.length - 1;
+            window.myChart.data.datasets[1].data[lastIndex] += 1;
+
+            addLog("Link Click");
+        }
+
+        let newCtr = 0;
+        if (countViews > 0) {
+            newCtr = (countClicks / countViews) * 100;
+        }
+        console.log(`Math: ${countClicks} / ${countViews} * 100 = ${newCtr}`); // Debug Log
+        if (ctrEl) {
+            ctrEl.innerText = newCtr.toFixed(1) + "%";
+        }
+
+        window.myChart.update();
+    }
+
+    function addLog(text) {
+        const feed = document.getElementById('activity-feed');
+        const newItem = `
+            <div class="flex items-start gap-3 p-3 bg-white/5 rounded-xl transition animate-fade-in-up border border-indigo-500/30">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400 mt-0.5">
+                    <i class="fa-regular fa-bolt text-xs"></i>
+                </div>
+                <div><p class="text-xs text-white font-bold">${text}</p><p class="text-[10px] text-emerald-400 font-medium">Just now</p></div>
+            </div>`;
+        feed.insertAdjacentHTML('afterbegin', newItem);
+    }
+</script>
 {% endblock %}
