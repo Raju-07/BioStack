@@ -76,7 +76,7 @@
                 <div class="flex items-center gap-3 font-mono text-sm text-emerald-100/80">
                     <i class="fa-solid fa-users text-emerald-500"></i>
                     <span>Total Users:</span>
-                    <span class="font-bold text-white text-base tracking-wide">{{ total_users|default:"2,140" }}</span>
+                    <span id = "live-user-count" class="font-bold text-white text-base tracking-wide">{{ total_users|default:"2,140" }}</span>
                 </div>
 
             </div>
@@ -420,4 +420,47 @@
     </script>
     {% endif %}
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const sbUrl = "{{ SUPABASE_URL }}";
+    const sbKey = "{{ SUPABASE_ANON_KEY }}";
+
+    if (sbUrl && sbKey && sbUrl !== 'None') {
+        const sbClient = supabase.createClient(sbUrl, sbKey);
+
+        const channel = sbClient.channel('home-user-count')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles_profile' }, (payload) => {
+                updateUserCount();
+            })
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                }
+            });
+
+    } else {
+        console.warn("Supabase keys missing");
+    }
+
+    function updateUserCount() {
+        const countEl = document.getElementById('live-user-count');
+        if (countEl) {
+            let currentCount = parseInt(countEl.innerText.replace(/,/g, ''));
+            
+            currentCount += 1;
+            
+            countEl.innerText = currentCount.toLocaleString();
+            
+            countEl.style.transition = "transform 0.2s";
+            countEl.style.transform = "scale(1.2)";
+            countEl.style.color = "#34d399"; 
+            setTimeout(() => {
+                countEl.style.transform = "scale(1)";
+                countEl.style.color = "white"; 
+            }, 200);
+        }
+    }
+</script>
+
 {% endblock content %}

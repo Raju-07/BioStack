@@ -280,7 +280,6 @@
 
     // --- 3. UPDATE UI ---
     function updateMetrics(type) {
-        console.log("Updating Dashboard UI for:", type);
         
         const viewsEl = document.getElementById('live-views');
         const clicksEl = document.getElementById('live-clicks');
@@ -314,7 +313,6 @@
         if (countViews > 0) {
             newCtr = (countClicks / countViews) * 100;
         }
-        console.log(`Math: ${countClicks} / ${countViews} * 100 = ${newCtr}`); // Debug Log
         if (ctrEl) {
             ctrEl.innerText = newCtr.toFixed(1) + "%";
         }
