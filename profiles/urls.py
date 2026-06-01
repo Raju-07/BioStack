@@ -44,5 +44,4 @@ urlpatterns = [
 
     path('delete/verify/', verify_delete_account, name='verify_delete_account'),
     path('account/', account_settings, name='account'),
-    path("<str:username>/<slug:profile_slug>/", public_profile_view, name="public"),
 ]

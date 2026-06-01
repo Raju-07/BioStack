@@ -162,3 +162,78 @@ def getting_started(request):
 
 def analytics(request):
     return render(request,'docs/analytics.html')
+
+
+# SEO Views
+def robots_txt(request):
+    """
+    Generate robots.txt dynamically
+    """
+    from django.http import HttpResponse
+    content = """User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /profile/me/
+Disallow: /profile/create/
+Disallow: /profile/set-active/
+Disallow: /profile/account/
+Disallow: /search/
+Disallow: /api/
+
+User-agent: Googlebot
+Allow: /
+
+Sitemap: {domain}/sitemap.xml
+""".format(domain=request.build_absolute_uri('/').rstrip('/'))
+    return HttpResponse(content, content_type="text/plain")
+
+
+def sitemap_xml(request):
+    """
+    Generate sitemap.xml dynamically with all public profiles and pages
+    """
+    from django.http import HttpResponse
+    from django.template.loader import render_to_string
+    from profiles.models import Profile
+    
+    # Get all public profiles
+    public_profiles = Profile.objects.filter(visibility='PUBLIC').select_related('user')
+    
+    # Static pages
+    static_pages = [
+        ('/', 1.0, 'weekly'),
+        ('/about-us/', 0.9, 'monthly'),
+        ('/features/', 0.9, 'monthly'),
+        ('/pricing/', 0.9, 'monthly'),
+        ('/blogs/', 0.8, 'weekly'),
+        ('/showcase/', 0.8, 'weekly'),
+        ('/careers/', 0.7, 'monthly'),
+        ('/templates/', 0.8, 'monthly'),
+        ('/privacy/', 0.5, 'yearly'),
+        ('/terms/', 0.5, 'yearly'),
+    ]
+    
+    domain = request.build_absolute_uri('/').rstrip('/')
+    
+    urls = []
+    
+    # Add static pages
+    for url, priority, changefreq in static_pages:
+        urls.append({
+            'location': f'{domain}{url}',
+            'priority': priority,
+            'changefreq': changefreq,
+        })
+    
+    # Add public profiles
+    for profile in public_profiles:
+        urls.append({
+            'location': f'{domain}/{profile.user.username}/{profile.slug}/',
+            'priority': 0.7,
+            'changefreq': 'weekly',
+        })
+    
+    sitemap = render_to_string('sitemap.xml', {'urls': urls})
+    return HttpResponse(sitemap, content_type='application/xml')

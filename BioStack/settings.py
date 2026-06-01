@@ -28,6 +28,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,6 +54,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'BioStack.context_processors.supabase_config',
+                'BioStack.context_processors.seo_context',
             ],
         },
     },
@@ -171,4 +173,74 @@ TINYMCE_DEFAULT_CONFIG = {
     "menubar": "file edit view insert format tools table help",
     "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount",
     "toolbar": "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help",
+}
+
+# ============ CACHING CONFIGURATION ============
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'biostack-cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,
+        }
+    }
+}
+
+# Cache timeout (in seconds)
+CACHE_TIMEOUT = 3600  # 1 hour
+
+# ============ PERFORMANCE & COMPRESSION ============
+# GZip compression is added via MIDDLEWARE
+# Optimize database queries
+DATABASE_CONN_MAX_AGE = 600  # Connection pooling
+
+# ============ RESPONSE OPTIMIZATION ============
+# Static files caching with compression
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ============ SECURITY & PERFORMANCE HEADERS ============
+# HTTPS and Security
+if not DEBUG:
+    # Security headers
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_SECURITY_POLICY = {
+        "default-src": ("'self'",),
+        "script-src": ("'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "cdn.jsdelivr.net"),
+        "style-src": ("'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "fonts.googleapis.com", "cdn.jsdelivr.net"),
+        "img-src": ("'self'", "data:", "https:"),
+        "font-src": ("'self'", "fonts.gstatic.com", "data:"),
+        "connect-src": ("'self'", "https:"),
+        "frame-ancestors": ("'self'",),
+        "base-uri": ("'self'",),
+        "form-action": ("'self'",),
+    }
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = 'DENY'
+
+# ============ LOGGING CONFIGURATION ============
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
 }

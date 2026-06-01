@@ -20,9 +20,9 @@
     <div class="flex flex-wrap gap-3">
         <button onclick="copyLink()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl font-semibold text-sm transition flex items-center gap-2 group relative active:scale-95">
             <i class="fa-regular fa-copy text-indigo-400"></i> <span id="copyText">Copy Link</span>
-            <input type="hidden" id="shareUrl" value="{{ request.scheme }}://{{ request.get_host }}{% url 'profiles:public' profile.user.username profile.slug %}">
+            <input type="hidden" id="shareUrl" value="{{ request.scheme }}://{{ request.get_host }}{% url 'public_profile' profile.user.username profile.slug %}">
         </button>
-        <a href="{% url 'profiles:public' profile.user.username profile.slug %}" target="_blank" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:-translate-y-0.5">
+        <a href="{% url 'public_profile' profile.user.username profile.slug %}" target="_blank" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition shadow-lg shadow-indigo-500/20 flex items-center gap-2 hover:-translate-y-0.5">
             Visit Page <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
         </a>
     </div>

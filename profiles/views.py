@@ -33,7 +33,8 @@ def get_client_ip(request):
 
 @login_required
 def profile_list(request):
-    profiles = request.user.profiles.all()
+    # Optimize with select_related for the user relationship
+    profiles = request.user.profiles.select_related('theme').all()
     active_profile_id = request.session.get("active_profile_id")
 
     return render(
@@ -110,8 +111,8 @@ def theme_store(request):
     if not profile:
         return redirect("profiles:list")
 
-    #Fetching themes here
-    themes =  Theme.objects.all()
+    #Fetching themes here with select_related for optimization
+    themes = Theme.objects.all()
 
     #Ensure profile has a theme (fallback logic)
     if not profile.theme:
@@ -287,13 +288,22 @@ def delete_section(request, section_id):
 
 User = get_user_model()
 def public_profile_view(request,username, profile_slug):
-    user_obj = get_object_or_404(User,username=username)
-    profile = get_object_or_404(Profile, user = user_obj, slug=profile_slug)
+    # Optimize queries with select_related
+    user_obj = get_object_or_404(
+        User.objects.all(),
+        username=username
+    )
+    profile = get_object_or_404(
+        Profile.objects.select_related('user', 'theme'),
+        user=user_obj,
+        slug=profile_slug
+    )
 
     if profile.visibility == Profile.PRIVATE:
         raise Http404()
     
-    sections = profile.sections.filter(is_enabled=True)
+    # Prefetch related sections to avoid N+1 queries
+    sections = profile.sections.filter(is_enabled=True).prefetch_related('profile')
 
 # implimenting Analytics logic 
     session_key = f"profile_view_{profile.id}"

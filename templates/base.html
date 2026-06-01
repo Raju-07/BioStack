@@ -4,9 +4,36 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <title> {% block title %}BioStack | Your Professional Identity{% endblock title %} </title>
+  <title>{% block title %}{{ seo.title }}{% endblock title %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta name="description" content="{{ seo.description }}" />
+  <meta name="keywords" content="{{ seo.keywords }}" />
+  <meta name="author" content="{{ seo.author }}" />
+  {% if seo.noindex %}<meta name="robots" content="noindex, nofollow" />{% else %}<meta name="robots" content="index, follow" />{% endif %}
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="{{ seo.page_url }}" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="{{ seo.title }}" />
+  <meta property="og:description" content="{{ seo.description }}" />
+  <meta property="og:image" content="{{ seo.og_image }}" />
+  <meta property="og:url" content="{{ seo.page_url }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{ seo.site_name }}" />
+  <meta property="og:locale" content="{{ seo.locale }}" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="{{ seo.twitter_card }}" />
+  <meta name="twitter:title" content="{{ seo.title }}" />
+  <meta name="twitter:description" content="{{ seo.description }}" />
+  <meta name="twitter:image" content="{{ seo.og_image }}" />
+  <meta name="twitter:creator" content="{{ seo.twitter_creator }}" />
+  
+  <!-- Additional Meta Tags -->
+  <meta name="language" content="English" />
+  <meta name="revisit-after" content="7 days" />
+  
   <link rel='icon' type='image/x-icon' href="{% static 'images/main-logo.png' %}">
   <link rel="stylesheet" href = "{% static 'css/main.css' %}">
   
@@ -46,6 +73,49 @@
                         linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     }
   </style>
+  
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ seo.site_name }}",
+    "url": "{{ seo.site_url }}",
+    "description": "{{ seo.description }}",
+    "image": "{{ seo.og_image }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "{{ seo.site_url }}/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{ seo.site_name }}",
+    "url": "{{ seo.site_url }}",
+    "logo": "{{ seo.og_image }}",
+    "description": "{{ seo.description }}",
+    "sameAs": [
+      "https://twitter.com/BioStackApp",
+      "https://www.linkedin.com/company/biostack"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Support",
+      "url": "{{ seo.site_url }}/support"
+    }
+  }
+  </script>
+
+  {% block structured_data %}{% endblock %}
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans overflow-x-hidden relative">
 

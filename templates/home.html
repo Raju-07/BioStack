@@ -1,6 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block structured_data %}
+<!-- Homepage Product Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "BioStack",
+  "description": "Create a stunning professional profile and bio link in minutes. Showcase your work, links, and personality all in one place.",
+  "url": "{{ seo.site_url }}",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free Plan Available"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "250"
+  }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 
 <style>

@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from BioStack import views
 from django.contrib.auth import views as auth_views
+from profiles.views import public_profile_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -42,6 +43,10 @@ urlpatterns = [
     #docs
     path('getting_started',views.getting_started,name='getting_started'),
 
+    # SEO
+    path('robots.txt', views.robots_txt, name='robots'),
+    path('sitemap.xml', views.sitemap_xml, name='sitemap'),
+
  # Namespaced apps
     path("auth/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
@@ -54,7 +59,9 @@ urlpatterns = [
     path("reset/done/",auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_complete.html"),name="password_reset_complete", ),
     #Profile 
     path("profile/", include(("profiles.urls", "profiles"), namespace="profiles")),
-
+    
+    # Public Profile View - Catch-all for /username/slug (must be last)
+    path("<str:username>/<slug:profile_slug>/", public_profile_view, name="public_profile"),
 ]
 
 if settings.DEBUG:

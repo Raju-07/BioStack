@@ -21,7 +21,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in-up delay-100">
             
             {% for profile in profiles %}
-            <a href="{% url 'profiles:public' profile.user.username profile.slug %}" class="group relative bg-[#0F172A] border border-white/10 rounded-2xl overflow-hidden hover:border-indigo-500/50 hover:-translate-y-1 transition duration-300 shadow-xl">
+            <a href="{% url 'public_profile' profile.user.username profile.slug %}" class="group relative bg-[#0F172A] border border-white/10 rounded-2xl overflow-hidden hover:border-indigo-500/50 hover:-translate-y-1 transition duration-300 shadow-xl">
                 
                 <div class="h-48 w-full relative overflow-hidden bg-slate-900 border-b border-white/5">
                     {% if profile.profile_image %}
