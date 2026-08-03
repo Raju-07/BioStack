@@ -13,6 +13,7 @@
     .draggable-item:active { cursor: grabbing; }
     .group-handle { cursor: move; }
     .sortable-ghost { opacity: 0.4; background-color: #312e81; border: 2px dashed #6366f1; }
+    .save-order-button:disabled { cursor: not-allowed; opacity: 0.6; }
     
     /* Universal Form Styling */
     .django-field-group input, .django-field-group textarea, .django-field-group select {
@@ -207,6 +208,12 @@
     </div>
 
     <h3 class="text-2xl font-bold text-white mb-6">Manage Content</h3>
+    <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-900/40 p-4">
+        <p id="order-status" class="text-sm text-slate-400">Drag sections or groups, then save to keep the order permanent.</p>
+        <button type="button" id="save-order-btn" class="save-order-button px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition shadow-lg shadow-indigo-500/20 disabled:hover:bg-indigo-600" disabled>
+            <i class="fa-solid fa-floppy-disk mr-2"></i> Save Order
+        </button>
+    </div>
     
     <div id="main-groups-container" class="space-y-8 pb-12">
         
@@ -354,10 +361,29 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
         
+        const saveButton = document.getElementById('save-order-btn');
+        const orderStatus = document.getElementById('order-status');
+        const mainContainer = document.getElementById('main-groups-container');
+        const persistedGroupOrder = [{% for s in sections %}{% ifchanged s.section_type %}'{{ s.section_type }}',{% endifchanged %}{% endfor %}];
+        let hasUnsavedOrder = false;
+
+        const persistedGroupIds = new Set(persistedGroupOrder);
+        const allGroupBlocks = Array.from(mainContainer.querySelectorAll('.group-block'));
+        const orderedGroupBlocks = persistedGroupOrder
+            .map(groupId => mainContainer.querySelector(`[data-group-id="${groupId}"]`))
+            .filter(Boolean);
+        const remainingGroupBlocks = allGroupBlocks.filter(group => !persistedGroupIds.has(group.dataset.groupId));
+        mainContainer.replaceChildren(...orderedGroupBlocks, ...remainingGroupBlocks);
+
+        function markOrderChanged() {
+            hasUnsavedOrder = true;
+            if (saveButton) saveButton.disabled = false;
+            if (orderStatus) orderStatus.textContent = 'You have unsaved order changes.';
+        }
+
         // --- 1. THE SAVE FUNCTION ---
         function saveGlobalOrder() {
-            const groupContainer = document.getElementById('main-groups-container');
-            const groups = Array.from(groupContainer.querySelectorAll('.group-block')); 
+            const groups = Array.from(mainContainer.querySelectorAll('.group-block'));
             let globalOrderIds = [];
             
             groups.forEach(group => {
@@ -371,20 +397,44 @@
                 }
             });
             
-            console.log("Saving Order:", globalOrderIds); 
-
             if(globalOrderIds.length > 0) {
+                if (saveButton) {
+                    saveButton.disabled = true;
+                    saveButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+                }
+                if (orderStatus) orderStatus.textContent = 'Saving section order...';
+
                 fetch("{% url 'profiles:reorder_sections' %}", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                     body: JSON.stringify({ order: globalOrderIds })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Unable to save order.');
+                    return response.json();
+                })
                 .then(data => {
-                    console.log("Save Response:", data);
+                    hasUnsavedOrder = false;
+                    if (orderStatus) orderStatus.textContent = 'Order saved. Your profile will render in this order.';
+                    if (saveButton) saveButton.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Saved';
+                    setTimeout(() => {
+                        if (saveButton && !hasUnsavedOrder) {
+                            saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> Save Order';
+                            saveButton.disabled = true;
+                        }
+                    }, 1400);
+                })
+                .catch(error => {
+                    if (orderStatus) orderStatus.textContent = error.message;
+                    if (saveButton) {
+                        saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> Save Order';
+                        saveButton.disabled = false;
+                    }
                 });
             }
         }
+
+        if (saveButton) saveButton.addEventListener('click', saveGlobalOrder);
 
         // --- 2. INITIALIZE ITEM LISTS ---
         const lists = document.querySelectorAll('.sortable-list');
@@ -395,31 +445,18 @@
                 ghostClass: 'sortable-ghost',
                 handle: '.cursor-grab',
                 onEnd: function (evt) {
-                    saveGlobalOrder(); 
+                    markOrderChanged();
                 }
             });
         });
 
         // --- 3. INITIALIZE GROUP LIST ---
-        const mainContainer = document.getElementById('main-groups-container');
         new Sortable(mainContainer, {
             animation: 150,
             handle: '.group-handle', 
             ghostClass: 'sortable-ghost',
             onEnd: function (evt) {
-                saveGlobalOrder(); 
-                var order = this.toArray();
-                localStorage.setItem(this.options.group.name, order.join('|'));
-            },
-            store: {
-                get: function (sortable) {
-                    var order = localStorage.getItem(sortable.options.group.name);
-                    return order ? order.split('|') : [];
-                },
-                set: function (sortable) {
-                    var order = sortable.toArray();
-                    localStorage.setItem(sortable.options.group.name, order.join('|'));
-                }
+                markOrderChanged();
             },
             group: 'main-groups'
         });

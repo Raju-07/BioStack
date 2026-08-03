@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 import json
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -36,6 +37,21 @@ def profile_list(request):
     # Optimize with select_related for the user relationship
     profiles = request.user.profiles.select_related('theme').all()
     active_profile_id = request.session.get("active_profile_id")
+    profile_count = profiles.count()
+
+    if profile_count == 1:
+        active_profile = profiles.first()
+        active_profile_id = active_profile.id
+        request.session["active_profile_id"] = active_profile_id
+        request.session.modified = True
+    elif active_profile_id:
+        active_profile = profiles.filter(id=active_profile_id).first()
+        if active_profile:
+            active_profile_id = active_profile.id
+        else:
+            active_profile_id = None
+            request.session.pop("active_profile_id", None)
+            request.session.modified = True
 
     return render(
         request,
@@ -53,7 +69,7 @@ def delete_profile(request, profile_id):
 
     active_profile_id = request.session.get("active_profile_id")
 
-    if active_profile_id == profile.id:
+    if str(active_profile_id) == str(profile.id):
         messages.error(request, "You cannot delete your currently active profile. Switch to another profile first.")
     else:
         profile.delete()
@@ -118,8 +134,8 @@ def theme_store(request):
     if not profile.theme:
         default_theme = Theme.objects.first()
         if default_theme :
-            profile_theme = default_theme
-            profile.save()
+            profile.theme = default_theme
+            profile.save(update_fields=['theme'])
     return render(
         request,
         "profiles/theme_store.html",
@@ -158,21 +174,30 @@ def reorder_sections(request):
         if not profile:
             return JsonResponse({'status': 'error'}, status=400)
 
-        # Optimized Approach:
-        # Fetch all sections for this profile to memory
-        all_sections = {s.id: s for s in profile.sections.all()}
+        try:
+            ordered_ids = [int(section_id) for section_id in order_list]
+        except (TypeError, ValueError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid section order.'}, status=400)
+
+        if not ordered_ids:
+            return JsonResponse({'status': 'success', 'updated': 0})
+
+        all_sections = {
+            section.id: section
+            for section in profile.sections.filter(id__in=ordered_ids).only('id', 'order')
+        }
         
         sections_to_update = []
-        for index, section_id in enumerate(order_list):
+        for index, section_id in enumerate(ordered_ids):
             section = all_sections.get(section_id)
             if section:
                 section.order = index
                 sections_to_update.append(section)
         
-        # Save all at once
-        ProfileSection.objects.bulk_update(sections_to_update, ['order'])
+        with transaction.atomic():
+            ProfileSection.objects.bulk_update(sections_to_update, ['order'])
                 
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success', 'updated': len(sections_to_update)})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
@@ -198,7 +223,7 @@ def section_list_create(request):
                 uploaded_image = request.FILES.get('profile_image')
                 if uploaded_image:
                     profile.profile_image = uploaded_image
-                    profile.save()
+                    profile.save(update_fields=['profile_image'])
 
             # --- 2. DETERMINE IF UPDATE OR CREATE ---
             existing_section = None
@@ -225,6 +250,7 @@ def section_list_create(request):
                 # Only run this if we are NOT updating an existing section
                 section = form.save(commit=False)
                 section.profile = profile
+                section.order = profile.sections.count()
 
                 # Title Logic
                 if not section.title:
@@ -289,13 +315,9 @@ def delete_section(request, section_id):
 User = get_user_model()
 def public_profile_view(request,username, profile_slug):
     # Optimize queries with select_related
-    user_obj = get_object_or_404(
-        User.objects.all(),
-        username=username
-    )
     profile = get_object_or_404(
-        Profile.objects.select_related('user', 'theme'),
-        user=user_obj,
+        Profile.objects.select_related('user', 'theme', 'user__details'),
+        user__username=username,
         slug=profile_slug
     )
 
@@ -303,7 +325,9 @@ def public_profile_view(request,username, profile_slug):
         raise Http404()
     
     # Prefetch related sections to avoid N+1 queries
-    sections = profile.sections.filter(is_enabled=True).prefetch_related('profile')
+    sections = profile.sections.filter(is_enabled=True).only(
+        'id', 'profile_id', 'section_type', 'title', 'data', 'order', 'created_at'
+    )
 
 # implimenting Analytics logic 
     session_key = f"profile_view_{profile.id}"
@@ -511,4 +535,3 @@ def verify_delete_account(request):
         
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
-

@@ -244,9 +244,9 @@
                <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
                    <span class="w-1 h-8 bg-emerald-500 rounded-full"></span> Skills
                </h2>
-               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+               <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                    {% for s in group.list %}
-                   <div class="perspective-1000 h-40 group cursor-pointer" onclick="toggleFlip(this)">
+                   <div class="skill-card perspective-1000 h-40 group cursor-pointer {% if forloop.counter > 10 %}hidden skill-extra{% endif %}" onclick="toggleFlip(this)">
                        <div class="flip-card-inner relative w-full h-full transform-style-3d">
                            <div class="absolute inset-0 glass-card rounded-2xl backface-hidden flex flex-col items-center justify-center p-4 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition duration-300">
                                <i class="devicon-{{ s.data.name|lower }}-plain text-4xl mb-3 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]" id="icon-{{ s.id }}"></i>
@@ -272,6 +272,14 @@
                    </div>
                    {% endfor %}
                </div>
+               {% if group.list|length > 10 %}
+               <div class="mt-6 text-center">
+                   <button type="button" onclick="toggleSkills(this)" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900/50 rounded-full border border-white/10 hover:bg-slate-800 transition text-sm font-medium text-slate-300">
+                       <span class="skill-toggle-text">Show More</span>
+                       <i class="fa-solid fa-chevron-down skill-toggle-icon text-xs text-emerald-400 transition-transform"></i>
+                   </button>
+               </div>
+               {% endif %}
 
             {% elif group.grouper == 'LINKS' %}
                <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
@@ -351,7 +359,7 @@
         
         if (grid.classList.contains('hidden')) {
             grid.classList.remove('hidden');
-            grid.style.display = 'grid'; 
+            grid.classList.add('grid');
             if(icon) icon.className = "fa-solid fa-eye text-indigo-400 toggle-icon";
             if(text) text.textContent = "Hide";
             
@@ -365,10 +373,31 @@
             cards.forEach(card => card.classList.remove('stagger-visible'));
             setTimeout(() => {
                 grid.classList.add('hidden');
+                grid.classList.remove('grid');
             }, 300);
             if(icon) icon.className = "fa-regular fa-eye-slash text-slate-400 toggle-icon";
             if(text) text.textContent = "Show";
         }
+    }
+
+    function toggleSkills(btn) {
+        const extras = document.querySelectorAll('#skills-grid .skill-extra');
+        const text = btn.querySelector('.skill-toggle-text');
+        const icon = btn.querySelector('.skill-toggle-icon');
+        const shouldShow = Array.from(extras).some(card => card.classList.contains('hidden'));
+
+        extras.forEach((card, index) => {
+            if (shouldShow) {
+                card.classList.remove('hidden');
+                setTimeout(() => card.classList.add('stagger-visible'), index * 40);
+            } else {
+                card.classList.remove('stagger-visible');
+                setTimeout(() => card.classList.add('hidden'), 180);
+            }
+        });
+
+        if (text) text.textContent = shouldShow ? 'Show Less' : 'Show More';
+        if (icon) icon.classList.toggle('rotate-180', shouldShow);
     }
 
     // Exp Calc

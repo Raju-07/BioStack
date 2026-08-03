@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from .models import Profile
 
 def is_owner(user, obj):
@@ -10,12 +9,17 @@ def is_profile_owner(user, profile):
 
 def get_active_profile(request):
     profile_id = request.session.get("active_profile_id")
+    profiles = Profile.objects.filter(user=request.user)
 
-    if not profile_id:
-        return None
+    if profile_id:
+        profile = profiles.filter(id=profile_id).first()
+        if profile:
+            return profile
 
-    return get_object_or_404(
-        Profile,
-        id=profile_id,
-        user=request.user,
-    )
+    if profiles.count() == 1:
+        profile = profiles.first()
+        request.session["active_profile_id"] = profile.id
+        request.session.modified = True
+        return profile
+
+    return None
