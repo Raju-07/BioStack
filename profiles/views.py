@@ -1,4 +1,5 @@
 import razorpay
+from collections import OrderedDict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
+from django.db.models import Max
 import json
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -217,54 +219,12 @@ def section_list_create(request):
         
         if form.is_valid():
             section_type = form.cleaned_data.get("section_type")
-
-            # --- 1. IMAGE HANDLING (Profile Level) ---
-            if section_type == 'PERSONAL':
-                uploaded_image = request.FILES.get('profile_image')
-                if uploaded_image:
-                    profile.profile_image = uploaded_image
-                    profile.save(update_fields=['profile_image'])
-
-            # --- 2. DETERMINE IF UPDATE OR CREATE ---
-            existing_section = None
-            if section_type in ['ABOUT', 'PERSONAL']:
-                existing_section = profile.sections.filter(section_type=section_type).first()
-            
-            # --- 3. EXECUTE LOGIC ---
-            if existing_section:
-                # === UPDATE PATH ===
-                # Re-bind form to the existing instance
-                form = ProfileSectionForm(request.POST, request.FILES, instance=existing_section)
-                
-                if form.is_valid():
-                    section = form.save(commit=False)
-                    section.save()
+            section, form = save_profile_section_form(request, profile, form)
+            if section:
+                if section_type in ['ABOUT', 'PERSONAL']:
                     messages.success(request, f"Updated your {section_type.lower()} section.")
-                    return redirect("profiles:sections")
-                
-                # If form is INVALID, we do nothing here. 
-                # The code falls through to the 'render' at the bottom, which displays the errors.
-
-            else:
-                # === CREATE PATH ===
-                # Only run this if we are NOT updating an existing section
-                section = form.save(commit=False)
-                section.profile = profile
-                section.order = profile.sections.count()
-
-                # Title Logic
-                if not section.title:
-                    if section_type == 'ABOUT':
-                        section.title = "About Me"
-                    elif section_type == 'PERSONAL':
-                        section.title = "Personal Details"
-                    elif section_type == 'SKILLS':
-                        section.title = form.cleaned_data.get('skill_name', 'Skill') 
-                    else:
-                        section.title = "Untitled Section"
-
-                section.save()
-                messages.success(request, "Section added successfully.")
+                else:
+                    messages.success(request, "Section added successfully.")
                 return redirect("profiles:sections")
         
         else:
@@ -298,6 +258,72 @@ def section_list_create(request):
         {"sections": sections, "form": form, "profile": profile},
     )
 
+def save_profile_section_form(request, profile, form):
+    section_type = form.cleaned_data.get("section_type")
+
+    if section_type == 'PERSONAL':
+        uploaded_image = request.FILES.get('profile_image')
+        if uploaded_image:
+            profile.profile_image = uploaded_image
+            profile.save(update_fields=['profile_image'])
+
+    existing_section = None
+    if section_type in ['ABOUT', 'PERSONAL']:
+        existing_section = profile.sections.filter(section_type=section_type).first()
+
+    if existing_section:
+        form = ProfileSectionForm(request.POST, request.FILES, instance=existing_section)
+        if not form.is_valid():
+            return None, form
+        section = form.save(commit=False)
+        section.save()
+        return section, form
+
+    section = form.save(commit=False)
+    section.profile = profile
+    max_order = profile.sections.aggregate(max_order=Max('order'))['max_order']
+    section.order = 0 if max_order is None else max_order + 1
+
+    if not section.title:
+        if section_type == 'ABOUT':
+            section.title = "About Me"
+        elif section_type == 'PERSONAL':
+            section.title = "Personal Details"
+        elif section_type == 'SKILLS':
+            section.title = form.cleaned_data.get('skill_name', 'Skill')
+        else:
+            section.title = "Untitled Section"
+
+    section.save()
+    return section, form
+
+
+@login_required
+@require_POST
+def quick_add_section(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+    form = ProfileSectionForm(request.POST, request.FILES)
+
+    if not form.is_valid():
+        return JsonResponse({
+            'status': 'error',
+            'errors': form.errors.get_json_data(),
+        }, status=400)
+
+    section, saved_form = save_profile_section_form(request, profile, form)
+    if not section:
+        return JsonResponse({
+            'status': 'error',
+            'errors': saved_form.errors.get_json_data(),
+        }, status=400)
+
+    return JsonResponse({
+        'status': 'success',
+        'section_id': section.id,
+        'section_type': section.section_type,
+        'message': 'Section saved successfully.',
+    })
+
 @login_required
 @require_POST
 def delete_section(request, section_id):
@@ -325,9 +351,13 @@ def public_profile_view(request,username, profile_slug):
         raise Http404()
     
     # Prefetch related sections to avoid N+1 queries
-    sections = profile.sections.filter(is_enabled=True).only(
+    sections_qs = profile.sections.filter(is_enabled=True).only(
         'id', 'profile_id', 'section_type', 'title', 'data', 'order', 'created_at'
     )
+    section_groups = OrderedDict()
+    for section in sections_qs:
+        section_groups.setdefault(section.section_type, []).append(section)
+    sections = [section for group in section_groups.values() for section in group]
 
 # implimenting Analytics logic 
     session_key = f"profile_view_{profile.id}"
@@ -347,7 +377,11 @@ def public_profile_view(request,username, profile_slug):
     return render(
         request,
         template_name,
-        {"profile": profile, "sections": sections},
+        {
+            "profile": profile,
+            "sections": sections,
+            "is_owner": request.user.is_authenticated and profile.user_id == request.user.id,
+        },
         content_type="text/html"
     )
 

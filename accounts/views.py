@@ -5,31 +5,38 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import SignupForm, LoginForm,UserDetailForm
 from .models import UserDetail
+from profiles.utils import get_active_profile
+
+
+def redirect_after_auth(request):
+    if get_active_profile(request):
+        return redirect("dashboard:index")
+    return redirect("profiles:list")
 
 
 def signup_view(request):
     if request.user.is_authenticated:
-        return redirect("dashboard:index")
+        return redirect_after_auth(request)
 
     form = SignupForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         user = form.save()
         login(request, user)
-        return redirect("dashboard:index")
+        return redirect_after_auth(request)
 
     return render(request, "accounts/signup.html", {"form": form})
 
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("dashboard:index")
+        return redirect_after_auth(request)
 
     form = LoginForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         login(request, form.cleaned_data["user"])
-        return redirect("dashboard:index")
+        return redirect_after_auth(request)
 
     return render(request, "accounts/login.html", {"form": form})
 

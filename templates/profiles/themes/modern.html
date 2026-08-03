@@ -63,23 +63,21 @@
     <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
   </div>
 
-  <main class="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center gap-16">
+  <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-20 flex flex-col items-center gap-8 md:gap-14">
 
     <header class="text-center w-full max-w-3xl fade-up" style="animation-delay: 0ms;">
-        <div class="relative mx-auto w-32 h-32 mb-6 group cursor-default">
-            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-            
-            <div class="relative w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
+        <div class="relative mx-auto w-24 h-24 md:w-32 md:h-32 mb-4 md:mb-6 cursor-default">
+            <div class="relative w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-xl">
                 
                 {% if profile.profile_image %}
                     <img src="{{ profile.profile_image.url }}" 
                         alt="{{ profile.full_name }}" 
-                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        class="w-full h-full object-cover">
 
                 {% elif profile.user.details.profile_image %}
                     <img src="{{ profile.user.details.profile_image.url }}" 
                         alt="{{ profile.full_name }}" 
-                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                        class="w-full h-full object-cover">
 
                 {% else %}
                     <span class="text-4xl font-bold text-white tracking-wider select-none">
@@ -89,19 +87,30 @@
             </div>
         </div>
 
-        <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+        <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold text-white tracking-tight mb-3 md:mb-4">
             {{ profile.full_name|default:profile.slug }}
         </h1>
         
         {% if profile.bio %}
-            <p class="text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">
+            <p class="text-sm sm:text-base md:text-lg text-slate-400 max-w-lg mx-auto leading-relaxed">
             {{ profile.bio }}
             </p>
+        {% endif %}
+
+        {% if is_owner %}
+            <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button type="button" onclick="openSectionModal('ABOUT')" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition">
+                    <i class="fa-solid fa-plus"></i> Add Section
+                </button>
+                <a href="{% url 'profiles:sections' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/60 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white text-sm font-semibold transition">
+                    <i class="fa-solid fa-pen-to-square"></i> Manage
+                </a>
+            </div>
         {% endif %}
     
     </header>
 
-    <div class="w-full max-w-4xl space-y-12">
+    <div class="w-full max-w-4xl space-y-8 md:space-y-12">
       
       {% regroup sections by section_type as section_list %}
 
@@ -109,21 +118,38 @@
         <section class="fade-up w-full" style="animation-delay: 100ms;">
             
             {% if group.grouper == 'ABOUT' %}
+               <div class="flex items-center justify-between mb-4 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-7 md:h-8 bg-indigo-500 rounded-full"></span> About
+                   </h2>
+                   {% if is_owner %}
+                   <button type="button" onclick="openSectionModal('ABOUT')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-indigo-600 text-slate-300 hover:text-white transition" title="Update About">
+                       <i class="fa-solid fa-plus"></i>
+                   </button>
+                   {% endif %}
+               </div>
                {% for s in group.list %}
-               <div class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed glass-card p-6 rounded-2xl border-l-4 border-indigo-500 text-left">
+               <div class="text-sm sm:text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed glass-card p-4 md:p-6 rounded-2xl border-l-4 border-indigo-500 text-left">
                   {{ s.data.content }}
                </div>
                {% endfor %}
 
             {% elif group.grouper == 'PERSONAL' %}
-               <div class="flex items-center justify-between mb-8 px-2">
-                   <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-                       <span class="w-1 h-8 bg-indigo-500 rounded-full"></span> Personal Details
+               <div class="flex items-center justify-between gap-3 mb-5 md:mb-8 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3 min-w-0">
+                       <span class="w-1 h-7 md:h-8 bg-indigo-500 rounded-full shrink-0"></span> <span class="truncate">Personal Details</span>
                    </h2>
-                   <button onclick="togglePersonalBlock(this)" class="flex items-center gap-2 px-4 py-2 bg-slate-900/50 rounded-full border border-white/10 hover:bg-slate-800 transition">
-                       <i class="fa-regular fa-eye-slash text-slate-400 toggle-icon"></i>
-                       <span class="text-sm font-medium text-slate-300 toggle-text">Show</span>
-                   </button>
+                   <div class="flex items-center gap-2 shrink-0">
+                       {% if is_owner %}
+                       <button type="button" onclick="openSectionModal('PERSONAL')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-indigo-600 text-slate-300 hover:text-white transition" title="Update Personal Details">
+                           <i class="fa-solid fa-plus"></i>
+                       </button>
+                       {% endif %}
+                       <button onclick="togglePersonalBlock(this)" class="flex items-center gap-2 px-3 md:px-4 py-2 bg-slate-900/50 rounded-full border border-white/10 hover:bg-slate-800 transition">
+                           <i class="fa-regular fa-eye-slash text-slate-400 toggle-icon"></i>
+                           <span class="text-xs sm:text-sm font-medium text-slate-300 toggle-text">Show</span>
+                       </button>
+                   </div>
                </div>
                
                <div class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 personal-grid-container">
@@ -180,14 +206,21 @@
                </div>
 
             {% elif group.grouper == 'EXPERIENCE' %}
-               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
-                   <span class="w-1 h-8 bg-cyan-500 rounded-full"></span> Experience
-               </h2>
-               <div class="relative border-l-2 border-slate-800 ml-4 md:ml-6 space-y-8">
+               <div class="flex items-center justify-between mb-5 md:mb-8 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-7 md:h-8 bg-cyan-500 rounded-full"></span> Experience
+                   </h2>
+                   {% if is_owner %}
+                   <button type="button" onclick="openSectionModal('EXPERIENCE')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-cyan-600 text-slate-300 hover:text-white transition" title="Add Experience">
+                       <i class="fa-solid fa-plus"></i>
+                   </button>
+                   {% endif %}
+               </div>
+               <div class="relative border-l-2 border-slate-800 ml-2 md:ml-6 space-y-5 md:space-y-8">
                    {% for s in group.list %}
                    <div class="relative pl-8 md:pl-12 group">
                        <div class="absolute -left-[9px] top-6 w-4 h-4 rounded-full bg-[#0B0F19] border-4 border-slate-700 group-hover:border-cyan-500 transition duration-300 z-10"></div>
-                       <div class="glass-card p-6 md:p-8 rounded-3xl transition duration-300 hover:border-cyan-500/30">
+                       <div class="glass-card p-4 md:p-8 rounded-2xl md:rounded-3xl transition duration-300 hover:border-cyan-500/30">
                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
                                <div>
                                    <h3 class="text-xl font-bold text-white group-hover:text-cyan-400 transition">{{ s.data.position }}</h3>
@@ -207,9 +240,16 @@
                </div>
 
             {% elif group.grouper == 'PROJECTS' %}
-               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
-                   <span class="w-1 h-8 bg-purple-500 rounded-full"></span> Projects
-               </h2>
+               <div class="flex items-center justify-between mb-5 md:mb-8 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-7 md:h-8 bg-purple-500 rounded-full"></span> Projects
+                   </h2>
+                   {% if is_owner %}
+                   <button type="button" onclick="openSectionModal('PROJECTS')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-purple-600 text-slate-300 hover:text-white transition" title="Add Project">
+                       <i class="fa-solid fa-plus"></i>
+                   </button>
+                   {% endif %}
+               </div>
                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                    {% for s in group.list %}
                    <div class="perspective-1000 h-64 group cursor-pointer" onclick="toggleFlip(this)">
@@ -241,12 +281,19 @@
                </div>
 
             {% elif group.grouper == 'SKILLS' %}
-               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
-                   <span class="w-1 h-8 bg-emerald-500 rounded-full"></span> Skills
-               </h2>
-               <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+               <div class="flex items-center justify-between mb-5 md:mb-8 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-7 md:h-8 bg-emerald-500 rounded-full"></span> Skills
+                   </h2>
+                   {% if is_owner %}
+                   <button type="button" onclick="openSectionModal('SKILLS')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-emerald-600 text-slate-300 hover:text-white transition" title="Add Skill">
+                       <i class="fa-solid fa-plus"></i>
+                   </button>
+                   {% endif %}
+               </div>
+               <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                    {% for s in group.list %}
-                   <div class="skill-card perspective-1000 h-40 group cursor-pointer {% if forloop.counter > 10 %}hidden skill-extra{% endif %}" onclick="toggleFlip(this)">
+                   <div class="skill-card perspective-1000 h-32 md:h-40 group cursor-pointer {% if forloop.counter > 10 %}hidden skill-extra{% endif %}" onclick="toggleFlip(this)">
                        <div class="flip-card-inner relative w-full h-full transform-style-3d">
                            <div class="absolute inset-0 glass-card rounded-2xl backface-hidden flex flex-col items-center justify-center p-4 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition duration-300">
                                <i class="devicon-{{ s.data.name|lower }}-plain text-4xl mb-3 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]" id="icon-{{ s.id }}"></i>
@@ -282,9 +329,16 @@
                {% endif %}
 
             {% elif group.grouper == 'LINKS' %}
-               <h2 class="text-2xl font-bold text-white mb-8 px-2 flex items-center gap-3">
-                   <span class="w-1 h-8 bg-pink-500 rounded-full"></span> Connect
-               </h2>
+               <div class="flex items-center justify-between mb-5 md:mb-8 px-1 sm:px-2">
+                   <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
+                       <span class="w-1 h-7 md:h-8 bg-pink-500 rounded-full"></span> Connect
+                   </h2>
+                   {% if is_owner %}
+                   <button type="button" onclick="openSectionModal('LINKS')" class="owner-add-btn h-9 w-9 rounded-full border border-white/10 bg-slate-900/60 hover:bg-pink-600 text-slate-300 hover:text-white transition" title="Add Link">
+                       <i class="fa-solid fa-plus"></i>
+                   </button>
+                   {% endif %}
+               </div>
                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                    {% for s in group.list %}
                    <a href="{% url 'profiles:track_click' s.id %}" target="_blank" class="glass-card p-4 rounded-xl flex items-center gap-4 hover:bg-pink-500/10 hover:border-pink-500/40 transition duration-300 group">
@@ -317,6 +371,111 @@
 
   </main>
 
+  {% if is_owner %}
+  <div id="section-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+      <div class="bg-slate-950 border border-white/10 w-full max-w-2xl rounded-2xl p-5 md:p-6 shadow-2xl transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto">
+          <button type="button" onclick="closeSectionModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+              <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+          <h3 id="section-modal-title" class="text-xl md:text-2xl font-bold text-white mb-5 pr-8">Add Section</h3>
+          <form id="quick-section-form" action="{% url 'profiles:quick_add_section' profile.id %}" method="post" enctype="multipart/form-data" class="space-y-4">
+              {% csrf_token %}
+              <label class="block">
+                  <span class="block text-sm text-slate-400 mb-2">Section Type</span>
+                  <select name="section_type" id="quick-section-type" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                      <option value="ABOUT">About Me</option>
+                      <option value="PERSONAL">Personal Details</option>
+                      <option value="EXPERIENCE">Experience</option>
+                      <option value="PROJECTS">Projects</option>
+                      <option value="SKILLS">Skills</option>
+                      <option value="LINKS">Links</option>
+                      <option value="CUSTOM">Custom Section</option>
+                  </select>
+              </label>
+              <label class="quick-field quick-title block">
+                  <span class="block text-sm text-slate-400 mb-2">Title / Heading</span>
+                  <input name="title" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Section title">
+              </label>
+              <div class="quick-field quick-skill hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label class="block">
+                      <span class="block text-sm text-slate-400 mb-2">Skill Name</span>
+                      <input name="skill_name" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Python">
+                  </label>
+                  <label class="block">
+                      <span class="block text-sm text-slate-400 mb-2">Proficiency</span>
+                      <select name="skill_level" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                          <option>Beginner</option>
+                          <option>Intermediate</option>
+                          <option>Advanced</option>
+                          <option>Expert</option>
+                      </select>
+                  </label>
+              </div>
+              <label class="quick-field quick-link hidden block">
+                  <span class="block text-sm text-slate-400 mb-2">Destination URL</span>
+                  <input name="link_url" type="url" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="https://example.com">
+              </label>
+              <div class="quick-field quick-experience hidden space-y-4">
+                  <label class="block">
+                      <span class="block text-sm text-slate-400 mb-2">Job Title / Role</span>
+                      <input name="position" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Senior Developer">
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <label class="block">
+                          <span class="block text-sm text-slate-400 mb-2">Start Date</span>
+                          <input name="start_date" type="date" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                      </label>
+                      <label class="block">
+                          <span class="block text-sm text-slate-400 mb-2">End Date</span>
+                          <input name="end_date" type="date" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                      </label>
+                  </div>
+                  <label class="inline-flex items-center gap-3 text-sm text-slate-300">
+                      <input name="is_current" type="checkbox" class="h-4 w-4 accent-indigo-500"> I currently work here
+                  </label>
+              </div>
+              <div class="quick-field quick-personal hidden space-y-4">
+                  <label class="block">
+                      <span class="block text-sm text-slate-400 mb-2">Profile Photo</span>
+                      <input name="profile_image" type="file" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-800 file:px-4 file:py-2 file:text-white hover:file:bg-slate-700">
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input name="phone" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Phone">
+                      <input name="email" type="email" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Email">
+                      <input name="dob" type="date" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                      <input name="location" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="City / Location">
+                      <select name="gender" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                          <option value="">Gender</option>
+                          <option>Male</option>
+                          <option>Female</option>
+                          <option>Other</option>
+                      </select>
+                      <select name="marital_status" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+                          <option value="">Marital Status</option>
+                          <option>Single</option>
+                          <option>Married</option>
+                          <option>Divorced</option>
+                      </select>
+                      <input name="nationality" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Nationality">
+                      <textarea name="address" rows="2" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="Address"></textarea>
+                  </div>
+              </div>
+              <label class="quick-field quick-content block">
+                  <span id="quick-content-label" class="block text-sm text-slate-400 mb-2">Description / Bio</span>
+                  <textarea name="content" rows="4" class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 resize-none" placeholder="Write your details here..."></textarea>
+              </label>
+              <label class="inline-flex items-center gap-3 text-sm text-slate-300">
+                  <input name="is_enabled" type="checkbox" checked class="h-4 w-4 accent-indigo-500"> Visible on Profile
+              </label>
+              <p id="quick-section-error" class="hidden text-sm text-red-400"></p>
+              <button type="submit" id="quick-section-submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition">
+                  Save Section
+              </button>
+          </form>
+      </div>
+  </div>
+  {% endif %}
+
   <div id="info-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
       <div class="bg-slate-900 border border-white/10 w-full max-w-lg rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300 relative">
           <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
@@ -345,6 +504,99 @@
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
     modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+    {% if is_owner %}
+    const sectionModal = document.getElementById('section-modal');
+    const sectionForm = document.getElementById('quick-section-form');
+    const sectionType = document.getElementById('quick-section-type');
+    const sectionTitle = document.getElementById('section-modal-title');
+    const sectionError = document.getElementById('quick-section-error');
+    const sectionSubmit = document.getElementById('quick-section-submit');
+    const sectionLabels = {
+        ABOUT: 'Update About',
+        PERSONAL: 'Update Personal Details',
+        EXPERIENCE: 'Add Experience',
+        PROJECTS: 'Add Project',
+        SKILLS: 'Add Skill',
+        LINKS: 'Add Link',
+        CUSTOM: 'Add Custom Section'
+    };
+
+    function updateSectionModalFields() {
+        const type = sectionType.value;
+        sectionForm.querySelectorAll('.quick-field').forEach(field => field.classList.add('hidden'));
+        sectionForm.querySelector('.quick-title').classList.remove('hidden');
+        sectionForm.querySelector('.quick-content').classList.remove('hidden');
+
+        if (type === 'SKILLS') {
+            sectionForm.querySelector('.quick-skill').classList.remove('hidden');
+            sectionForm.querySelector('.quick-title').classList.add('hidden');
+        } else if (type === 'LINKS') {
+            sectionForm.querySelector('.quick-link').classList.remove('hidden');
+        } else if (type === 'EXPERIENCE') {
+            sectionForm.querySelector('.quick-experience').classList.remove('hidden');
+        } else if (type === 'PERSONAL') {
+            sectionForm.querySelector('.quick-personal').classList.remove('hidden');
+            sectionForm.querySelector('.quick-title').classList.add('hidden');
+        }
+
+        sectionTitle.textContent = sectionLabels[type] || 'Add Section';
+        document.getElementById('quick-content-label').textContent = type === 'PERSONAL' ? 'Short Bio' : 'Description / Bio';
+    }
+
+    function openSectionModal(type) {
+        sectionForm.reset();
+        sectionType.value = type || 'ABOUT';
+        sectionError.classList.add('hidden');
+        sectionError.textContent = '';
+        updateSectionModalFields();
+        sectionModal.classList.remove('hidden');
+        sectionModal.classList.add('flex');
+        setTimeout(() => {
+            sectionModal.classList.remove('opacity-0');
+            sectionModal.firstElementChild.classList.remove('scale-95');
+            sectionModal.firstElementChild.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeSectionModal() {
+        sectionModal.classList.add('opacity-0');
+        sectionModal.firstElementChild.classList.remove('scale-100');
+        sectionModal.firstElementChild.classList.add('scale-95');
+        setTimeout(() => {
+            sectionModal.classList.add('hidden');
+            sectionModal.classList.remove('flex');
+        }, 300);
+    }
+
+    sectionType.addEventListener('change', updateSectionModalFields);
+    sectionModal.addEventListener('click', (event) => {
+        if (event.target === sectionModal) closeSectionModal();
+    });
+    sectionForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        sectionError.classList.add('hidden');
+        sectionSubmit.disabled = true;
+        sectionSubmit.textContent = 'Saving...';
+
+        fetch(sectionForm.action, {
+            method: 'POST',
+            body: new FormData(sectionForm),
+            headers: { 'X-CSRFToken': sectionForm.querySelector('[name=csrfmiddlewaretoken]').value }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Please check the section fields.');
+            return response.json();
+        })
+        .then(() => window.location.reload())
+        .catch(error => {
+            sectionError.textContent = error.message;
+            sectionError.classList.remove('hidden');
+            sectionSubmit.disabled = false;
+            sectionSubmit.textContent = 'Save Section';
+        });
+    });
+    {% endif %}
 
     // FIXED: Personal Data Toggle Logic
     // We now traverse the DOM to find the exact sibling container

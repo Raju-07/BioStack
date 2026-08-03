@@ -9,6 +9,7 @@ from .views import (
     delete_profile,
     delete_section,
     reorder_sections,
+    quick_add_section,
     update_theme,
     track_link_click,
     subscription,
@@ -36,6 +37,7 @@ urlpatterns = [
     # Section Management 
     path("me/sections/", section_list_create, name="sections"),
     path("me/sections/reorder/", reorder_sections, name="reorder_sections"),
+    path("me/sections/quick-add/<int:profile_id>/", quick_add_section, name="quick_add_section"),
     path("me/sections/delete/<int:section_id>/", delete_section, name="delete_section"),
     
     # Actions 
